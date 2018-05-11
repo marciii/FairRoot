@@ -1,0 +1,22 @@
+#!/bin/bash
+prototypeconfig="@CMAKE_BINARY_DIR@/bin/config/prototype-pushpull.json"
+
+
+PROCESSOR1="flpprocessorpushpull"
+PROCESSOR1+=" --id flpprocessorpushpull"
+PROCESSOR1+=" --mq-config $prototypeconfig"
+#PROCESSOR1+=" --config-key processor"
+xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pushpull/$PROCESSOR1 &
+
+PROCESSOR2="schedulerprocessorpushpull"
+PROCESSOR2+=" --id schedulerprocessorpushpull"
+PROCESSOR2+=" --mq-config $prototypeconfig"
+#PROCESSOR2+=" --config-key processor"
+xterm -geometry 80x23+500+330 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pushpull/$PROCESSOR2 &
+
+PROCESSOR3="epnprocessorpushpull"
+PROCESSOR3+=" --id epnprocessorpushpull"
+PROCESSOR3+=" --mq-config $prototypeconfig"
+#PROCESSOR3+=" --config-key processor"
+xterm -geometry 80x23+500+660 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pushpull/$PROCESSOR3 &
+
