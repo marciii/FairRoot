@@ -1,0 +1,22 @@
+#!/bin/bash
+prototypeconfig="@CMAKE_BINARY_DIR@/bin/config/prototype-dealerrouter.json"
+
+
+PROCESSOR1="flpprocessordealerrouter"
+PROCESSOR1+=" --id flpprocessordealerrouter"
+PROCESSOR1+=" --mq-config $prototypeconfig"
+#PROCESSOR1+=" --config-key processor"
+xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-dealerrouter/$PROCESSOR1 &
+
+PROCESSOR2="schedulerprocessordealerrouter"
+PROCESSOR2+=" --id schedulerprocessordealerrouter"
+PROCESSOR2+=" --mq-config $prototypeconfig"
+#PROCESSOR2+=" --config-key processor"
+xterm -geometry 80x23+500+330 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-dealerrouter/$PROCESSOR2 &
+
+PROCESSOR3="epnprocessordealerrouter"
+PROCESSOR3+=" --id epnprocessordealerrouter"
+PROCESSOR3+=" --mq-config $prototypeconfig"
+#PROCESSOR3+=" --config-key processor"
+xterm -geometry 80x23+500+660 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-dealerrouter/$PROCESSOR3 &
+

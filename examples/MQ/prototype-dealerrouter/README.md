@@ -1,0 +1,3 @@
+Dealer / Router pattern
+===============
+

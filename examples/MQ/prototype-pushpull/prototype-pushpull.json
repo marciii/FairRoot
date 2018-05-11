@@ -1,0 +1,73 @@
+{
+    "fairMQOptions": {
+        "devices": [
+            {
+                "id": "flpprocessorpushpull",
+                "channels": [
+                    {
+                        "name": "scheduledatatoflp",
+                        "sockets": [
+                            {
+                                "type": "pull",
+                                "method": "bind",
+                                "address": "tcp://*:25555",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+                {
+                "id": "schedulerprocessorpushpull",
+                "channels": [
+                    {
+                        "name": "scheduledatafromepn",
+                        "sockets": [
+                            {
+                                "type": "pull",
+                                "method": "connect",
+                                "address": "tcp://localhost:25556",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    },
+                    {
+                        "name": "scheduledatatoflp",
+                        "sockets": [
+                            {
+                                "type": "push",
+                                "method": "connect",
+                                "address": "tcp://localhost:25555",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "epnprocessorpushpull",
+                "channels": [
+                    {
+                        "name": "scheduledatafromepn",
+                        "sockets": [
+                            {
+                                "type": "push",
+                                "method": "bind",
+                                "address": "tcp://*:25556",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
