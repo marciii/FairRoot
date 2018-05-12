@@ -1,0 +1,1776 @@
+// Do NOT change. Changes will be lost next time file is generated
+
+#define R__DICTIONARY_FILENAME dIhomedImarcidIfair_installdIFairRootdIbuild2dIparbasedIG__ParBaseDict
+
+/*******************************************************************/
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#define G__DICTIONARY
+#include "RConfig.h"
+#include "TClass.h"
+#include "TDictAttributeMap.h"
+#include "TInterpreter.h"
+#include "TROOT.h"
+#include "TBuffer.h"
+#include "TMemberInspector.h"
+#include "TInterpreter.h"
+#include "TVirtualMutex.h"
+#include "TError.h"
+
+#ifndef G__ROOT
+#define G__ROOT
+#endif
+
+#include "RtypesImp.h"
+#include "TIsAProxy.h"
+#include "TFileMergeInfo.h"
+#include <algorithm>
+#include "TCollectionProxyInfo.h"
+/*******************************************************************/
+
+#include "TDataMember.h"
+
+// Since CINT ignores the std namespace, we need to do so in this file.
+namespace std {} using namespace std;
+
+// Header files passed as explicit arguments
+#include "FairContFact.h"
+#include "FairDetParAsciiFileIo.h"
+#include "FairDetParIo.h"
+#include "FairDetParRootFileIo.h"
+#include "FairGenericParAsciiFileIo.h"
+#include "FairGenericParRootFileIo.h"
+#include "FairParAsciiFileIo.h"
+#include "FairParGenericSet.h"
+#include "FairParIo.h"
+#include "FairParRootFileIo.h"
+#include "FairParSet.h"
+#include "FairParamList.h"
+#include "FairRtdbRun.h"
+#include "FairRuntimeDb.h"
+
+// Header files passed via #pragma extra_include
+
+namespace ROOT {
+   static void delete_FairContainer(void *p);
+   static void deleteArray_FairContainer(void *p);
+   static void destruct_FairContainer(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairContainer*)
+   {
+      ::FairContainer *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairContainer >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairContainer", ::FairContainer::Class_Version(), "FairContFact.h", 21,
+                  typeid(::FairContainer), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairContainer::Dictionary, isa_proxy, 4,
+                  sizeof(::FairContainer) );
+      instance.SetDelete(&delete_FairContainer);
+      instance.SetDeleteArray(&deleteArray_FairContainer);
+      instance.SetDestructor(&destruct_FairContainer);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairContainer*)
+   {
+      return GenerateInitInstanceLocal((::FairContainer*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairContainer*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairContFact(void *p = 0);
+   static void *newArray_FairContFact(Long_t size, void *p);
+   static void delete_FairContFact(void *p);
+   static void deleteArray_FairContFact(void *p);
+   static void destruct_FairContFact(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairContFact*)
+   {
+      ::FairContFact *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairContFact >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairContFact", ::FairContFact::Class_Version(), "FairContFact.h", 48,
+                  typeid(::FairContFact), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairContFact::Dictionary, isa_proxy, 4,
+                  sizeof(::FairContFact) );
+      instance.SetNew(&new_FairContFact);
+      instance.SetNewArray(&newArray_FairContFact);
+      instance.SetDelete(&delete_FairContFact);
+      instance.SetDeleteArray(&deleteArray_FairContFact);
+      instance.SetDestructor(&destruct_FairContFact);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairContFact*)
+   {
+      return GenerateInitInstanceLocal((::FairContFact*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairContFact*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairDetParIo(void *p = 0);
+   static void *newArray_FairDetParIo(Long_t size, void *p);
+   static void delete_FairDetParIo(void *p);
+   static void deleteArray_FairDetParIo(void *p);
+   static void destruct_FairDetParIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairDetParIo*)
+   {
+      ::FairDetParIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairDetParIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairDetParIo", ::FairDetParIo::Class_Version(), "FairDetParIo.h", 17,
+                  typeid(::FairDetParIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairDetParIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairDetParIo) );
+      instance.SetNew(&new_FairDetParIo);
+      instance.SetNewArray(&newArray_FairDetParIo);
+      instance.SetDelete(&delete_FairDetParIo);
+      instance.SetDeleteArray(&deleteArray_FairDetParIo);
+      instance.SetDestructor(&destruct_FairDetParIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairDetParIo*)
+   {
+      return GenerateInitInstanceLocal((::FairDetParIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairDetParIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void delete_FairDetParAsciiFileIo(void *p);
+   static void deleteArray_FairDetParAsciiFileIo(void *p);
+   static void destruct_FairDetParAsciiFileIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairDetParAsciiFileIo*)
+   {
+      ::FairDetParAsciiFileIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairDetParAsciiFileIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairDetParAsciiFileIo", ::FairDetParAsciiFileIo::Class_Version(), "FairDetParAsciiFileIo.h", 21,
+                  typeid(::FairDetParAsciiFileIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairDetParAsciiFileIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairDetParAsciiFileIo) );
+      instance.SetDelete(&delete_FairDetParAsciiFileIo);
+      instance.SetDeleteArray(&deleteArray_FairDetParAsciiFileIo);
+      instance.SetDestructor(&destruct_FairDetParAsciiFileIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairDetParAsciiFileIo*)
+   {
+      return GenerateInitInstanceLocal((::FairDetParAsciiFileIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairDetParAsciiFileIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void delete_FairDetParRootFileIo(void *p);
+   static void deleteArray_FairDetParRootFileIo(void *p);
+   static void destruct_FairDetParRootFileIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairDetParRootFileIo*)
+   {
+      ::FairDetParRootFileIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairDetParRootFileIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairDetParRootFileIo", ::FairDetParRootFileIo::Class_Version(), "FairDetParRootFileIo.h", 21,
+                  typeid(::FairDetParRootFileIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairDetParRootFileIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairDetParRootFileIo) );
+      instance.SetDelete(&delete_FairDetParRootFileIo);
+      instance.SetDeleteArray(&deleteArray_FairDetParRootFileIo);
+      instance.SetDestructor(&destruct_FairDetParRootFileIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairDetParRootFileIo*)
+   {
+      return GenerateInitInstanceLocal((::FairDetParRootFileIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairDetParRootFileIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairGenericParAsciiFileIo(void *p = 0);
+   static void *newArray_FairGenericParAsciiFileIo(Long_t size, void *p);
+   static void delete_FairGenericParAsciiFileIo(void *p);
+   static void deleteArray_FairGenericParAsciiFileIo(void *p);
+   static void destruct_FairGenericParAsciiFileIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairGenericParAsciiFileIo*)
+   {
+      ::FairGenericParAsciiFileIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairGenericParAsciiFileIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairGenericParAsciiFileIo", ::FairGenericParAsciiFileIo::Class_Version(), "FairGenericParAsciiFileIo.h", 22,
+                  typeid(::FairGenericParAsciiFileIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairGenericParAsciiFileIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairGenericParAsciiFileIo) );
+      instance.SetNew(&new_FairGenericParAsciiFileIo);
+      instance.SetNewArray(&newArray_FairGenericParAsciiFileIo);
+      instance.SetDelete(&delete_FairGenericParAsciiFileIo);
+      instance.SetDeleteArray(&deleteArray_FairGenericParAsciiFileIo);
+      instance.SetDestructor(&destruct_FairGenericParAsciiFileIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairGenericParAsciiFileIo*)
+   {
+      return GenerateInitInstanceLocal((::FairGenericParAsciiFileIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairGenericParAsciiFileIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairGenericParRootFileIo(void *p = 0);
+   static void *newArray_FairGenericParRootFileIo(Long_t size, void *p);
+   static void delete_FairGenericParRootFileIo(void *p);
+   static void deleteArray_FairGenericParRootFileIo(void *p);
+   static void destruct_FairGenericParRootFileIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairGenericParRootFileIo*)
+   {
+      ::FairGenericParRootFileIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairGenericParRootFileIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairGenericParRootFileIo", ::FairGenericParRootFileIo::Class_Version(), "FairGenericParRootFileIo.h", 18,
+                  typeid(::FairGenericParRootFileIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairGenericParRootFileIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairGenericParRootFileIo) );
+      instance.SetNew(&new_FairGenericParRootFileIo);
+      instance.SetNewArray(&newArray_FairGenericParRootFileIo);
+      instance.SetDelete(&delete_FairGenericParRootFileIo);
+      instance.SetDeleteArray(&deleteArray_FairGenericParRootFileIo);
+      instance.SetDestructor(&destruct_FairGenericParRootFileIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairGenericParRootFileIo*)
+   {
+      return GenerateInitInstanceLocal((::FairGenericParRootFileIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairGenericParRootFileIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParIo(void *p = 0);
+   static void *newArray_FairParIo(Long_t size, void *p);
+   static void delete_FairParIo(void *p);
+   static void deleteArray_FairParIo(void *p);
+   static void destruct_FairParIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParIo*)
+   {
+      ::FairParIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParIo", ::FairParIo::Class_Version(), "FairParIo.h", 20,
+                  typeid(::FairParIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParIo) );
+      instance.SetNew(&new_FairParIo);
+      instance.SetNewArray(&newArray_FairParIo);
+      instance.SetDelete(&delete_FairParIo);
+      instance.SetDeleteArray(&deleteArray_FairParIo);
+      instance.SetDestructor(&destruct_FairParIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParIo*)
+   {
+      return GenerateInitInstanceLocal((::FairParIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParAsciiFileIo(void *p = 0);
+   static void *newArray_FairParAsciiFileIo(Long_t size, void *p);
+   static void delete_FairParAsciiFileIo(void *p);
+   static void deleteArray_FairParAsciiFileIo(void *p);
+   static void destruct_FairParAsciiFileIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParAsciiFileIo*)
+   {
+      ::FairParAsciiFileIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParAsciiFileIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParAsciiFileIo", ::FairParAsciiFileIo::Class_Version(), "FairParAsciiFileIo.h", 20,
+                  typeid(::FairParAsciiFileIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParAsciiFileIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParAsciiFileIo) );
+      instance.SetNew(&new_FairParAsciiFileIo);
+      instance.SetNewArray(&newArray_FairParAsciiFileIo);
+      instance.SetDelete(&delete_FairParAsciiFileIo);
+      instance.SetDeleteArray(&deleteArray_FairParAsciiFileIo);
+      instance.SetDestructor(&destruct_FairParAsciiFileIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParAsciiFileIo*)
+   {
+      return GenerateInitInstanceLocal((::FairParAsciiFileIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParAsciiFileIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParSet(void *p = 0);
+   static void *newArray_FairParSet(Long_t size, void *p);
+   static void delete_FairParSet(void *p);
+   static void deleteArray_FairParSet(void *p);
+   static void destruct_FairParSet(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParSet*)
+   {
+      ::FairParSet *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParSet >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParSet", ::FairParSet::Class_Version(), "FairParSet.h", 18,
+                  typeid(::FairParSet), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParSet::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParSet) );
+      instance.SetNew(&new_FairParSet);
+      instance.SetNewArray(&newArray_FairParSet);
+      instance.SetDelete(&delete_FairParSet);
+      instance.SetDeleteArray(&deleteArray_FairParSet);
+      instance.SetDestructor(&destruct_FairParSet);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParSet*)
+   {
+      return GenerateInitInstanceLocal((::FairParSet*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParSet*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void delete_FairParGenericSet(void *p);
+   static void deleteArray_FairParGenericSet(void *p);
+   static void destruct_FairParGenericSet(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParGenericSet*)
+   {
+      ::FairParGenericSet *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParGenericSet >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParGenericSet", ::FairParGenericSet::Class_Version(), "FairParGenericSet.h", 18,
+                  typeid(::FairParGenericSet), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParGenericSet::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParGenericSet) );
+      instance.SetDelete(&delete_FairParGenericSet);
+      instance.SetDeleteArray(&deleteArray_FairParGenericSet);
+      instance.SetDestructor(&destruct_FairParGenericSet);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParGenericSet*)
+   {
+      return GenerateInitInstanceLocal((::FairParGenericSet*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParGenericSet*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void delete_FairParRootFile(void *p);
+   static void deleteArray_FairParRootFile(void *p);
+   static void destruct_FairParRootFile(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParRootFile*)
+   {
+      ::FairParRootFile *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParRootFile >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParRootFile", ::FairParRootFile::Class_Version(), "FairParRootFileIo.h", 24,
+                  typeid(::FairParRootFile), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParRootFile::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParRootFile) );
+      instance.SetDelete(&delete_FairParRootFile);
+      instance.SetDeleteArray(&deleteArray_FairParRootFile);
+      instance.SetDestructor(&destruct_FairParRootFile);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParRootFile*)
+   {
+      return GenerateInitInstanceLocal((::FairParRootFile*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParRootFile*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParRootFileIo(void *p = 0);
+   static void *newArray_FairParRootFileIo(Long_t size, void *p);
+   static void delete_FairParRootFileIo(void *p);
+   static void deleteArray_FairParRootFileIo(void *p);
+   static void destruct_FairParRootFileIo(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParRootFileIo*)
+   {
+      ::FairParRootFileIo *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParRootFileIo >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParRootFileIo", ::FairParRootFileIo::Class_Version(), "FairParRootFileIo.h", 55,
+                  typeid(::FairParRootFileIo), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParRootFileIo::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParRootFileIo) );
+      instance.SetNew(&new_FairParRootFileIo);
+      instance.SetNewArray(&newArray_FairParRootFileIo);
+      instance.SetDelete(&delete_FairParRootFileIo);
+      instance.SetDeleteArray(&deleteArray_FairParRootFileIo);
+      instance.SetDestructor(&destruct_FairParRootFileIo);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParRootFileIo*)
+   {
+      return GenerateInitInstanceLocal((::FairParRootFileIo*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParRootFileIo*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParamObj(void *p = 0);
+   static void *newArray_FairParamObj(Long_t size, void *p);
+   static void delete_FairParamObj(void *p);
+   static void deleteArray_FairParamObj(void *p);
+   static void destruct_FairParamObj(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParamObj*)
+   {
+      ::FairParamObj *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParamObj >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParamObj", ::FairParamObj::Class_Version(), "FairParamList.h", 27,
+                  typeid(::FairParamObj), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParamObj::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParamObj) );
+      instance.SetNew(&new_FairParamObj);
+      instance.SetNewArray(&newArray_FairParamObj);
+      instance.SetDelete(&delete_FairParamObj);
+      instance.SetDeleteArray(&deleteArray_FairParamObj);
+      instance.SetDestructor(&destruct_FairParamObj);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParamObj*)
+   {
+      return GenerateInitInstanceLocal((::FairParamObj*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParamObj*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParamList(void *p = 0);
+   static void *newArray_FairParamList(Long_t size, void *p);
+   static void delete_FairParamList(void *p);
+   static void deleteArray_FairParamList(void *p);
+   static void destruct_FairParamList(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParamList*)
+   {
+      ::FairParamList *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParamList >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParamList", ::FairParamList::Class_Version(), "FairParamList.h", 80,
+                  typeid(::FairParamList), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParamList::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParamList) );
+      instance.SetNew(&new_FairParamList);
+      instance.SetNewArray(&newArray_FairParamList);
+      instance.SetDelete(&delete_FairParamList);
+      instance.SetDeleteArray(&deleteArray_FairParamList);
+      instance.SetDestructor(&destruct_FairParamList);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParamList*)
+   {
+      return GenerateInitInstanceLocal((::FairParamList*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParamList*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairParVersion(void *p = 0);
+   static void *newArray_FairParVersion(Long_t size, void *p);
+   static void delete_FairParVersion(void *p);
+   static void deleteArray_FairParVersion(void *p);
+   static void destruct_FairParVersion(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairParVersion*)
+   {
+      ::FairParVersion *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairParVersion >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairParVersion", ::FairParVersion::Class_Version(), "FairRtdbRun.h", 23,
+                  typeid(::FairParVersion), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairParVersion::Dictionary, isa_proxy, 4,
+                  sizeof(::FairParVersion) );
+      instance.SetNew(&new_FairParVersion);
+      instance.SetNewArray(&newArray_FairParVersion);
+      instance.SetDelete(&delete_FairParVersion);
+      instance.SetDeleteArray(&deleteArray_FairParVersion);
+      instance.SetDestructor(&destruct_FairParVersion);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairParVersion*)
+   {
+      return GenerateInitInstanceLocal((::FairParVersion*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairParVersion*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void *new_FairRtdbRun(void *p = 0);
+   static void *newArray_FairRtdbRun(Long_t size, void *p);
+   static void delete_FairRtdbRun(void *p);
+   static void deleteArray_FairRtdbRun(void *p);
+   static void destruct_FairRtdbRun(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairRtdbRun*)
+   {
+      ::FairRtdbRun *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairRtdbRun >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairRtdbRun", ::FairRtdbRun::Class_Version(), "FairRtdbRun.h", 47,
+                  typeid(::FairRtdbRun), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairRtdbRun::Dictionary, isa_proxy, 4,
+                  sizeof(::FairRtdbRun) );
+      instance.SetNew(&new_FairRtdbRun);
+      instance.SetNewArray(&newArray_FairRtdbRun);
+      instance.SetDelete(&delete_FairRtdbRun);
+      instance.SetDeleteArray(&deleteArray_FairRtdbRun);
+      instance.SetDestructor(&destruct_FairRtdbRun);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairRtdbRun*)
+   {
+      return GenerateInitInstanceLocal((::FairRtdbRun*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairRtdbRun*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static void delete_FairRuntimeDb(void *p);
+   static void deleteArray_FairRuntimeDb(void *p);
+   static void destruct_FairRuntimeDb(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::FairRuntimeDb*)
+   {
+      ::FairRuntimeDb *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::FairRuntimeDb >(0);
+      static ::ROOT::TGenericClassInfo 
+         instance("FairRuntimeDb", ::FairRuntimeDb::Class_Version(), "FairRuntimeDb.h", 25,
+                  typeid(::FairRuntimeDb), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::FairRuntimeDb::Dictionary, isa_proxy, 4,
+                  sizeof(::FairRuntimeDb) );
+      instance.SetDelete(&delete_FairRuntimeDb);
+      instance.SetDeleteArray(&deleteArray_FairRuntimeDb);
+      instance.SetDestructor(&destruct_FairRuntimeDb);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::FairRuntimeDb*)
+   {
+      return GenerateInitInstanceLocal((::FairRuntimeDb*)0);
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::FairRuntimeDb*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairContainer::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairContainer::Class_Name()
+{
+   return "FairContainer";
+}
+
+//______________________________________________________________________________
+const char *FairContainer::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairContainer*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairContainer::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairContainer*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairContainer::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairContainer*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairContainer::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairContainer*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairContFact::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairContFact::Class_Name()
+{
+   return "FairContFact";
+}
+
+//______________________________________________________________________________
+const char *FairContFact::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairContFact*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairContFact::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairContFact*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairContFact::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairContFact*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairContFact::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairContFact*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairDetParIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairDetParIo::Class_Name()
+{
+   return "FairDetParIo";
+}
+
+//______________________________________________________________________________
+const char *FairDetParIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairDetParIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairDetParIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairDetParIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairDetParIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairDetParIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairDetParIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairDetParIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairDetParAsciiFileIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairDetParAsciiFileIo::Class_Name()
+{
+   return "FairDetParAsciiFileIo";
+}
+
+//______________________________________________________________________________
+const char *FairDetParAsciiFileIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairDetParAsciiFileIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairDetParAsciiFileIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairDetParAsciiFileIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairDetParAsciiFileIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairDetParAsciiFileIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairDetParAsciiFileIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairDetParAsciiFileIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairDetParRootFileIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairDetParRootFileIo::Class_Name()
+{
+   return "FairDetParRootFileIo";
+}
+
+//______________________________________________________________________________
+const char *FairDetParRootFileIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairDetParRootFileIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairDetParRootFileIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairDetParRootFileIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairDetParRootFileIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairDetParRootFileIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairDetParRootFileIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairDetParRootFileIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairGenericParAsciiFileIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairGenericParAsciiFileIo::Class_Name()
+{
+   return "FairGenericParAsciiFileIo";
+}
+
+//______________________________________________________________________________
+const char *FairGenericParAsciiFileIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParAsciiFileIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairGenericParAsciiFileIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParAsciiFileIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairGenericParAsciiFileIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParAsciiFileIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairGenericParAsciiFileIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParAsciiFileIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairGenericParRootFileIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairGenericParRootFileIo::Class_Name()
+{
+   return "FairGenericParRootFileIo";
+}
+
+//______________________________________________________________________________
+const char *FairGenericParRootFileIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParRootFileIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairGenericParRootFileIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParRootFileIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairGenericParRootFileIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParRootFileIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairGenericParRootFileIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairGenericParRootFileIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParIo::Class_Name()
+{
+   return "FairParIo";
+}
+
+//______________________________________________________________________________
+const char *FairParIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParAsciiFileIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParAsciiFileIo::Class_Name()
+{
+   return "FairParAsciiFileIo";
+}
+
+//______________________________________________________________________________
+const char *FairParAsciiFileIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParAsciiFileIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParAsciiFileIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParAsciiFileIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParAsciiFileIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParAsciiFileIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParAsciiFileIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParAsciiFileIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParSet::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParSet::Class_Name()
+{
+   return "FairParSet";
+}
+
+//______________________________________________________________________________
+const char *FairParSet::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParSet*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParSet::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParSet*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParSet::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParSet*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParSet::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParSet*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParGenericSet::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParGenericSet::Class_Name()
+{
+   return "FairParGenericSet";
+}
+
+//______________________________________________________________________________
+const char *FairParGenericSet::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParGenericSet*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParGenericSet::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParGenericSet*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParGenericSet::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParGenericSet*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParGenericSet::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParGenericSet*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParRootFile::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParRootFile::Class_Name()
+{
+   return "FairParRootFile";
+}
+
+//______________________________________________________________________________
+const char *FairParRootFile::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFile*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParRootFile::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFile*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParRootFile::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFile*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParRootFile::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFile*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParRootFileIo::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParRootFileIo::Class_Name()
+{
+   return "FairParRootFileIo";
+}
+
+//______________________________________________________________________________
+const char *FairParRootFileIo::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFileIo*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParRootFileIo::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFileIo*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParRootFileIo::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFileIo*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParRootFileIo::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParRootFileIo*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParamObj::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParamObj::Class_Name()
+{
+   return "FairParamObj";
+}
+
+//______________________________________________________________________________
+const char *FairParamObj::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParamObj*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParamObj::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParamObj*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParamObj::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParamObj*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParamObj::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParamObj*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParamList::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParamList::Class_Name()
+{
+   return "FairParamList";
+}
+
+//______________________________________________________________________________
+const char *FairParamList::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParamList*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParamList::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParamList*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParamList::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParamList*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParamList::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParamList*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairParVersion::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairParVersion::Class_Name()
+{
+   return "FairParVersion";
+}
+
+//______________________________________________________________________________
+const char *FairParVersion::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParVersion*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairParVersion::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairParVersion*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairParVersion::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParVersion*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairParVersion::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairParVersion*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairRtdbRun::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairRtdbRun::Class_Name()
+{
+   return "FairRtdbRun";
+}
+
+//______________________________________________________________________________
+const char *FairRtdbRun::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairRtdbRun*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairRtdbRun::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairRtdbRun*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairRtdbRun::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairRtdbRun*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairRtdbRun::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairRtdbRun*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+atomic_TClass_ptr FairRuntimeDb::fgIsA(0);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *FairRuntimeDb::Class_Name()
+{
+   return "FairRuntimeDb";
+}
+
+//______________________________________________________________________________
+const char *FairRuntimeDb::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairRuntimeDb*)0x0)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int FairRuntimeDb::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::FairRuntimeDb*)0x0)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *FairRuntimeDb::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairRuntimeDb*)0x0)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *FairRuntimeDb::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD2(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::FairRuntimeDb*)0x0)->GetClass(); }
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+void FairContainer::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairContainer.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairContainer::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairContainer::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrapper around operator delete
+   static void delete_FairContainer(void *p) {
+      delete ((::FairContainer*)p);
+   }
+   static void deleteArray_FairContainer(void *p) {
+      delete [] ((::FairContainer*)p);
+   }
+   static void destruct_FairContainer(void *p) {
+      typedef ::FairContainer current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairContainer
+
+//______________________________________________________________________________
+void FairContFact::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairContFact.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairContFact::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairContFact::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairContFact(void *p) {
+      return  p ? new(p) ::FairContFact : new ::FairContFact;
+   }
+   static void *newArray_FairContFact(Long_t nElements, void *p) {
+      return p ? new(p) ::FairContFact[nElements] : new ::FairContFact[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairContFact(void *p) {
+      delete ((::FairContFact*)p);
+   }
+   static void deleteArray_FairContFact(void *p) {
+      delete [] ((::FairContFact*)p);
+   }
+   static void destruct_FairContFact(void *p) {
+      typedef ::FairContFact current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairContFact
+
+//______________________________________________________________________________
+void FairDetParIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairDetParIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairDetParIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairDetParIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairDetParIo(void *p) {
+      return  p ? new(p) ::FairDetParIo : new ::FairDetParIo;
+   }
+   static void *newArray_FairDetParIo(Long_t nElements, void *p) {
+      return p ? new(p) ::FairDetParIo[nElements] : new ::FairDetParIo[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairDetParIo(void *p) {
+      delete ((::FairDetParIo*)p);
+   }
+   static void deleteArray_FairDetParIo(void *p) {
+      delete [] ((::FairDetParIo*)p);
+   }
+   static void destruct_FairDetParIo(void *p) {
+      typedef ::FairDetParIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairDetParIo
+
+//______________________________________________________________________________
+void FairDetParAsciiFileIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairDetParAsciiFileIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairDetParAsciiFileIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairDetParAsciiFileIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrapper around operator delete
+   static void delete_FairDetParAsciiFileIo(void *p) {
+      delete ((::FairDetParAsciiFileIo*)p);
+   }
+   static void deleteArray_FairDetParAsciiFileIo(void *p) {
+      delete [] ((::FairDetParAsciiFileIo*)p);
+   }
+   static void destruct_FairDetParAsciiFileIo(void *p) {
+      typedef ::FairDetParAsciiFileIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairDetParAsciiFileIo
+
+//______________________________________________________________________________
+void FairDetParRootFileIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairDetParRootFileIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairDetParRootFileIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairDetParRootFileIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrapper around operator delete
+   static void delete_FairDetParRootFileIo(void *p) {
+      delete ((::FairDetParRootFileIo*)p);
+   }
+   static void deleteArray_FairDetParRootFileIo(void *p) {
+      delete [] ((::FairDetParRootFileIo*)p);
+   }
+   static void destruct_FairDetParRootFileIo(void *p) {
+      typedef ::FairDetParRootFileIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairDetParRootFileIo
+
+//______________________________________________________________________________
+void FairGenericParAsciiFileIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairGenericParAsciiFileIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairGenericParAsciiFileIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairGenericParAsciiFileIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairGenericParAsciiFileIo(void *p) {
+      return  p ? new(p) ::FairGenericParAsciiFileIo : new ::FairGenericParAsciiFileIo;
+   }
+   static void *newArray_FairGenericParAsciiFileIo(Long_t nElements, void *p) {
+      return p ? new(p) ::FairGenericParAsciiFileIo[nElements] : new ::FairGenericParAsciiFileIo[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairGenericParAsciiFileIo(void *p) {
+      delete ((::FairGenericParAsciiFileIo*)p);
+   }
+   static void deleteArray_FairGenericParAsciiFileIo(void *p) {
+      delete [] ((::FairGenericParAsciiFileIo*)p);
+   }
+   static void destruct_FairGenericParAsciiFileIo(void *p) {
+      typedef ::FairGenericParAsciiFileIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairGenericParAsciiFileIo
+
+//______________________________________________________________________________
+void FairGenericParRootFileIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairGenericParRootFileIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairGenericParRootFileIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairGenericParRootFileIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairGenericParRootFileIo(void *p) {
+      return  p ? new(p) ::FairGenericParRootFileIo : new ::FairGenericParRootFileIo;
+   }
+   static void *newArray_FairGenericParRootFileIo(Long_t nElements, void *p) {
+      return p ? new(p) ::FairGenericParRootFileIo[nElements] : new ::FairGenericParRootFileIo[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairGenericParRootFileIo(void *p) {
+      delete ((::FairGenericParRootFileIo*)p);
+   }
+   static void deleteArray_FairGenericParRootFileIo(void *p) {
+      delete [] ((::FairGenericParRootFileIo*)p);
+   }
+   static void destruct_FairGenericParRootFileIo(void *p) {
+      typedef ::FairGenericParRootFileIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairGenericParRootFileIo
+
+//______________________________________________________________________________
+void FairParIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParIo(void *p) {
+      return  p ? new(p) ::FairParIo : new ::FairParIo;
+   }
+   static void *newArray_FairParIo(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParIo[nElements] : new ::FairParIo[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParIo(void *p) {
+      delete ((::FairParIo*)p);
+   }
+   static void deleteArray_FairParIo(void *p) {
+      delete [] ((::FairParIo*)p);
+   }
+   static void destruct_FairParIo(void *p) {
+      typedef ::FairParIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParIo
+
+//______________________________________________________________________________
+void FairParAsciiFileIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParAsciiFileIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParAsciiFileIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParAsciiFileIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParAsciiFileIo(void *p) {
+      return  p ? new(p) ::FairParAsciiFileIo : new ::FairParAsciiFileIo;
+   }
+   static void *newArray_FairParAsciiFileIo(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParAsciiFileIo[nElements] : new ::FairParAsciiFileIo[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParAsciiFileIo(void *p) {
+      delete ((::FairParAsciiFileIo*)p);
+   }
+   static void deleteArray_FairParAsciiFileIo(void *p) {
+      delete [] ((::FairParAsciiFileIo*)p);
+   }
+   static void destruct_FairParAsciiFileIo(void *p) {
+      typedef ::FairParAsciiFileIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParAsciiFileIo
+
+//______________________________________________________________________________
+void FairParSet::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParSet.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParSet::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParSet::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParSet(void *p) {
+      return  p ? new(p) ::FairParSet : new ::FairParSet;
+   }
+   static void *newArray_FairParSet(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParSet[nElements] : new ::FairParSet[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParSet(void *p) {
+      delete ((::FairParSet*)p);
+   }
+   static void deleteArray_FairParSet(void *p) {
+      delete [] ((::FairParSet*)p);
+   }
+   static void destruct_FairParSet(void *p) {
+      typedef ::FairParSet current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParSet
+
+//______________________________________________________________________________
+void FairParGenericSet::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParGenericSet.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParGenericSet::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParGenericSet::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrapper around operator delete
+   static void delete_FairParGenericSet(void *p) {
+      delete ((::FairParGenericSet*)p);
+   }
+   static void deleteArray_FairParGenericSet(void *p) {
+      delete [] ((::FairParGenericSet*)p);
+   }
+   static void destruct_FairParGenericSet(void *p) {
+      typedef ::FairParGenericSet current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParGenericSet
+
+//______________________________________________________________________________
+void FairParRootFile::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParRootFile.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParRootFile::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParRootFile::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrapper around operator delete
+   static void delete_FairParRootFile(void *p) {
+      delete ((::FairParRootFile*)p);
+   }
+   static void deleteArray_FairParRootFile(void *p) {
+      delete [] ((::FairParRootFile*)p);
+   }
+   static void destruct_FairParRootFile(void *p) {
+      typedef ::FairParRootFile current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParRootFile
+
+//______________________________________________________________________________
+void FairParRootFileIo::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParRootFileIo.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParRootFileIo::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParRootFileIo::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParRootFileIo(void *p) {
+      return  p ? new(p) ::FairParRootFileIo : new ::FairParRootFileIo;
+   }
+   static void *newArray_FairParRootFileIo(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParRootFileIo[nElements] : new ::FairParRootFileIo[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParRootFileIo(void *p) {
+      delete ((::FairParRootFileIo*)p);
+   }
+   static void deleteArray_FairParRootFileIo(void *p) {
+      delete [] ((::FairParRootFileIo*)p);
+   }
+   static void destruct_FairParRootFileIo(void *p) {
+      typedef ::FairParRootFileIo current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParRootFileIo
+
+//______________________________________________________________________________
+void FairParamObj::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParamObj.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParamObj::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParamObj::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParamObj(void *p) {
+      return  p ? new(p) ::FairParamObj : new ::FairParamObj;
+   }
+   static void *newArray_FairParamObj(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParamObj[nElements] : new ::FairParamObj[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParamObj(void *p) {
+      delete ((::FairParamObj*)p);
+   }
+   static void deleteArray_FairParamObj(void *p) {
+      delete [] ((::FairParamObj*)p);
+   }
+   static void destruct_FairParamObj(void *p) {
+      typedef ::FairParamObj current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParamObj
+
+//______________________________________________________________________________
+void FairParamList::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParamList.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParamList::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParamList::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParamList(void *p) {
+      return  p ? new(p) ::FairParamList : new ::FairParamList;
+   }
+   static void *newArray_FairParamList(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParamList[nElements] : new ::FairParamList[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParamList(void *p) {
+      delete ((::FairParamList*)p);
+   }
+   static void deleteArray_FairParamList(void *p) {
+      delete [] ((::FairParamList*)p);
+   }
+   static void destruct_FairParamList(void *p) {
+      typedef ::FairParamList current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParamList
+
+//______________________________________________________________________________
+void FairParVersion::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairParVersion.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairParVersion::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairParVersion::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairParVersion(void *p) {
+      return  p ? new(p) ::FairParVersion : new ::FairParVersion;
+   }
+   static void *newArray_FairParVersion(Long_t nElements, void *p) {
+      return p ? new(p) ::FairParVersion[nElements] : new ::FairParVersion[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairParVersion(void *p) {
+      delete ((::FairParVersion*)p);
+   }
+   static void deleteArray_FairParVersion(void *p) {
+      delete [] ((::FairParVersion*)p);
+   }
+   static void destruct_FairParVersion(void *p) {
+      typedef ::FairParVersion current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairParVersion
+
+//______________________________________________________________________________
+void FairRtdbRun::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairRtdbRun.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairRtdbRun::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairRtdbRun::Class(),this);
+   }
+}
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_FairRtdbRun(void *p) {
+      return  p ? new(p) ::FairRtdbRun : new ::FairRtdbRun;
+   }
+   static void *newArray_FairRtdbRun(Long_t nElements, void *p) {
+      return p ? new(p) ::FairRtdbRun[nElements] : new ::FairRtdbRun[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_FairRtdbRun(void *p) {
+      delete ((::FairRtdbRun*)p);
+   }
+   static void deleteArray_FairRtdbRun(void *p) {
+      delete [] ((::FairRtdbRun*)p);
+   }
+   static void destruct_FairRtdbRun(void *p) {
+      typedef ::FairRtdbRun current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::FairRtdbRun
+
+//______________________________________________________________________________
+void FairRuntimeDb::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class FairRuntimeDb.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(FairRuntimeDb::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(FairRuntimeDb::Class(),this);
+   }
+}
+

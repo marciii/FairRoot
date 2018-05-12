@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# This macro is used to generate the ROOT dictionaries
+# To use the ctest launchers one needs some environment variables which
+# are only present when running CMake. To have the same environment at
+# the time the dictionary is build this script is used which is build
+# at the time cmake runs.
+
+# Setup the needed environment
+export LD_LIBRARY_PATH=/home/marci/fair_install/FairSoftInst/lib/root::
+export DYLD_LIBRARY_PATH=/home/marci/fair_install/FairSoftInst/lib/root::
+export ROOTSYS=/home/marci/fair_install/FairSoftInst
+
+/home/marci/fair_install/FairSoftInst/bin/rootcint -f /home/marci/fair_install/FairRoot/build2/base/G__BaseDict.cxx -rmf /home/marci/fair_install/FairRoot/build2/lib/libBase.rootmap -rml Base.so -c  -DBUILD_MBS -I/home/marci/fair_install/FairRoot/logger -I/home/marci/fair_install/FairRoot/fairtools -I/home/marci/fair_install/FairRoot/geobase -I/home/marci/fair_install/FairRoot/parbase -I/home/marci/fair_install/FairRoot/base -I/home/marci/fair_install/FairRoot/base/steer -I/home/marci/fair_install/FairRoot/base/event -I/home/marci/fair_install/FairRoot/base/field -I/home/marci/fair_install/FairRoot/base/sim -I/home/marci/fair_install/FairRoot/base/source -I/home/marci/fair_install/FairRoot/MbsAPI -I/home/marci/fair_install/FairSoftInst/include/root -I/home/marci/fair_install/FairSoftInst/include steer/FairAnaSelector.h steer/FairRadGridManager.h steer/FairRadLenManager.h steer/FairRadMapManager.h steer/FairRingSorter.h steer/FairRingSorterTask.h steer/FairRootManager.h steer/FairRun.h steer/FairRunAna.h steer/FairRunAnaProof.h steer/FairRunSim.h steer/FairTSBufferFunctional.h steer/FairTask.h steer/FairTrajFilter.h steer/FairWriteoutBuffer.h steer/FairRunOnline.h steer/FairLinkManager.h sim/FairBaseContFact.h sim/FairBaseParSet.h sim/FairGeoParSet.h sim/FairDetector.h sim/FairGeaneApplication.h sim/FairGenerator.h sim/FairGenericStack.h sim/FairIon.h sim/FairMCApplication.h sim/FairModule.h sim/FairParticle.h sim/FairPrimaryGenerator.h sim/FairRunIdGenerator.h sim/FairVolume.h sim/FairVolumeList.h event/FairEventBuilder.h event/FairEventBuilderManager.h event/FairEventHeader.h event/FairFileHeader.h event/FairFileInfo.h event/FairHit.h event/FairLink.h event/FairMCEventHeader.h event/FairMCPoint.h event/FairMesh.h event/FairMultiLinkedData.h event/FairMultiLinkedData_Interface.h event/FairRadLenPoint.h event/FairRadMapPoint.h event/FairRecoEventHeader.h event/FairRunInfo.h event/FairTimeStamp.h event/FairTrackParam.h field/FairField.h field/FairFieldFactory.h field/FairRKPropagator.h source/FairSource.h source/FairFileSource.h source/FairMixedSource.h source/FairOnlineSource.h source/FairLmdSource.h source/FairRemoteSource.h source/FairMbsSource.h source/FairUnpack.h source/MRevBuffer.h source/FairMbsStreamSource.h FairLinkDef.h

@@ -1,0 +1,8 @@
+[ FairTools.so ]
+# List of selected classes
+class FairLogger
+class FairMonitor
+class FairSystemInfo
+header FairLogger.h
+header FairMonitor.h
+header FairSystemInfo.h

@@ -1,0 +1,82 @@
+#!/bin/bash
+
+_major_version=17
+_minor_version=10
+_patch_version=02
+if [ $_patch_version -eq "00" ]; then
+  _patch=""
+else
+  _tmp=$(printf '%d' $_patch_version)
+  _tmp=$((_tmp+96))
+  _patch=$(printf \\$(printf '%03o' $_tmp))
+fi
+_version=v-17.10$_patch
+
+_cc=/usr/bin/cc
+_cxx=/usr/bin/c++
+_fairsoft_path=/home/marci/fair_install/FairSoftInst
+
+usage="\
+Usage: fairroot-config [--version] [--major_version] [--minor_version] [--patch_version] \
+[--cc] [--cxx] [--fairsoft_path] [--help]"
+
+if [ $# -eq 0 -o $# -gt 1 ]; then
+   echo "${usage}" 1>&2
+   exit 1
+fi
+
+out=""
+
+
+case $1 in
+    --version)
+      ### Output the fairroot version
+      out="$out ${_version}"
+      ;;
+    --major_version)
+      ### Output the fairroot version
+      out="$out ${_major_version}"
+      ;;
+    --minor_version)
+      ### Output the fairroot version
+      out="$out ${_minor_version}"
+      ;;
+    --patch_version)
+      ### Output the fairroot version
+      out="$out ${_patch_version}"
+      ;;
+    --cc)
+      ### Output the full path of used c compiler
+      out="$out ${_cc}"
+      ;;
+    --cxx)
+      ### Output the full path of used cxx compiler
+      out="$out ${_cxx}"
+      ;;
+    --fairsoft_path)
+      ### Output the full path to the used fairsoft installation
+      out="$out ${_fairsoft_path}"
+      ;;
+    --help)
+      ### Print a help message
+      echo "Usage: `basename $0` [options]"
+      echo ""
+      echo "  --version            Print the fairroot version"
+      echo "  --major_version      Print the fairroot major version"
+      echo "  --minor_version      Print the fairroot minor version"
+      echo "  --patch_version      Print the fairroot patch version"
+      echo "  --cc                 Print the full path of the used c compiler"
+      echo "  --cxx                Print the full path of the used cxx compiler"
+      echo "  --fairsoft_path      Print the full path of the used fairsoft version"
+      exit 0
+      ;;
+    *)
+      ### Give an error
+      echo "Unknown argument \"$1\"!" 1>&2
+      echo "${usage}" 1>&2
+      exit 1
+      ;;
+esac
+
+### Output the stuff
+echo $out

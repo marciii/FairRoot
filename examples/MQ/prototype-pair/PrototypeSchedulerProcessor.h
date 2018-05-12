@@ -26,9 +26,16 @@ class PrototypeSchedulerProcessor : public FairMQDevice
 	bool HandleFlpData(FairMQMessagePtr&, int);
 void write(int amountFlp, duration<double>dur);
 void write(std::string msgSize, duration<double>dur);
-virtual void InitTask();
 
+virtual void InitTask();
+virtual bool ConditionalRun();
+
+std::string logDir;
+uint64_t messageSize;
+bool randomReply;
+uint64_t msgFreq;
 uint64_t amountFlp;
+
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */
