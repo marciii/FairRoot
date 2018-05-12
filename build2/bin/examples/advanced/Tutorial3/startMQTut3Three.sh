@@ -1,0 +1,65 @@
+#!/bin/bash
+
+mcEngine="TGeant3"
+
+echo "Supported data formats: binary, boost, boost-text, flatbuffers, msgpack, protobuf, tmessage"
+dataFormat="binary"
+if [ "$1" = "binary" ]; then
+    echo "Using: binary"
+elif [ "$1" = "boost" ]; then
+    dataFormat="boost"
+    echo "Using: boost (Boost binary)"
+elif [ "$1" = "boost-text" ]; then
+    dataFormat="boost-text"
+    echo "Using: boost-text (Boost text)"
+elif [ "$1" = "flatbuffers" ]; then
+    if(true); then
+        dataFormat="flatbuffers"
+        echo "Using: flatbuffers (Google FlatBuffers)"
+    else
+        echo "Cannot use flatbuffers: library not found at build time"
+        exit 1
+    fi
+elif [ "$1" = "msgpack" ]; then
+    if(true); then
+        dataFormat="msgpack"
+        echo "Using: msgpack (MessagePack)"
+    else
+        echo "Cannot use msgpack: library not found at build time"
+        exit 1
+    fi
+elif [ "$1" = "protobuf" ]; then
+    dataFormat="protobuf"
+    echo "Using: protobuf (Google Protocol Buffers)"
+elif [ "$1" = "tmessage" ]; then
+    dataFormat="tmessage"
+    echo "Using: tmessage (Root TMessage)"
+else
+    echo "None or incorrect data format provided!"
+    echo "Using: binary"
+fi
+
+tut3cfg="/home/marci/fair_install/FairRoot/build2/bin/config/tut3-three.json"
+
+SAMPLER="tut3-sampler"
+SAMPLER+=" --id sampler1"
+SAMPLER+=" --data-format $dataFormat"
+SAMPLER+=" --chain-input 99"
+SAMPLER+=" --input-file /home/marci/fair_install/FairRoot/examples/advanced/Tutorial3/macro/data/testdigi_$mcEngine.root"
+SAMPLER+=" --parameter-file /home/marci/fair_install/FairRoot/examples/advanced/Tutorial3/macro/data/testparams_$mcEngine.root"
+SAMPLER+=" --mq-config $tut3cfg"
+xterm -geometry 80x23+0+0 -hold -e /home/marci/fair_install/FairRoot/build2/bin/examples/advanced/Tutorial3/$SAMPLER &
+
+PROCESSOR="tut3-processor"
+PROCESSOR+=" --id processor1"
+PROCESSOR+=" --severity debug"
+PROCESSOR+=" --data-format $dataFormat"
+PROCESSOR+=" --mq-config $tut3cfg"
+xterm -geometry 80x23+500+0 -hold -e /home/marci/fair_install/FairRoot/build2/bin/examples/advanced/Tutorial3/$PROCESSOR &
+
+FILESINK="tut3-sink"
+FILESINK+=" --id sink1"
+FILESINK+=" --severity debug"
+FILESINK+=" --data-format $dataFormat"
+FILESINK+=" --mq-config $tut3cfg"
+xterm -geometry 80x23+1000+0 -hold -e /home/marci/fair_install/FairRoot/build2/bin/examples/advanced/Tutorial3/$FILESINK &

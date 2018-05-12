@@ -20,7 +20,11 @@
 //#include "Plot.h"
 using namespace std;
 
-
+struct MyMessage {
+uint64_t sendCounter;
+uint64_t replyId;
+std::string content;
+};
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
     : fMaxIterations(0)
@@ -41,8 +45,6 @@ void PrototypeFlpProcessor::InitTask()
 bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
 {
 	
-	LOG(info) << "index: " <<index;
-
  	
     //LOG(info) << "Empfange von scheduler: \"" << string(static_cast<char*>(msg->GetData()), msg->GetSize()) << "\"";
 	LOG(info) << "habe nachricth empfangen, groesse: " << msg->GetSize();
@@ -52,17 +54,22 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
 	//std::string msgText = string(static_cast<char*>(msg->GetData()));
 	//std::string ID = msgText.substr(0,4);
 	
-
-
+	LOG(info) << "hier1";
+	//MyMessage receivedMsg;
+	//memcpy(&receivedMsg, msg->GetData(), sizeof(MyMessage)); //hier noch fehler, vermutlich weil memcpy falscher command ist
+	//std::string t = receivedMsg.content;
+	//LOG(info) << t;
+	LOG(info) << "hier2";
 
    string* text = new string("bestätigung von FLP");
     FairMQMessagePtr answer(NewMessage(const_cast<char*>(text->c_str()),
                                     text->length(),
                                     [](void* /*data*/, void* object) { delete static_cast<string*>(object); },
                                     text));
-	LOG(info) << "sende bestätigung für RTT";
+	LOG(info) << "Sende bestaetigung für RTT";
  if (Send(answer, "scheduledatatoflp") < 0)
     {
+	LOG(error) << "Bestaetigung konnte nicht gesendet werden";
         return false;
     }
 
