@@ -14,7 +14,7 @@ namespace bpo = boost::program_options;
 void addCustomOptions(bpo::options_description& options)
 {
     options.add_options()
-        ("max-iterations", bpo::value<uint64_t>()->default_value(0), "Maximum number of iterations of Run/ConditionalRun/OnData (0 - infinite)");
+        ("myId", bpo::value<uint64_t>()->default_value(0), "gives the FLP his id (for the random reply)");
 }
 
 FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/)

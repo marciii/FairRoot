@@ -22,11 +22,9 @@ class PrototypeFlpProcessor : public FairMQDevice
   protected:
     virtual void InitTask();
     bool HandleData(FairMQMessagePtr&, int);
-    void write(std::string s1, std::string s2, pid_t s3);
 
   private:
-    uint64_t fMaxIterations;
-    uint64_t fNumIterations;
+    uint64_t myId;
 };
 
 #endif /* PROTOTYPEFLPPROCESSOR_H_ */

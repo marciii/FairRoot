@@ -4,30 +4,35 @@ prototypeconfig="@CMAKE_BINARY_DIR@/bin/config/prototype-pair.json"
 #FLP
 FLPPROCESSOR1="flpprocessorpair"
 FLPPROCESSOR1+=" --id flpprocessorpair1"
+FLPPROCESSOR1+=" --MyId 1"
 FLPPROCESSOR1+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pair/$FLPPROCESSOR1 &
 
 FLPPROCESSOR2="flpprocessorpair"
 FLPPROCESSOR2+=" --id flpprocessorpair2"
+FLPPROCESSOR2+=" --MyId 2"
 FLPPROCESSOR2+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pair/$FLPPROCESSOR2 &
 
 FLPPROCESSOR3="flpprocessorpair"
 FLPPROCESSOR3+=" --id flpprocessorpair3"
+FLPPROCESSOR3+=" --MyId 3"
 FLPPROCESSOR3+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pair/$FLPPROCESSOR3 &
 
 FLPPROCESSOR4="flpprocessorpair"
 FLPPROCESSOR4+=" --id flpprocessorpair4"
+FLPPROCESSOR4+=" --MyId 4"
 FLPPROCESSOR4+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pair/$FLPPROCESSOR4 &
 
 FLPPROCESSOR5="flpprocessorpair"
 FLPPROCESSOR5+=" --id flpprocessorpair5"
+FLPPROCESSOR5+=" --MyId 5"
 FLPPROCESSOR5+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pair/$FLPPROCESSOR5 &

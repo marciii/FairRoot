@@ -16,8 +16,7 @@
 #include "FairMQLogger.h"
 #include "FairMQProgOptions.h" // device->fConfig
 #include <unistd.h>
-//#include "GnuPlot.h"
-//#include "Plot.h"
+
 using namespace std;
 
 struct MyMessage {
@@ -27,8 +26,6 @@ std::string content;
 };
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
-    : fMaxIterations(0)
-    , fNumIterations(0)
 {
     // register a handler for data arriving on "data" channel
     OnData("scheduledatatoflp", &PrototypeFlpProcessor::HandleData);
@@ -36,23 +33,15 @@ PrototypeFlpProcessor::PrototypeFlpProcessor()
 
 void PrototypeFlpProcessor::InitTask()
 {
-    // Get the fMaxIterations value from the command line options (via fConfig)
-    fMaxIterations = fConfig->GetValue<uint64_t>("max-iterations");
-	LOG(info) << "max iterations: " << std::to_string(fMaxIterations);
+    myId = fConfig->GetValue<uint64_t>("myId");
 }
 
 
 bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
 {
 	
- 	
-    //LOG(info) << "Empfange von scheduler: \"" << string(static_cast<char*>(msg->GetData()), msg->GetSize()) << "\"";
 	LOG(info) << "habe nachricth empfangen, groesse: " << msg->GetSize();
 	
-
-	//teil für random ID -> statistik
-	//std::string msgText = string(static_cast<char*>(msg->GetData()));
-	//std::string ID = msgText.substr(0,4);
 	
 	LOG(info) << "hier1";
 	//MyMessage receivedMsg;
@@ -61,6 +50,17 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
 	//LOG(info) << t;
 	LOG(info) << "hier2";
 
+	/*
+	if (receivedMsg.replyId == myId || receivedMsg.replyId == -1) { dieser FLP soll antworten oder jeder FLP soll antworten
+	
+
+
+	}
+
+	*/
+	
+
+ //den teil dann in die obige if schleife
    string* text = new string("bestätigung von FLP");
     FairMQMessagePtr answer(NewMessage(const_cast<char*>(text->c_str()),
                                     text->length(),
@@ -74,16 +74,7 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
     }
 
 
-    //this_thread::sleep_for(chrono::seconds(10));
-
-    // return true if want to be called again (otherwise return false go to IDLE state)
     return true;
-}
-
-void PrototypeFlpProcessor::write(std::string s1, std::string s2, pid_t s3) {
-	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-	gnudatafile << s1 << "\t" << s2 << "\t" << s3 << std::endl;
-	return;
 }
 
 
