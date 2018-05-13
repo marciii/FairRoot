@@ -28,8 +28,7 @@ class PrototypeFlpProcessor : public FairMQDevice
     bool HandleData(FairMQMessagePtr&, int);
 
   private:
-    uint64_t fMaxIterations;
-    uint64_t fNumIterations;
+    uint64_t myId;
 };
 
 #endif /* PROTOTYPEFLPPROCESSOR_H_ */

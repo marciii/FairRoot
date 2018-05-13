@@ -135,9 +135,14 @@ len = 1024;
 
 
 
+MyMessage msgToFlp;
+	msgToFlp.sendCounter = sendCounter;
+	//wenn alle antworten sollen -> -1
+	//msgToFlp.content = *text;
+	msgToFlp.content = "asdf";
 
 
-if (randomReply == true) {
+if (randomReply == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
 
 //teil für random id -> statistik
     std::random_device rd;
@@ -146,23 +151,16 @@ if (randomReply == true) {
 int flpAnswerId = distribution(eng); //creates the random variable in the range of 0 and amountFlp
 
 LOG(info) << "FLP " << flpAnswerId << " soll antworten";
-//the first 4 characters will be the ID
-if (flpAnswerId <= 9)
-	*text = "000" + std::to_string(flpAnswerId) + "|" + *text;
-else if (flpAnswerId <= 99)
-	*text = "00" + std::to_string(flpAnswerId) + "|" + *text;
-else if (flpAnswerId <= 999)
-	*text = "0" + std::to_string(flpAnswerId) + "|" + *text;
-else
-	*text = std::to_string(flpAnswerId) + "|" + *text;
+	msgToFlp.replyId = f; 
 
 }
+else { // keine random ID -> in MyMessage reply ID auf -1 setzen
+	msgToFlp.replyId = -1; 
+}
 
-MyMessage msgToFlp;
-	msgToFlp.sendCounter = sendCounter;
-	msgToFlp.replyId = -1; //wenn alle antworten sollen -> -1
-	//msgToFlp.content = *text;
-	msgToFlp.content = "asdf";
+
+
+
 
 
 

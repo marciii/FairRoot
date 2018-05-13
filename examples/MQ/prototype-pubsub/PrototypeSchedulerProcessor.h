@@ -28,6 +28,13 @@ void write(std::string s1, duration<double> dur);
 void write(int amountFlp, duration<double>dur);
 
 virtual void InitTask();
+virtual bool ConditionalRun();
+
+
+std::string logDir;
+uint64_t messageSize;
+bool randomReply;
+uint64_t msgFreq;
 uint64_t amountFlp;
 };
 

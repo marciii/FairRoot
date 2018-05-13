@@ -32,95 +32,95 @@ FLPPROCESSOR5+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR5 &
 
-FLPPROCESSOR6="flpprocessorpubsub"
-FLPPROCESSOR6+=" --id flpprocessorpubsub6"
-FLPPROCESSOR6+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR6 &
-
-FLPPROCESSOR7="flpprocessorpubsub"
-FLPPROCESSOR7+=" --id flpprocessorpubsub7"
-FLPPROCESSOR7+=" --mq-config $prototypeconfig"
+#FLPPROCESSOR6="flpprocessorpubsub"
+#FLPPROCESSOR6+=" --id flpprocessorpubsub6"
+#FLPPROCESSOR6+=" --mq-config $prototypeconfig"
 ##PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR7 &
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR6 &
 
-FLPPROCESSOR8="flpprocessorpubsub"
-FLPPROCESSOR8+=" --id flpprocessorpubsub8"
-FLPPROCESSOR8+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR8 &
+#FLPPROCESSOR7="flpprocessorpubsub"
+#FLPPROCESSOR7+=" --id flpprocessorpubsub7"
+#FLPPROCESSOR7+=" --mq-config $prototypeconfig"
+###PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR7 &
 
-FLPPROCESSOR9="flpprocessorpubsub"
-FLPPROCESSOR9+=" --id flpprocessorpubsub9"
-FLPPROCESSOR9+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR9 &
+#FLPPROCESSOR8="flpprocessorpubsub"
+#FLPPROCESSOR8+=" --id flpprocessorpubsub8"
+#FLPPROCESSOR8+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR8 &
 
-FLPPROCESSOR10="flpprocessorpubsub"
-FLPPROCESSOR10+=" --id flpprocessorpubsub10"
-FLPPROCESSOR10+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR10 &
+#FLPPROCESSOR9="flpprocessorpubsub"
+#FLPPROCESSOR9+=" --id flpprocessorpubsub9"
+#FLPPROCESSOR9+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR9 &
 
-FLPPROCESSOR11="flpprocessorpubsub"
-FLPPROCESSOR11+=" --id flpprocessorpubsub11"
-FLPPROCESSOR11+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR11 &
+#FLPPROCESSOR10="flpprocessorpubsub"
+#FLPPROCESSOR10+=" --id flpprocessorpubsub10"
+#FLPPROCESSOR10+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR10 &
 
-FLPPROCESSOR12="flpprocessorpubsub"
-FLPPROCESSOR12+=" --id flpprocessorpubsub12"
-FLPPROCESSOR12+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR12 &
+#FLPPROCESSOR11="flpprocessorpubsub"
+#FLPPROCESSOR11+=" --id flpprocessorpubsub11"
+#FLPPROCESSOR11+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR11 &
 
-FLPPROCESSOR13="flpprocessorpubsub"
-FLPPROCESSOR13+=" --id flpprocessorpubsub13"
-FLPPROCESSOR13+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR13 &
+#FLPPROCESSOR12="flpprocessorpubsub"
+#FLPPROCESSOR12+=" --id flpprocessorpubsub12"
+#FLPPROCESSOR12+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR12 &
 
-FLPPROCESSOR14="flpprocessorpubsub"
-FLPPROCESSOR14+=" --id flpprocessorpubsub14"
-FLPPROCESSOR14+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR14 &
+#FLPPROCESSOR13="flpprocessorpubsub"
+#FLPPROCESSOR13+=" --id flpprocessorpubsub13"
+#FLPPROCESSOR13+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR13 &
 
-FLPPROCESSOR15="flpprocessorpubsub"
-FLPPROCESSOR15+=" --id flpprocessorpubsub15"
-FLPPROCESSOR15+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR15 &
+#FLPPROCESSOR14="flpprocessorpubsub"
+#FLPPROCESSOR14+=" --id flpprocessorpubsub14"
+#FLPPROCESSOR14+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR14 &
 
-FLPPROCESSOR16="flpprocessorpubsub"
-FLPPROCESSOR16+=" --id flpprocessorpubsub16"
-FLPPROCESSOR16+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR16 &
+#FLPPROCESSOR15="flpprocessorpubsub"
+#FLPPROCESSOR15+=" --id flpprocessorpubsub15"
+#FLPPROCESSOR15+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR15 &
 
-FLPPROCESSOR17="flpprocessorpubsub"
-FLPPROCESSOR17+=" --id flpprocessorpubsub17"
-FLPPROCESSOR17+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR17 &
+#FLPPROCESSOR16="flpprocessorpubsub"
+#FLPPROCESSOR16+=" --id flpprocessorpubsub16"
+#FLPPROCESSOR16+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR16 &
 
-FLPPROCESSOR18="flpprocessorpubsub"
-FLPPROCESSOR18+=" --id flpprocessorpubsub18"
-FLPPROCESSOR18+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR18 &
+#FLPPROCESSOR17="flpprocessorpubsub"
+#FLPPROCESSOR17+=" --id flpprocessorpubsub17"
+#FLPPROCESSOR17+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR17 &
 
-FLPPROCESSOR19="flpprocessorpubsub"
-FLPPROCESSOR19+=" --id flpprocessorpubsub19"
-FLPPROCESSOR19+=" --mq-config $prototypeconfig"
-#PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR19 &
+#FLPPROCESSOR18="flpprocessorpubsub"
+#FLPPROCESSOR18+=" --id flpprocessorpubsub18"
+#FLPPROCESSOR18+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR18 &
 
-FLPPROCESSOR20="flpprocessorpubsub"
-FLPPROCESSOR20+=" --id flpprocessorpubsub20"
-FLPPROCESSOR20+=" --mq-config $prototypeconfig"
+#FLPPROCESSOR19="flpprocessorpubsub"
+#FLPPROCESSOR19+=" --id flpprocessorpubsub19"
+#FLPPROCESSOR19+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
-xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR20 &
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR19 &
+
+#FLPPROCESSOR20="flpprocessorpubsub"
+#FLPPROCESSOR20+=" --id flpprocessorpubsub20"
+#FLPPROCESSOR20+=" --mq-config $prototypeconfig"
+##PROCESSOR1+=" --config-key processor"
+#xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR20 &
 
 
 
@@ -129,7 +129,10 @@ xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototyp
 PROCESSOR2="schedulerprocessorpubsub"
 PROCESSOR2+=" --id schedulerprocessorpubsub"
 PROCESSOR2+=" --mq-config $prototypeconfig"
-PROCESSOR2+=" --amountFlp 20"
+PROCESSOR2+=" --amountFlp 5"
+PROCESSOR2+=" --msgFreq 1000"
+PROCESSOR2+=" --messageSize 100"
+PROCESSOR2+=" --randomReply false"
 #PROCESSOR2+=" --config-key processor"
 xterm -geometry 80x23+500+330 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$PROCESSOR2 &
 
