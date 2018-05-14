@@ -8,9 +8,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                                "type": "rep",
-                                "method": "bind",
-                                "address": "tcp://*:25552",
+                                "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -26,9 +26,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                                "type": "rep",
-                                "method": "bind",
-                                "address": "tcp://*:25553",
+                             "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -44,9 +44,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                                "type": "rep",
-                                "method": "bind",
-                                "address": "tcp://*:25554",
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -55,6 +55,314 @@
                     }
                 ]
             },
+	{
+                "id": "flpprocessorreqrep4",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep5",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep6",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep7",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep8",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep9",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep10",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep11",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep12",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep13",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep14",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep15",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep16",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep17",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep18",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep19",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	{
+                "id": "flpprocessorreqrep20",
+                "channels": [
+                    {
+                        "name": "scheduledata",
+                        "sockets": [
+                            {
+                            "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+	
+
                 {
                 "id": "schedulerprocessorreqrep",
                 "channels": [
@@ -62,25 +370,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                                "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25552",
-                                "sndBufSize": 1000,
-                                "rcvBufSize": 1000,
-                                "rateLogging": 0
-                            },
- 			{
-                                "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25553",
-                                "sndBufSize": 1000,
-                                "rcvBufSize": 1000,
-                                "rateLogging": 0
-                            },
-			{
-                                "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25554",
+                                "type": "rep",
+                                "method": "bind",
+                                "address": "tcp://*:25553",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
