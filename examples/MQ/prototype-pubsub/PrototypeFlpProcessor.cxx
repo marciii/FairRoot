@@ -33,7 +33,7 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int /*index*/)
 {
     //LOG(info) << "Empfange von scheduler, groesse: \"" << std::to_string(msg->GetSize()) << "\"";
 
-	LOG(info) << "antworrt erhalten";
+	LOG(info) << "antwort erhalten";
     string* text = new string("answer from FLP");
 
    FairMQMessagePtr answer(NewMessage(const_cast<char*>(text->c_str()),
