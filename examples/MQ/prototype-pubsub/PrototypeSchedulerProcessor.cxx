@@ -189,7 +189,10 @@ before = high_resolution_clock::now();
 			{ LOG(error) << "fail";
 			return false; }
 		LOG(info) << "hier3";
-		if (Receive(reply, "answerfromflp") >= 0)
+
+ for (int i=0;i<amountFlp;i++) {
+		
+		if (Receive(reply, "answerfromflp", i) >= 0)
        		 {
 		
           	  LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
@@ -203,8 +206,11 @@ before = high_resolution_clock::now();
 			write(msgSize, dur);
 			answerCounter=0;
 			}
+		//return true;
 		}
-		else LOG(info)<<"hier2";
+		else LOG(info)<<"hier2"; 
+}
+
 		LOG(info) << "hier4";
 	
 	//hier an alle weitergeleitet -> Zeit stoppen
