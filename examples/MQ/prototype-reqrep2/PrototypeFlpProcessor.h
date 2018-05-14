@@ -16,9 +16,12 @@
 #define PROTOTYPEFLPPROESSOR_H_
 
 #include <string>
+#include <ctime>
+
+
 
 #include "FairMQDevice.h"
-
+using namespace std::chrono;
 class PrototypeFlpProcessor : public FairMQDevice
 {
   public:
@@ -26,13 +29,14 @@ class PrototypeFlpProcessor : public FairMQDevice
     virtual ~PrototypeFlpProcessor();
 
   protected:
-    std::string fText;
-    uint64_t fMaxIterations;
-    uint64_t fNumIterations;
-	bool HandleData(FairMQMessagePtr&, int);
+
+	
 
     //virtual bool ConditionalRun();
-    virtual void InitTask();
+   virtual void InitTask();
+	bool HandleData(FairMQMessagePtr& request, int index);
+   void write(std::string s1, duration<double> rtt);
+	void write(int messageCounter, std::string s1, duration<double> rtt);
 };
 
-#endif /* PROTOTYPEFLPPROESSOR_H_ */
+#endif /* PROTOTYPEEPNPROESSOR_H_ */

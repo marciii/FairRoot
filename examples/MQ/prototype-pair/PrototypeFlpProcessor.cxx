@@ -44,10 +44,9 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
 	
 	
 	LOG(info) << "hier1";
-	//MyMessage receivedMsg;
-	//memcpy(&receivedMsg, msg->GetData(), sizeof(MyMessage)); //hier noch fehler, vermutlich weil memcpy falscher command ist
-	//std::string t = receivedMsg.content;
-	//LOG(info) << t;
+	MyMessage receivedMsg;
+	memcpy(&receivedMsg, msg->GetData(), sizeof(MyMessage)); //hier noch fehler
+
 	LOG(info) << "hier2";
 
 	/*

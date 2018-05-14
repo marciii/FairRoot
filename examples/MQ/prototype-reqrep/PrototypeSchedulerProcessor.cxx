@@ -80,7 +80,8 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int /*in
 bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*index*/)
 {
    
-    LOG(info) << "Received request from flp: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
+    //LOG(info) << "Received request from flp: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
+LOG(info) << "empfange";
 	std::string req = string(static_cast<char*>(request->GetData()));
 
 	if (req.compare("bestätigung von flp")==0) { //wenn die nachricht bestätigung ist

@@ -6,7 +6,7 @@
  *                  copied verbatim in the file "LICENSE"                       *
  ********************************************************************************/
 /**
- * PrototypeFlpProcessor.cpp
+ * PrototypeEpnProcessor.cpp
  *
  * @since 2014-10-10
  * @author A. Rybalchenko
@@ -19,37 +19,70 @@
 #include "PrototypeFlpProcessor.h"
 #include "FairMQLogger.h"
 #include "FairMQProgOptions.h"
+#include "HardwareInformation.h"
 
+//times
+#include <ctime>
+
+
+using namespace std::chrono;
 using namespace std;
 
+int messageCounter = 0;
+
 PrototypeFlpProcessor::PrototypeFlpProcessor()
-    : fMaxIterations(0)
-    , fNumIterations(0)
 {
 	OnData("scheduledata", &PrototypeFlpProcessor::HandleData);
 }
 
 void PrototypeFlpProcessor::InitTask()
 {
-    // Get the fMaxIterations value from the command line options (via fConfig)
-    fMaxIterations = fConfig->GetValue<uint64_t>("max-iterations");
 }
 
-bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& request, int /*index*/)
+//bool PrototypeFlpProcessor::ConditionalRun()
+bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& request, int index)
 {
-    LOG(info) << "Empfange Nachricht von scheduler: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
+	LOG(info) << "empfange von scheduler";
+   
+ 	messageCounter++;
 
-  string* text = new string("bestaetigung, dass nachricht von scheduler ankam");
+	string* bestaetigungtext = new string("bestätigung von flp");
 
-    LOG(info) << "Sende EPN Bestaetigung";
+    // create message object with a pointer to the data buffer,
+    // its size,
+    // custom deletion function (called when transfer is done),
+    // and pointer to the object managing the data buffer
 
-    FairMQMessagePtr reply(NewMessage(const_cast<char*>(text->c_str()), // data
-                                                        text->length(), // size
-                                                        [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
-                                                        text)); // object that manages the data
-	Send(reply, "scheduledata");
+	
+ FairMQMessagePtr bestaetigung(NewMessage(const_cast<char*>(bestaetigungtext->c_str()), // data
+                                                          bestaetigungtext->length(), // size
+                                                          [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
+                                                          bestaetigungtext)); // object that manages the data
+    FairMQMessagePtr reply(NewMessage());
 
-return true;
+    LOG(info) << "Sende an Scheduler:  \"" << *bestaetigungtext << "\"";
+
+
+
+    if (Send(bestaetigung, "scheduledata") > 0)
+    {
+      
+            return true;
+        
+    }
+
+    return false;
+}
+
+void PrototypeFlpProcessor::write(std::string s1, duration<double> rtt) {
+	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+	gnudatafile << s1 << "\t" << rtt.count() << std::endl;
+	return;
+}
+void PrototypeFlpProcessor::write(int messageCounter, std::string s1, duration<double> rtt) {
+	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+	gnudatafile << messageCounter << "\t"<< s1 << "\t" << rtt.count() << std::endl;
+	return;
 }
 
 PrototypeFlpProcessor::~PrototypeFlpProcessor()

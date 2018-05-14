@@ -151,7 +151,7 @@ if (randomReply == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs ausw√
 int flpAnswerId = distribution(eng); //creates the random variable in the range of 0 and amountFlp
 
 LOG(info) << "FLP " << flpAnswerId << " soll antworten";
-	msgToFlp.replyId = f; 
+	msgToFlp.replyId = flpAnswerId; 
 
 }
 else { // keine random ID -> in MyMessage reply ID auf -1 setzen
@@ -210,7 +210,7 @@ before = high_resolution_clock::now();
 			answerCounter=0;
 			}
 		}
-		else LOG(info)<<"hier2";
+		else LOG(error)<<"fail";
 
 	}
 	//hier an alle weitergeleitet -> Zeit stoppen

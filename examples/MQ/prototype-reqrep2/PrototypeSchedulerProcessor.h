@@ -16,6 +16,11 @@
 #define PROTOTYPESCHEDULERPROCESSOR_H_
 
 #include "FairMQDevice.h"
+#include <ctime>
+
+
+using namespace std::chrono;
+
 
 class PrototypeSchedulerProcessor : public FairMQDevice
 {
@@ -26,10 +31,20 @@ class PrototypeSchedulerProcessor : public FairMQDevice
   protected:
     virtual void InitTask();
     bool HandleData(FairMQMessagePtr&, int);
+bool HandleData2(FairMQMessagePtr&, int);
+void write(int amountFlp, duration<double>dur);
+void write(std::string msgSize, duration<double>dur);
 
-  private:
-    uint64_t fMaxIterations;
-    uint64_t fNumIterations;
+virtual bool ConditionalRun();
+
+std::string logDir;
+uint64_t messageSize;
+bool randomReply;
+uint64_t msgFreq;
+uint64_t amountFlp;
+
+
+
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */
