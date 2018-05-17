@@ -27,7 +27,9 @@ high_resolution_clock::time_point after;
 
 int sendCounter = 0;
 int answerCounter = 0;
+
 std::string msgSize;
+int flpAnswerId;
 
 struct MyMessage {
   uint64_t sendCounter;
@@ -75,25 +77,24 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
     //teil für random id -> statistik
     std::random_device rd;
     std::mt19937 eng(rd());
-    std::uniform_int_distribution<> distribution(0, amountFlp);
-    int flpAnswerId = distribution(eng); //creates the random variable in the range of 0 and amountFlp
+    std::uniform_int_distribution<> distribution(1, amountFlp);
+    flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
 
     LOG(info) << "FLP " << flpAnswerId << " soll antworten";
     msgToFlp.replyId = flpAnswerId;
 
   } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
     //wenn alle antworten sollen -> -1
-    msgToFlp.replyId = -1;
+    msgToFlp.replyId = 99999;
   }
 
 
   FairMQMessagePtr msg2 = NewMessage(len);
 
-  // FairMQMessagePtr msg2(NewSimpleMessage("OK"));
-  LOG(info) << "hier1";
-  memset(msg2->GetData(), 'a', msg2->GetSize());
+  //LOG(info) << "hier1";
+ // memset(msg2->GetData(), 'a', msg2->GetSize());
   memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
-  LOG(info) << "hier2";
+  //LOG(info) << "hier2";
 
 
   msgSize = std::to_string(msg2->GetSize());
@@ -106,15 +107,15 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
   before = high_resolution_clock::now();
 
 
-  LOG(info) << "sende";
+
+
+if (randomReply == false) {
   int test = Send(msg2, "scheduledatatoflp");
   if (test < 0 ) {
     LOG(error) << "fail";
     return false;
   }
-  LOG(info) << "hier3";
 
-  // return true;
 
   for (int i = 0; i < amountFlp; i++) {
 
@@ -133,8 +134,27 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
       //return true;
     } else LOG(info) << "hier2";
   }
+}
 
-  LOG(info) << "hier4";
+else { //randomReply = true
+ int test = Send(msg2, "scheduledatatoflp");
+  if (test < 0 ) {
+    LOG(error) << "fail";
+    return false;
+  }
+
+	if (Receive(reply, "answerfromflp", flpAnswerId -1) > 0) {
+		LOG(info) << "bestätigung von flp " << flpAnswerId - 1  << " erhalten, schreibe";
+		after = high_resolution_clock::now();
+		duration<double> dur = duration_cast<duration<double>>(after - before);
+		//write(amountFlp, dur); //für skalierende #flps
+		write(msgSize, dur);
+	}
+
+}
+
+
+
 
   //hier an alle weitergeleitet -> Zeit stoppen
   //high_resolution_clock::time_point after = high_resolution_clock::now();
