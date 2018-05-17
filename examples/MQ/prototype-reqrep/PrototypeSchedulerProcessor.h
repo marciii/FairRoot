@@ -36,11 +36,13 @@ void write(int amountFlp, duration<double>dur);
 void write(std::string msgSize, duration<double>dur);
 
 
-uint64_t amountFlp;
 
   private:
-    uint64_t fMaxIterations;
-    uint64_t fNumIterations;
+  std::string logDir;
+uint64_t messageSize;
+bool randomReply;
+uint64_t msgFreq;
+uint64_t amountFlp;
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */

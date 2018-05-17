@@ -28,19 +28,21 @@
 using namespace std::chrono;
 using namespace std;
 
+struct MyMessage {
+  uint64_t sendCounter;
+  uint64_t replyId;
+};
+
 int messageCounter = 0;
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
-    : fText()
-    , fMaxIterations(0)
-    , fNumIterations(0)
 {
 }
 
 void PrototypeFlpProcessor::InitTask()
 {
-    fText = fConfig->GetValue<string>("text");
-    fMaxIterations = fConfig->GetValue<uint64_t>("max-iterations");
+  myId = fConfig->GetValue<uint64_t>("myId");
+	this_thread::sleep_for(chrono::seconds(10));
 }
 
 bool PrototypeFlpProcessor::ConditionalRun()
@@ -48,6 +50,8 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
    
  	messageCounter++;
+	
+
     string* text = new string(std::to_string(messageCounter) + ". Nachricht");
 	string* bestaetigungtext = new string("bestätigung von flp");
 
@@ -71,20 +75,22 @@ bool PrototypeFlpProcessor::ConditionalRun()
     high_resolution_clock::time_point rttBefore = high_resolution_clock::now();
 
 
-    if (Send(request, "scheduledata") > 0)
+    if (Send(request, "scheduledata") > 0) //1)
     {
-        if (Receive(reply, "scheduledata") >= 0)
+        if (Receive(reply, "scheduledata") >= 0) //4)
         {
+		MyMessage receivedMsg;
+
+ 		 // make sure the msg is large enough to hold the data
+  		assert(reply->GetSize() >= sizeof(MyMessage));
+
+  		memcpy(&receivedMsg, reply->GetData(), sizeof(MyMessage));
+
             LOG(info) << "Received reply from server: \"" << reply->GetSize();
 
-            if (fMaxIterations > 0 && ++fNumIterations >= fMaxIterations)
-            {
-                LOG(info) << "Configured maximum number of iterations reached. Leaving RUNNING state.";
-                return false;
-            }
 	
-	Send(bestaetigung, "scheduledata"); //bestätigung für scheduler, um RTT zu berechnen
-	LOG(info) << "bestätigung an scheduler gesendet";
+		Send(bestaetigung, "scheduledata"); //5), bestätigung für scheduler, um RTT zu berechnen
+	LOG(info) << "letzte bestätigung an scheduler gesendet";
 	/*
 	high_resolution_clock::time_point rttAfter = high_resolution_clock::now();
 	duration<double> rtt = duration_cast<duration<double>>(rttAfter - rttBefore);
@@ -101,16 +107,6 @@ bool PrototypeFlpProcessor::ConditionalRun()
     return false;
 }
 
-void PrototypeFlpProcessor::write(std::string s1, duration<double> rtt) {
-	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-	gnudatafile << s1 << "\t" << rtt.count() << std::endl;
-	return;
-}
-void PrototypeFlpProcessor::write(int messageCounter, std::string s1, duration<double> rtt) {
-	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-	gnudatafile << messageCounter << "\t"<< s1 << "\t" << rtt.count() << std::endl;
-	return;
-}
 
 PrototypeFlpProcessor::~PrototypeFlpProcessor()
 {
