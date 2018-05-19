@@ -47,7 +47,7 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
   // make sure the msg is large enough to hold the data
   assert(msg->GetSize() >= sizeof(MyMessage));
 
-  memcpy(&receivedMsg, msg->GetData(), sizeof(MyMessage)); //hier noch fehler
+  memcpy(&receivedMsg, msg->GetData(), sizeof(MyMessage));
 
   LOG(info) << "meine id: " << myId;
 

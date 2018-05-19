@@ -40,7 +40,7 @@ int flpAnswerId;
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
-  // std::string content;
+  bool confirmation;
 };
 
 
@@ -92,24 +92,17 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
     //LOG(info) << "Received request from flp: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
 LOG(info) << "empfange von FLP";
 	
+	
+  MyMessage receivedMsg;
+  // make sure the msg is large enough to hold the data
+  assert(request->GetSize() >= sizeof(MyMessage));
 
-	/*
-	if (req.compare("bestätigung von flp")==0) { //wenn die nachricht bestätigung ist
-		LOG(info) << "nachricht: " << req;
-		bestaetigungReceived++;
-		if (bestaetigungReceived == amountFlp) { //alle flps haben bestätigt
-			bestaetigungReceived = 0;
-			high_resolution_clock::time_point after = high_resolution_clock::now(); //timer stoppen
-			duration<double> dur = duration_cast<duration<double>>(after - before);
-			write(amountFlp, dur);
-			LOG(info) << "alle bestätigungen erhalten, schreibe";
+  memcpy(&receivedMsg, request->GetData(), sizeof(MyMessage));
 
-		} 
-
-		return true; //sonst geht er weiter und behandelt das, wie normalen request
-	} */
-
-
+	if (receivedMsg.confirmation == true) {
+	LOG(info) << "war bestätitigung";
+	return true;
+	}
 	
 
 	
@@ -126,7 +119,7 @@ return false;
     //teil für random id -> statistik
     std::random_device rd;
     std::mt19937 eng(rd());
-    std::uniform_int_distribution<> distribution(1, amountFlp);
+    std::uniform_int_distribution<> distribution(0, amountFlp-1);
     flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
 
     LOG(info) << "FLP " << flpAnswerId << " soll antworten";
@@ -152,12 +145,12 @@ return false;
 
     if (Send(reply, "scheduledata") > 0) //3)
     {
-	FairMQMessagePtr reply2(NewMessage());
-	if (Receive(reply2, "scheduledata") >=0) {//6
-		LOG(info) << "letzte bestaetigung erhalten";
+	//FairMQMessagePtr reply2(NewMessage());
+	//if (Receive(reply2, "scheduledata") >=0) {//6
+	//	LOG(info) << "letzte bestaetigung erhalten";
 		return true;
-	}
-	
+//	}
+	return true;	
 	
 /*
 	//nur für dauer aller FLP's
