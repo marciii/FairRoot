@@ -5,34 +5,34 @@ prototypeconfig="@CMAKE_BINARY_DIR@/bin/config/prototype-pubsub.json"
 FLPPROCESSOR1="flpprocessorpubsub"
 FLPPROCESSOR1+=" --id flpprocessorpubsub1"
 FLPPROCESSOR1+=" --mq-config $prototypeconfig"
-FLPPROCESSOR1+=" --myId 1"
+FLPPROCESSOR1+=" --myId 0"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR1 &
 
 FLPPROCESSOR2="flpprocessorpubsub"
 FLPPROCESSOR2+=" --id flpprocessorpubsub2"
-FLPPROCESSOR2+=" --myId 2"
+FLPPROCESSOR2+=" --myId 1"
 FLPPROCESSOR2+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR2 &
 
 FLPPROCESSOR3="flpprocessorpubsub"
 FLPPROCESSOR3+=" --id flpprocessorpubsub3"
-FLPPROCESSOR3+=" --myId 3"
+FLPPROCESSOR3+=" --myId 2"
 FLPPROCESSOR3+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR3 &
 
 FLPPROCESSOR4="flpprocessorpubsub"
 FLPPROCESSOR4+=" --id flpprocessorpubsub4"
-FLPPROCESSOR4+=" --myId 4"
+FLPPROCESSOR4+=" --myId 3"
 FLPPROCESSOR4+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR4 &
 
 FLPPROCESSOR5="flpprocessorpubsub"
 FLPPROCESSOR5+=" --id flpprocessorpubsub5"
-FLPPROCESSOR5+=" --myId 5"
+FLPPROCESSOR5+=" --myId 4"
 FLPPROCESSOR5+=" --mq-config $prototypeconfig"
 #PROCESSOR1+=" --config-key processor"
 xterm -geometry 80x23+500+0 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$FLPPROCESSOR5 &
@@ -135,8 +135,9 @@ PROCESSOR2="schedulerprocessorpubsub"
 PROCESSOR2+=" --id schedulerprocessorpubsub"
 PROCESSOR2+=" --mq-config $prototypeconfig"
 PROCESSOR2+=" --amountFlp 5"
-PROCESSOR2+=" --msgFreq 10000"
+PROCESSOR2+=" --msgFreq 1000"
 PROCESSOR2+=" --messageSize 10000000"
+PROCESSOR2+=" --msgAutoscale true"
 PROCESSOR2+=" --randomReply true"
 #PROCESSOR2+=" --config-key processor"
 xterm -geometry 80x23+500+330 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pubsub/$PROCESSOR2 &

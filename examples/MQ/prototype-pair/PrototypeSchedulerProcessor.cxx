@@ -54,6 +54,7 @@ void PrototypeSchedulerProcessor::InitTask()
 	randomReply = fConfig->GetValue<bool>("randomReply");
 	msgFreq = fConfig->GetValue<uint64_t>("msgFreq");
 	amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
+	msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
 
 }
 
@@ -61,13 +62,33 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 {
 
 	sendCounter++;
-	if (sendCounter > 50) { //
+
+	
+	if (sendCounter == 1400) { //
 		LOG(info) << "am ende angelangt";
 		return false;
-	}
+	} 
 
 
 	int len = messageSize;
+
+	//teil fuer message scaling
+	if (msgAutoscale == true) {
+		if (sendCounter <= 100) len = 4096; //4kb
+		else if (sendCounter <= 200) len = 8192; //8kb
+		else if (sendCounter <= 300) len = 16384; //16kb
+		else if (sendCounter <= 400) len = 32768; //32kb
+		else if (sendCounter <= 500) len = 65536; //64kb
+		else if (sendCounter <= 600) len = 131072; //128kb
+		else if (sendCounter <= 700) len = 262144; //256kb
+		else if (sendCounter <= 800) len = 524288; //512kb
+		else if (sendCounter <= 900) len = 1048576; //1024kb, 1mb
+		else if (sendCounter <= 1000) len = 2097152; //2048kb, 2mb
+		else if (sendCounter <= 1100) len = 4194304; //4096kb, 4mb
+		else if (sendCounter <= 1200) len = 8388608; //8192kb, 8mb
+		else if (sendCounter <= 1300) len = 16777216; //16384kb, 16mb
+	}
+	
 
 
 	MyMessage msgToFlp;
@@ -77,13 +98,12 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 	// msgToFlp.content = "asdf";
 
 
-	if (randomReply == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
-
 //teil für random id -> statistik
+	if (randomReply == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
 		std::random_device rd;
 		std::mt19937 eng(rd());
-		std::uniform_int_distribution<> distribution(1, amountFlp);
-		flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
+		std::uniform_int_distribution<> distribution(0, amountFlp-1);
+		flpAnswerId = distribution(eng); //creates the random variable in the range of 0 and amountFlp-1 (due to DDS which counts from 0)
 
 		LOG(info) << "FLP " << flpAnswerId << " soll antworten";
 		msgToFlp.replyId = flpAnswerId;
@@ -161,8 +181,8 @@ else { //randomReply = true
 
 	FairMQMessagePtr reply(NewMessage());
 
-	if (Receive(reply, "scheduledatatoflp", flpAnswerId -1) > 0) {
-		LOG(info) << "bestätigung von flp " << flpAnswerId - 1  << " erhalten, schreibe";
+	if (Receive(reply, "scheduledatatoflp", flpAnswerId) > 0) {
+		LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten, schreibe";
 		after = high_resolution_clock::now();
 		duration<double> dur = duration_cast<duration<double>>(after - before);
 		//write(amountFlp, dur); //für skalierende #flps
