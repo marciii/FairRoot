@@ -31,6 +31,7 @@ using namespace std;
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
+  bool confirmation;
 };
 
 int messageCounter = 0;
@@ -55,20 +56,26 @@ bool PrototypeFlpProcessor::ConditionalRun()
     string* text = new string(std::to_string(messageCounter) + ". Nachricht");
 	string* bestaetigungtext = new string("bestätigung von flp");
 
-    // create message object with a pointer to the data buffer,
-    // its size,
-    // custom deletion function (called when transfer is done),
-    // and pointer to the object managing the data buffer
-    FairMQMessagePtr request(NewMessage(const_cast<char*>(text->c_str()), // data
-                                                          text->length(), // size
-                                                          [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
-                                                          text)); // object that manages the data
+    //FairMQMessagePtr request(NewMessage(const_cast<char*>(text->c_str()), // data
+      //                                                    text->length(), // size
+        //                                                  [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
+          //                                                text)); // object that manages the data
+
+	MyMessage requ;
+	requ.confirmation = false;
+	FairMQMessagePtr request = NewMessage(100);
+	 memcpy(request->GetData(), &requ, sizeof(MyMessage));
+
 	
- FairMQMessagePtr bestaetigung(NewMessage(const_cast<char*>(bestaetigungtext->c_str()), // data
-                                                          bestaetigungtext->length(), // size
-                                                          [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
-                                                          bestaetigungtext)); // object that manages the data
+
     FairMQMessagePtr reply(NewMessage());
+
+	MyMessage conf;
+	conf.confirmation = true;
+
+	FairMQMessagePtr confirmation = NewMessage(100);
+	memcpy(confirmation->GetData(), &conf, sizeof(MyMessage));
+
 
     LOG(info) << "Sende an Scheduler:  \"" << *text << "\"";
 
@@ -77,27 +84,14 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
     if (Send(request, "scheduledata") > 0) //1)
     {
-        if (Receive(reply, "scheduledata") >= 0) //4)
-        {
-		MyMessage receivedMsg;
+        if (Receive(reply, "scheduledata") >= 0) {//4)
+		
+		
+		LOG(info) << "hier";
 
- 		 // make sure the msg is large enough to hold the data
-  		assert(reply->GetSize() >= sizeof(MyMessage));
-
-  		memcpy(&receivedMsg, reply->GetData(), sizeof(MyMessage));
-
-            LOG(info) << "Received reply from server: \"" << reply->GetSize();
-
+		Send(confirmation, "scheduledata"); //hier ist der Fehler
+		
 	
-		Send(bestaetigung, "scheduledata"); //5), bestätigung für scheduler, um RTT zu berechnen
-	LOG(info) << "letzte bestätigung an scheduler gesendet";
-	/*
-	high_resolution_clock::time_point rttAfter = high_resolution_clock::now();
-	duration<double> rtt = duration_cast<duration<double>>(rttAfter - rttBefore);
-	LOG(info) << "dauer : " << rtt.count() << " seconds"<<std::endl;
-	//write(std::to_string(reply->GetSize()), rtt);
-	//write(messageCounter, std::to_string(reply->GetSize()), rtt);
-	*/
             this_thread::sleep_for(chrono::seconds(10));
 
             return true;
