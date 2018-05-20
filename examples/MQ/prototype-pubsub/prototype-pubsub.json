@@ -628,25 +628,9 @@
                         "name": "scheduledatafromepn",
                         "sockets": [
                             {
-                                "type": "sub",
-                                "method": "connect",
-                                "address": "tcp://localhost:25556",
-                                "sndBufSize": 1000,
-                                "rcvBufSize": 1000,
-                                "rateLogging": 0
-                            },
-                 	{
-                                "type": "sub",
-                                "method": "connect",
-                                "address": "tcp://localhost:25557",
-                                "sndBufSize": 1000,
-                                "rcvBufSize": 1000,
-                                "rateLogging": 0
-                            },
-			{
-                                "type": "sub",
-                                "method": "connect",
-                                "address": "tcp://localhost:25558",
+                                "type": "pub",
+                                "method": "bind",
+                                "address": "tcp://*:25556",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -842,9 +826,9 @@
                         "name": "scheduledatafromepn",
                         "sockets": [
                             {
-                                "type": "pub",
-                                "method": "bind",
-                                "address": "tcp://*:25556",
+                                "type": "sub",
+                                "method": "connect",
+                                "address": "tcp://localhost:25556",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -860,9 +844,9 @@
                         "name": "scheduledatafromepn",
                         "sockets": [
                             {
-                                "type": "pub",
-                                "method": "bind",
-                                "address": "tcp://*:25557",
+                                "type": "sub",
+                                "method": "connect",
+                                "address": "tcp://localhost:25556",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -878,9 +862,9 @@
                         "name": "scheduledatafromepn",
                         "sockets": [
                             {
-                                "type": "pub",
-                                "method": "bind",
-                                "address": "tcp://*:25558",
+                                "type": "sub",
+                                "method": "connect",
+                                "address": "tcp://localhost:25556",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
