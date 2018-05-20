@@ -38,7 +38,6 @@ bool PrototypeEpnProcessor::HandleData(FairMQMessagePtr& msg, int /*index*/)
 {
 
     LOG(info) << "Empfange Nachricht von FLP";
-
     return true;
 }
 
