@@ -650,6 +650,37 @@
                             }
                         ]
                     },
+
+    		 {
+                        "name": "answerfromepn",
+                        "sockets": [
+                            {
+                                "type": "pair",
+                                "method": "connect",
+                                "address": "tcp://localhost:25500",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
+                            {
+                                "type": "pair",
+                                "method": "connect",
+                                "address": "tcp://localhost:25501",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
+                            {
+                                "type": "pair",
+                                "method": "connect",
+                                "address": "tcp://localhost:25502",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+
+			]
+		},
     		 {
                         "name": "answerfromflp",
                         "sockets": [
@@ -834,6 +865,19 @@
                                 "rateLogging": 0
                             }
                         ]
+                    },
+		   {
+                        "name": "answerfromepn",
+                        "sockets": [
+                            {
+                                "type": "pair",
+                                "method": "bind",
+                                "address": "tcp://*:25500",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
                     }
                 ]
             },
@@ -852,6 +896,19 @@
                                 "rateLogging": 0
                             }
                         ]
+                    },
+		   {
+                        "name": "answerfromepn",
+                        "sockets": [
+                            {
+                                "type": "pair",
+                                "method": "bind",
+                                "address": "tcp://*:25501",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
                     }
                 ]
             },
@@ -865,6 +922,19 @@
                                 "type": "sub",
                                 "method": "connect",
                                 "address": "tcp://localhost:25556",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    },
+		   {
+                        "name": "answerfromepn",
+                        "sockets": [
+                            {
+                                "type": "pair",
+                                "method": "bind",
+                                "address": "tcp://*:25502",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
