@@ -26,12 +26,10 @@ class PrototypeEpnProcessor : public FairMQDevice
     virtual ~PrototypeEpnProcessor();
 
   protected:
-    std::string fText;
-    uint64_t fMaxIterations;
-    uint64_t fNumIterations;
+	bool HandleData(FairMQMessagePtr&, int);
 
     virtual void InitTask();
-    virtual bool ConditionalRun();
+   // virtual bool ConditionalRun();
 };
 
 #endif /* PROTOTYPEEPNPROCESSOR_H_ */

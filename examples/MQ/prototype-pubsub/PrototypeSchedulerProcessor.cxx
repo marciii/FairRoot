@@ -68,6 +68,11 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
   }
 
 
+	//kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
+  FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
+  Send(testMsg, "scheduledatafromepn");
+
+
   int len = messageSize;
 
 	//teil fuer message scaling
