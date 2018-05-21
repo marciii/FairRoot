@@ -43,6 +43,7 @@ uint64_t messageSize;
 bool randomReply;
 uint64_t msgFreq;
 uint64_t amountFlp;
+bool msgAutoscale;
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */
