@@ -53,11 +53,14 @@ PrototypeSchedulerProcessor::PrototypeSchedulerProcessor()
 
 void PrototypeSchedulerProcessor::InitTask()
 {
-    logDir = fConfig->GetValue<std::string>("logDir");
+  logDir = fConfig->GetValue<std::string>("logDir");
   messageSize = fConfig->GetValue<uint64_t>("messageSize");
   randomReply = fConfig->GetValue<bool>("randomReply");
   msgFreq = fConfig->GetValue<uint64_t>("msgFreq");
   amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
+  msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
+
+
 this_thread::sleep_for(chrono::seconds(3));
 }
 
@@ -89,7 +92,26 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
 
    	sendCounter++;
 	int len = messageSize;
-    //LOG(info) << "Received request from flp: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
+ 	//teil fuer message scaling
+	if (msgAutoscale == true) {
+		if (sendCounter <= 100) len = 4096; //4kb
+		else if (sendCounter <= 200) len = 8192; //8kb
+		else if (sendCounter <= 300) len = 16384; //16kb
+		else if (sendCounter <= 400) len = 32768; //32kb
+		else if (sendCounter <= 500) len = 65536; //64kb
+		else if (sendCounter <= 600) len = 131072; //128kb
+		else if (sendCounter <= 700) len = 262144; //256kb
+		else if (sendCounter <= 800) len = 524288; //512kb
+		else if (sendCounter <= 900) len = 1048576; //1024kb, 1mb
+		else if (sendCounter <= 1000) len = 2097152; //2048kb, 2mb
+		else if (sendCounter <= 1100) len = 4194304; //4096kb, 4mb
+		else if (sendCounter <= 1200) len = 8388608; //8192kb, 8mb
+		else if (sendCounter <= 1300) len = 16777216; //16384kb, 16mb
+	}
+
+
+
+
 LOG(info) << "empfange von FLP";
 	
 	
@@ -152,19 +174,7 @@ return false;
 //	}
 	return true;	
 	
-/*
-	//nur für dauer aller FLP's
-	//wenn hier letzter FLP, dann fertig
-	if (flpReceived == amountFlp)  {
-	LOG(info) << "alle 20 bekommen, jetzt schreiben";
-	high_resolution_clock::time_point after = high_resolution_clock::now(); //timer stoppen
-	duration<double> dur = duration_cast<duration<double>>(after - before);
-	flpReceived = 0; //alle haben empfangen -> zurücksetzen
-	//counter+=10; // nachrichtengröße erhöhen
-	status++;
-	write(amountFlp, dur);
-	//write(msgSize, dur);
-	} */
+
     }
     return false;
 }

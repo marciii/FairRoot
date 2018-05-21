@@ -89,7 +89,7 @@ bool PrototypeFlpProcessor::ConditionalRun()
 		
 		LOG(info) << "hier";
 
-		Send(confirmation, "scheduledata"); //hier ist der Fehler
+		//Send(confirmation, "scheduledata"); //hier ist der Fehler
 		
 	
             this_thread::sleep_for(chrono::seconds(10));
