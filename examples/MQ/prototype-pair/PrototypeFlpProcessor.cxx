@@ -27,7 +27,7 @@ struct MyMessage {
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
 {
-  OnData("scheduledatatoflp", &PrototypeFlpProcessor::HandleData);
+  OnData("sched-flp-chan", &PrototypeFlpProcessor::HandleData);
 }
 
 void PrototypeFlpProcessor::InitTask()
@@ -60,7 +60,7 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
   memcpy(answer->GetData(), text.c_str(), text.length());
 
   LOG(info) << "Sende bestaetigung für RTT";
-  if (Send(answer, "scheduledatatoflp") < 0) {
+  if (Send(answer, "sched-flp-chan") < 0) {
     LOG(error) << "Bestaetigung konnte nicht gesendet werden";
     return false;
   }
