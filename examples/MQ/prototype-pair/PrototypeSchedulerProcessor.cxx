@@ -144,7 +144,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 if (randomReply == false) { //Antwort von allen FLPs sammeln
 	for (int i = 0; i < amountFlp; i++) {
 
-		int test = Send(msg2[i], "scheduledatatoflp", i);
+		int test = Send(msg2[i], "sched-flp-chan", i);
 		if (test < 0 ) {
 			LOG(error) << "fail index " << i;
 			return false;
@@ -152,7 +152,7 @@ if (randomReply == false) { //Antwort von allen FLPs sammeln
 
 		FairMQMessagePtr reply(NewMessage());
 
-		if (Receive(reply, "scheduledatatoflp", i) > 0) {
+		if (Receive(reply, "sched-flp-chan", i) > 0) {
 
 			LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
 			answerCounter++;
@@ -172,7 +172,7 @@ else { //randomReply = true
 
 	for (int i = 0; i < amountFlp; i++) {
 
-		int test = Send(msg2[i], "scheduledatatoflp", i);
+		int test = Send(msg2[i], "sched-flp-chan", i);
 		if (test < 0 ) {
 			LOG(error) << "fail index " << i;
 			return false;
@@ -181,7 +181,7 @@ else { //randomReply = true
 
 	FairMQMessagePtr reply(NewMessage());
 
-	if (Receive(reply, "scheduledatatoflp", flpAnswerId) > 0) {
+	if (Receive(reply, "sched-flp-chan", flpAnswerId) > 0) {
 		LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten, schreibe";
 		after = high_resolution_clock::now();
 		duration<double> dur = duration_cast<duration<double>>(after - before);
