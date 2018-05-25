@@ -94,9 +94,6 @@ class FairDetector : public FairModule
     virtual void   FinishEvent() {
       ;
     }
-    virtual void   SetSpecialPhysicsCuts() {
-      ;
-    }
     void SaveGeoParams();
     Int_t  GetDetId() {
       return fDetId;
@@ -107,6 +104,8 @@ class FairDetector : public FairModule
     FairDetector(const FairDetector&);
     /** Assignment operator */
     FairDetector& operator= (const FairDetector&);
+
+    virtual void DefineSensitiveVolumes();
 
     Int_t fDetId; // Detector Id has to be set from ctr.
     FairLogger* fLogger;  //! /// FairLogger

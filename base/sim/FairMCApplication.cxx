@@ -610,6 +610,12 @@ TVirtualMCApplication* FairMCApplication::CloneForWorker() const
   workerRun->SetName(fRun->GetName()); // Transport engine
   workerRun->SetOutputFileName(fRun->GetOutputFileName());
 
+  // Trajectories filter is created explicitly as we do not call
+  // FairRunSim::Init on workers
+  if ( fRun->GetStoreTraj() ) {
+    new FairTrajFilter();
+  }
+
   // Create new  FairMCApplication object on worker
   FairMCApplication* workerApplication = new FairMCApplication(*this);
   workerApplication->SetGenerator(fEvGen->ClonePrimaryGenerator());
@@ -968,7 +974,13 @@ void FairMCApplication::ConstructGeometry()
                << "This almost certainly means inconsistent lookup structures used in simulation/stepping.\n";
   }
   
-  TVirtualMC::GetMC()->SetRootGeometry();         // notify VMC about Root geometry
+  if (fRun->IsImportTGeoToVMC() ) {
+    TVirtualMC::GetMC()->SetRootGeometry();         // notify VMC about Root geometry
+    LOG(info) << "TGeometry will be imported to VMC" << "\n";
+  }
+  else {
+    LOG(info) << "TGeometry will not be imported to VMC" << "\n";
+  }
   Int_t Counter=0;
   TDatabasePDG* pdgDatabase = TDatabasePDG::Instance();
   const THashList *list=pdgDatabase->ParticleList();
@@ -1016,20 +1028,30 @@ void FairMCApplication::InitGeometry()
   } else {
     LOG(warn) << "Stack is not registered ";
   }
-
-  /** Initialize the event generator */
-  // if(fEvGen)fEvGen->Init();
-
-  /** Initialize the detectors.    */
-  for( std::list<FairDetector *>::iterator  listIter = listActiveDetectors.begin();
-       listIter != listActiveDetectors.end();
-       listIter++)
-  {
-    (*listIter)->Initialize();
-    (*listIter)->SetSpecialPhysicsCuts();
-    (*listIter)->Register();
-  }  
     
+  /** SetSpecialPhysicsCuts for FairDetector objects and all passive modules inheriting from FairModule */
+  // initialize and register FairDetector objects in addition
+  // Note: listActiveDetectors or fActiveDetectors not used to include passive modules in the same loop.
+  FairModule* module;
+  FairDetector* detector;
+  TObject* obj;
+  fModIter->Reset();
+  while((obj=fModIter->Next())) {
+    detector=dynamic_cast<FairDetector*>(obj);
+    module=dynamic_cast<FairModule*>(obj);
+    if(module) {
+      module->SetSpecialPhysicsCuts();
+    }
+    if(detector) {
+      // check whether detector is active 
+      if(detector->IsActive()) {
+        detector->Initialize();
+        detector->Register();
+      }
+    }
+  }
+  fModIter->Reset();
+
   /**Tasks has to be initialized here, they have access to the detector branches and still can create objects in the tree*/
   /// There is always a Main Task  !
   /// so .. always a InitTasks() is called <D.B>
@@ -1048,10 +1070,6 @@ void FairMCApplication::InitGeometry()
   fMCEventHeader->SetRunID(runId);
   if (fRootManager) {
     fMCEventHeader->Register();
-  }
-
-  if(NULL !=fRadGridMan) {
-    fRadGridMan->Init();
   }
 
   if(fEvGen) {

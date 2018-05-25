@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2014-2017 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
+ * Copyright (C) 2014-2018 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
  *                                                                              *
  *              This software is distributed under the terms of the             *
  *              GNU Lesser General Public Licence (LGPL) version 3,             *
@@ -9,12 +9,12 @@
 #ifndef FAIRMQTRANSPORTFACTORY_H_
 #define FAIRMQTRANSPORTFACTORY_H_
 
-#include "FairMQMessage.h"
-#include "FairMQSocket.h"
-#include "FairMQPoller.h"
-#include "FairMQUnmanagedRegion.h"
-#include "FairMQLogger.h"
-#include "FairMQTransports.h"
+#include <FairMQMessage.h>
+#include <FairMQSocket.h>
+#include <FairMQPoller.h>
+#include <FairMQUnmanagedRegion.h>
+#include <FairMQLogger.h>
+#include <fairmq/Transports.h>
 
 #include <string>
 #include <memory>
@@ -71,6 +71,9 @@ class FairMQTransportFactory
     /// Get transport type
     virtual FairMQ::Transport GetType() const = 0;
 
+    virtual void Interrupt() = 0;
+    virtual void Resume() = 0;
+
     virtual ~FairMQTransportFactory() {};
 
     static auto CreateTransportFactory(const std::string& type, const std::string& id = "", const FairMQProgOptions* config = nullptr) -> std::shared_ptr<FairMQTransportFactory>;
@@ -119,5 +122,15 @@ class FairMQTransportFactory
         return CreateMessage(const_cast<char*>(str.c_str()), str.length(), FairMQNoCleanup, nullptr);
     }
 };
+
+namespace fair
+{
+namespace mq
+{
+
+struct TransportFactoryError : std::runtime_error { using std::runtime_error::runtime_error; };
+
+} /* namespace mq */
+} /* namespace fair */
 
 #endif /* FAIRMQTRANSPORTFACTORY_H_ */

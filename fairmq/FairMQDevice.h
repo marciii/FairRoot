@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2012-2017 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
+ * Copyright (C) 2012-2018 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
  *                                                                              *
  *              This software is distributed under the terms of the             *
  *              GNU Lesser General Public Licence (LGPL) version 3,             *
@@ -9,15 +9,15 @@
 #ifndef FAIRMQDEVICE_H_
 #define FAIRMQDEVICE_H_
 
-#include "FairMQStateMachine.h"
-#include "FairMQTransportFactory.h"
-#include "FairMQTransports.h"
+#include <FairMQStateMachine.h>
+#include <FairMQTransportFactory.h>
+#include <fairmq/Transports.h>
 
-#include "FairMQSocket.h"
-#include "FairMQChannel.h"
-#include "FairMQMessage.h"
-#include "FairMQParts.h"
-#include "FairMQUnmanagedRegion.h"
+#include <FairMQSocket.h>
+#include <FairMQChannel.h>
+#include <FairMQMessage.h>
+#include <FairMQParts.h>
+#include <FairMQUnmanagedRegion.h>
 
 #include <vector>
 #include <memory> // unique_ptr
@@ -38,8 +38,6 @@ using FairMQChannelMap = std::unordered_map<std::string, std::vector<FairMQChann
 
 using InputMsgCallback = std::function<bool(FairMQMessagePtr&, int)>;
 using InputMultipartCallback = std::function<bool(FairMQParts&, int)>;
-
-class FairMQProgOptions;
 
 class FairMQDevice : public FairMQStateMachine
 {
@@ -196,7 +194,7 @@ class FairMQDevice : public FairMQStateMachine
     /// @brief Getter for default transport factory
     auto Transport() const -> const FairMQTransportFactory*
     {
-        return fTransports.cbegin()->second.get();
+        return fTransports.at(fair::mq::TransportTypes[GetDefaultTransport()]).get();
     }
 
     template<typename... Args>
@@ -297,10 +295,6 @@ class FairMQDevice : public FairMQStateMachine
     /// Sets the default transport for the device
     /// @param transport  Transport string ("zeromq"/"nanomsg"/"shmem")
     void SetTransport(const std::string& transport = "zeromq");
-
-    /// Creates stand-alone transport factory
-    /// @param transport  Transport string ("zeromq"/"nanomsg"/"shmem")
-    static std::unique_ptr<FairMQTransportFactory> MakeTransport(const std::string& transport) __attribute__((deprecated("Use 'static auto FairMQTransportFactory::CreateTransportFactory() -> std::shared_ptr<FairMQTransportFactory>' from <FairMQTransportFactory.h> instead.")));
 
     void SetConfig(FairMQProgOptions& config);
     const FairMQProgOptions* GetConfig() const
@@ -523,7 +517,6 @@ class FairMQDevice : public FairMQStateMachine
     void CreateOwnConfig();
 
     bool fDataCallbacks;
-    std::unordered_map<FairMQ::Transport, FairMQSocketPtr> fDeviceCmdSockets; ///< Sockets used for the internal unblocking mechanism
     std::unordered_map<std::string, InputMsgCallback> fMsgInputs;
     std::unordered_map<std::string, InputMultipartCallback> fMultipartInputs;
     std::unordered_map<FairMQ::Transport, std::vector<std::string>> fMultitransportInputs;

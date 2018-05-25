@@ -23,8 +23,6 @@ using namespace std;
 
 mutex FairMQChannel::fChannelMutex;
 
-atomic<bool> FairMQChannel::fInterrupted(false);
-
 FairMQChannel::FairMQChannel()
     : fSocket(nullptr)
     , fType("unspecified")
@@ -38,12 +36,8 @@ FairMQChannel::FairMQChannel()
     , fRateLogging(1)
     , fName("")
     , fIsValid(false)
-    , fPoller(nullptr)
-    , fChannelCmdSocket(nullptr)
     , fTransportType(FairMQ::Transport::DEFAULT)
     , fTransportFactory(nullptr)
-    , fNoBlockFlag(0)
-    , fSndMoreFlag(0)
     , fMultipart(false)
     , fModified(true)
     , fReset(false)
@@ -63,12 +57,8 @@ FairMQChannel::FairMQChannel(const string& type, const string& method, const str
     , fRateLogging(1)
     , fName("")
     , fIsValid(false)
-    , fPoller(nullptr)
-    , fChannelCmdSocket(nullptr)
     , fTransportType(FairMQ::Transport::DEFAULT)
     , fTransportFactory(nullptr)
-    , fNoBlockFlag(0)
-    , fSndMoreFlag(0)
     , fMultipart(false)
     , fModified(true)
     , fReset(false)
@@ -88,12 +78,8 @@ FairMQChannel::FairMQChannel(const string& name, const string& type, std::shared
     , fRateLogging(1)
     , fName(name)
     , fIsValid(false)
-    , fPoller(nullptr)
-    , fChannelCmdSocket(nullptr)
     , fTransportType(factory->GetType())
     , fTransportFactory(factory)
-    , fNoBlockFlag(0)
-    , fSndMoreFlag(0)
     , fMultipart(false)
     , fModified(true)
     , fReset(false)
@@ -113,12 +99,8 @@ FairMQChannel::FairMQChannel(const FairMQChannel& chan)
     , fRateLogging(chan.fRateLogging)
     , fName(chan.fName)
     , fIsValid(false)
-    , fPoller(nullptr)
-    , fChannelCmdSocket(nullptr)
     , fTransportType(FairMQ::Transport::DEFAULT)
     , fTransportFactory(nullptr)
-    , fNoBlockFlag(chan.fNoBlockFlag)
-    , fSndMoreFlag(chan.fSndMoreFlag)
     , fMultipart(chan.fMultipart)
     , fModified(chan.fModified)
     , fReset(false)
@@ -138,12 +120,8 @@ FairMQChannel& FairMQChannel::operator=(const FairMQChannel& chan)
     fSocket = nullptr;
     fName = chan.fName;
     fIsValid = false;
-    fPoller = nullptr;
-    fChannelCmdSocket = nullptr;
     fTransportType = FairMQ::Transport::DEFAULT;
     fTransportFactory = nullptr;
-    fNoBlockFlag = chan.fNoBlockFlag;
-    fSndMoreFlag = chan.fSndMoreFlag;
 
     return *this;
 }
@@ -585,6 +563,18 @@ bool FairMQChannel::ValidateChannel()
                         return false;
                     }
                 }
+                else if (address.compare(0, 8, "verbs://") == 0)
+                {
+                    // check if IPC address is not empty
+                    string addressString = address.substr(9);
+                    if (addressString == "")
+                    {
+                        ss << "INVALID";
+                        LOG(debug) << ss.str();
+                        LOG(error) << "invalid channel address: \"" << address << "\" (empty verbs address?)";
+                        return false;
+                    }
+                }
                 else
                 {
                     // if neither TCP or IPC is specified, return invalid
@@ -670,26 +660,6 @@ void FairMQChannel::InitTransport(shared_ptr<FairMQTransportFactory> factory)
     fTransportType = factory->GetType();
 }
 
-bool FairMQChannel::InitCommandInterface()
-{
-    fChannelCmdSocket = fTransportFactory->CreateSocket("sub", "device-commands");
-    if (fChannelCmdSocket)
-    {
-        fChannelCmdSocket->Connect("inproc://commands");
-
-        fNoBlockFlag = fChannelCmdSocket->NOBLOCK;
-        fSndMoreFlag = fChannelCmdSocket->SNDMORE;
-
-        fPoller = fTransportFactory->CreatePoller(*fChannelCmdSocket, *fSocket);
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 void FairMQChannel::ResetChannel()
 {
     unique_lock<mutex> lock(fChannelMutex);
@@ -711,56 +681,24 @@ int FairMQChannel::Receive(unique_ptr<FairMQMessage>& msg) const
 
 int FairMQChannel::Send(unique_ptr<FairMQMessage>& msg, int sndTimeoutInMs) const
 {
-    fPoller->Poll(sndTimeoutInMs);
-
-    if (fPoller->CheckInput(0))
-    {
-        HandleUnblock();
-        if (fInterrupted)
-        {
-            return -2;
-        }
-    }
-
-    if (fPoller->CheckOutput(1))
-    {
-        return Send(msg);
-    }
-
-    return -2;
+    return fSocket->Send(msg, sndTimeoutInMs);
 }
 
 int FairMQChannel::Receive(unique_ptr<FairMQMessage>& msg, int rcvTimeoutInMs) const
 {
-    fPoller->Poll(rcvTimeoutInMs);
-
-    if (fPoller->CheckInput(0))
-    {
-        HandleUnblock();
-        if (fInterrupted)
-        {
-            return -2;
-        }
-    }
-
-    if (fPoller->CheckInput(1))
-    {
-        return Receive(msg);
-    }
-
-    return -2;
+    return fSocket->Receive(msg, rcvTimeoutInMs);
 }
 
 int FairMQChannel::SendAsync(unique_ptr<FairMQMessage>& msg) const
 {
     CheckCompatibility(msg);
-    return fSocket->Send(msg, fNoBlockFlag);
+    return fSocket->TrySend(msg);
 }
 
 int FairMQChannel::ReceiveAsync(unique_ptr<FairMQMessage>& msg) const
 {
     CheckCompatibility(msg);
-    return fSocket->Receive(msg, fNoBlockFlag);
+    return fSocket->TryReceive(msg);
 }
 
 int64_t FairMQChannel::Send(vector<unique_ptr<FairMQMessage>>& msgVec) const
@@ -777,50 +715,18 @@ int64_t FairMQChannel::Receive(vector<unique_ptr<FairMQMessage>>& msgVec) const
 
 int64_t FairMQChannel::Send(vector<unique_ptr<FairMQMessage>>& msgVec, int sndTimeoutInMs) const
 {
-    fPoller->Poll(sndTimeoutInMs);
-
-    if (fPoller->CheckInput(0))
-    {
-        HandleUnblock();
-        if (fInterrupted)
-        {
-            return -2;
-        }
-    }
-
-    if (fPoller->CheckOutput(1))
-    {
-        return Send(msgVec);
-    }
-
-    return -2;
+    return fSocket->Send(msgVec, sndTimeoutInMs);
 }
 
 int64_t FairMQChannel::Receive(vector<unique_ptr<FairMQMessage>>& msgVec, int rcvTimeoutInMs) const
 {
-    fPoller->Poll(rcvTimeoutInMs);
-
-    if (fPoller->CheckInput(0))
-    {
-        HandleUnblock();
-        if (fInterrupted)
-        {
-            return -2;
-        }
-    }
-
-    if (fPoller->CheckInput(1))
-    {
-        return Receive(msgVec);
-    }
-
-    return -2;
+    return fSocket->Receive(msgVec, rcvTimeoutInMs);
 }
 
 int64_t FairMQChannel::SendAsync(vector<unique_ptr<FairMQMessage>>& msgVec) const
 {
     CheckCompatibility(msgVec);
-    return fSocket->Send(msgVec, fNoBlockFlag);
+    return fSocket->TrySend(msgVec);
 }
 
 /// Receives a vector of messages in non-blocking mode.
@@ -831,17 +737,7 @@ int64_t FairMQChannel::SendAsync(vector<unique_ptr<FairMQMessage>>& msgVec) cons
 int64_t FairMQChannel::ReceiveAsync(vector<unique_ptr<FairMQMessage>>& msgVec) const
 {
     CheckCompatibility(msgVec);
-    return fSocket->Receive(msgVec, fNoBlockFlag);
-}
-
-inline bool FairMQChannel::HandleUnblock() const
-{
-    FairMQMessagePtr cmd(fTransportFactory->CreateMessage());
-    if (fChannelCmdSocket->Receive(cmd) >= 0)
-    {
-        // LOG(debug) << "unblocked";
-    }
-    return true;
+    return fSocket->TryReceive(msgVec);
 }
 
 FairMQChannel::~FairMQChannel()

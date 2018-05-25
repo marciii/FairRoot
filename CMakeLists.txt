@@ -39,6 +39,8 @@ SET(FAIRROOT_PATCH_VERSION 02)
 # This also sets ${FAIRROOT_VERSION} to the provided VERSION value, which would be empty if not set here explicitly
 project(FAIRROOT VERSION ${FAIRROOT_MAJOR_VERSION}.${FAIRROOT_MINOR_VERSION}.${FAIRROOT_PATCH_VERSION})
 
+option(BUILD_OFI_TRANSPORT "Build FairMQ OFI transport" OFF)
+
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/
 # is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -235,6 +237,9 @@ find_package(CUDA)
 find_package(IWYU)
 find_package(ZeroMQ 4.1.3)
 find_package(nanomsg)
+if(SIMPATH)
+  set(CMAKE_PREFIX_PATH ${SIMPATH} ${CMAKE_PREFIX_PATH})
+endif()
 find_package(Protobuf)
 find_package(Msgpack)
 find_package(FlatBuffers)
@@ -303,6 +308,10 @@ Else()
       SOVERSION "${FAIRROOT_MAJOR_VERSION}"
   )
 EndIf()
+
+if(BUILD_OFI_TRANSPORT)
+  find_package(OFI REQUIRED COMPONENTS fi_sockets)
+endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/scripts/FairRootConfigVersion.cmake.in "${CMAKE_BINARY_DIR}/FairRootConfigVersion.cmake" @ONLY)
 

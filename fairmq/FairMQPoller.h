@@ -1,16 +1,10 @@
 /********************************************************************************
- *    Copyright (C) 2014 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH    *
+ * Copyright (C) 2014-2018 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
  *                                                                              *
  *              This software is distributed under the terms of the             * 
  *              GNU Lesser General Public Licence (LGPL) version 3,             *  
  *                  copied verbatim in the file "LICENSE"                       *
  ********************************************************************************/
-/**
- * FairMQPoller.h
- *
- * @since 2014-01-23
- * @author A. Rybalchenko
- */
 
 #ifndef FAIRMQPOLLER_H_
 #define FAIRMQPOLLER_H_
@@ -31,5 +25,17 @@ class FairMQPoller
 };
 
 using FairMQPollerPtr = std::unique_ptr<FairMQPoller>;
+
+namespace fair
+{
+namespace mq
+{
+
+using PollerPtr = std::unique_ptr<FairMQPoller>;
+
+struct PollerError : std::runtime_error { using std::runtime_error::runtime_error; };
+
+} /* namespace mq */
+} /* namespace fair */
 
 #endif /* FAIRMQPOLLER_H_ */

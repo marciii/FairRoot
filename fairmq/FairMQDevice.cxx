@@ -1,10 +1,24 @@
 /********************************************************************************
- * Copyright (C) 2012-2017 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
+ * Copyright (C) 2012-2018 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH  *
  *                                                                              *
  *              This software is distributed under the terms of the             *
  *              GNU Lesser General Public Licence (LGPL) version 3,             *
  *                  copied verbatim in the file "LICENSE"                       *
  ********************************************************************************/
+
+#include <FairMQSocket.h>
+#include <FairMQDevice.h>
+#include <FairMQLogger.h> 
+#include <options/FairMQProgOptions.h>
+
+#include <fairmq/Tools.h>
+#include <fairmq/Transports.h>
+
+#include <boost/algorithm/string.hpp> // join/split
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <list>
 #include <cstdlib>
@@ -14,24 +28,7 @@
 #include <mutex>
 #include <thread>
 #include <functional>
-
-#include <boost/algorithm/string.hpp> // join/split
-
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
-#include "FairMQSocket.h"
-#include "FairMQDevice.h"
-#include "FairMQLogger.h"
-#include <fairmq/Tools.h>
-
-#include "options/FairMQProgOptions.h"
-#include "zeromq/FairMQTransportFactoryZMQ.h"
-#include "shmem/FairMQTransportFactorySHM.h"
-#ifdef NANOMSG_FOUND
-#include "nanomsg/FairMQTransportFactoryNN.h"
-#endif
+#include <sstream>
 
 using namespace std;
 
@@ -51,7 +48,6 @@ FairMQDevice::FairMQDevice()
     , fDefaultTransport()
     , fInitializationTimeoutInS(120)
     , fDataCallbacks(false)
-    , fDeviceCmdSockets()
     , fMsgInputs()
     , fMultipartInputs()
     , fMultitransportInputs()
@@ -82,7 +78,6 @@ FairMQDevice::FairMQDevice(const fair::mq::tools::Version version)
     , fDefaultTransport()
     , fInitializationTimeoutInS(120)
     , fDataCallbacks(false)
-    , fDeviceCmdSockets()
     , fMsgInputs()
     , fMultipartInputs()
     , fMultitransportInputs()
@@ -105,21 +100,6 @@ void FairMQDevice::InitWrapper()
         exit(EXIT_FAILURE);
     }
 
-    if (fDeviceCmdSockets.empty())
-    {
-        auto p = fDeviceCmdSockets.emplace(fTransportFactory->GetType(), fTransportFactory->CreateSocket("pub", "device-commands"));
-        if (p.second)
-        {
-            p.first->second->Bind("inproc://commands");
-        }
-        else
-        {
-            exit(EXIT_FAILURE);
-        }
-
-        FairMQMessagePtr msg(fTransportFactory->CreateMessage());
-    }
-
     // Containers to store the uninitialized channels.
     vector<FairMQChannel*> uninitializedBindingChannels;
     vector<FairMQChannel*> uninitializedConnectingChannels;
@@ -134,8 +114,6 @@ void FairMQDevice::InitWrapper()
                 // if (vi->fReset)
                 // {
                 //     vi->fSocket.reset();
-                //     vi->fPoller.reset();
-                //     vi->fChannelCmdSocket.reset();
                 // }
                 // set channel name: name + vector index
                 vi->fName = fair::mq::tools::ToString(mi.first, "[", vi - (mi.second).begin(), "]");
@@ -251,7 +229,6 @@ void FairMQDevice::AttachChannels(vector<FairMQChannel*>& chans)
         {
             if (AttachChannel(**itr))
             {
-                (*itr)->InitCommandInterface();
                 (*itr)->SetModified(false);
                 itr = chans.erase(itr);
             }
@@ -477,11 +454,10 @@ void FairMQDevice::RunWrapper()
     // start the rate logger thread
     thread rateLogger(&FairMQDevice::LogSocketRates, this);
 
-    // notify channels to resume transfers
-    FairMQChannel::fInterrupted = false;
-    for (auto& kv : fDeviceCmdSockets)
+    // notify transports to resume transfers
+    for (auto& t : fTransports)
     {
-        kv.second->Resume();
+        t.second->Resume();
     }
 
     try
@@ -783,18 +759,6 @@ shared_ptr<FairMQTransportFactory> FairMQDevice::AddTransport(const string& tran
         pair<FairMQ::Transport, shared_ptr<FairMQTransportFactory>> trPair(FairMQ::TransportTypes.at(transport), tr);
         fTransports.insert(trPair);
 
-        auto p = fDeviceCmdSockets.emplace(tr->GetType(), tr->CreateSocket("pub", "device-commands"));
-        if (p.second)
-        {
-            p.first->second->Bind("inproc://commands");
-        }
-        else
-        {
-            exit(EXIT_FAILURE);
-        }
-
-        FairMQMessagePtr msg(tr->CreateMessage());
-
         return tr;
     }
     else
@@ -802,39 +766,6 @@ shared_ptr<FairMQTransportFactory> FairMQDevice::AddTransport(const string& tran
         LOG(debug) << "Reusing existing '" << transport << "' transport.";
         return i->second;
     }
-}
-
-unique_ptr<FairMQTransportFactory> FairMQDevice::MakeTransport(const string& transport)
-{
-    unique_ptr<FairMQTransportFactory> tr;
-
-    if (transport == "zeromq")
-    {
-        tr = fair::mq::tools::make_unique<FairMQTransportFactoryZMQ>();
-    }
-    else if (transport == "shmem")
-    {
-        tr = fair::mq::tools::make_unique<FairMQTransportFactorySHM>();
-    }
-#ifdef NANOMSG_FOUND
-    else if (transport == "nanomsg")
-    {
-        tr = fair::mq::tools::make_unique<FairMQTransportFactoryNN>();
-    }
-#endif
-    else
-    {
-        LOG(error) << "Unavailable transport requested: " << "\"" << transport << "\"" << ". Available are: "
-                   << "\"zeromq\""
-                   << "\"shmem\""
-#ifdef NANOMSG_FOUND
-                   << ", \"nanomsg\""
-#endif
-                   << ". Returning nullptr.";
-        return tr;
-    }
-
-    return tr;
 }
 
 void FairMQDevice::CreateOwnConfig()
@@ -1009,12 +940,9 @@ void FairMQDevice::LogSocketRates()
 
 void FairMQDevice::Unblock()
 {
-    FairMQChannel::fInterrupted = true;
-    for (auto& kv : fDeviceCmdSockets)
+    for (auto& t : fTransports)
     {
-        kv.second->Interrupt();
-        FairMQMessagePtr cmd(fTransports.at(kv.first)->CreateMessage());
-        kv.second->Send(cmd);
+        t.second->Interrupt();
     }
 }
 
@@ -1050,8 +978,6 @@ void FairMQDevice::Reset()
         {
             // vi.fReset = true;
             vi.fSocket.reset();
-            vi.fPoller.reset();
-            vi.fChannelCmdSocket.reset();
         }
     }
 }

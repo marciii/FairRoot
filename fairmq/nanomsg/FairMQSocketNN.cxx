@@ -33,16 +33,15 @@ using namespace std;
 atomic<bool> FairMQSocketNN::fInterrupted(false);
 
 FairMQSocketNN::FairMQSocketNN(const string& type, const string& name, const string& id /*= ""*/)
-    : FairMQSocket(0, 0, NN_DONTWAIT)
-    , fSocket(-1)
-    , fId()
+    : fSocket(-1)
+    , fId(id + "." + name + "." + type)
     , fBytesTx(0)
     , fBytesRx(0)
     , fMessagesTx(0)
     , fMessagesRx(0)
+    , fSndTimeout(100)
+    , fRcvTimeout(100)
 {
-    fId = id + "." + name + "." + type;
-
     if (type == "router" || type == "dealer")
     {
         // Additional info about using the sockets ROUTER and DEALER with nanomsg can be found in:
@@ -69,14 +68,12 @@ FairMQSocketNN::FairMQSocketNN(const string& type, const string& name, const str
         }
     }
 
-    int sndTimeout = 700;
-    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_SNDTIMEO, &sndTimeout, sizeof(sndTimeout)) != 0)
+    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_SNDTIMEO, &fSndTimeout, sizeof(fSndTimeout)) != 0)
     {
         LOG(error) << "Failed setting NN_SNDTIMEO socket option, reason: " << nn_strerror(errno);
     }
 
-    int rcvTimeout = 700;
-    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_RCVTIMEO, &rcvTimeout, sizeof(rcvTimeout)) != 0)
+    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_RCVTIMEO, &fRcvTimeout, sizeof(fRcvTimeout)) != 0)
     {
         LOG(error) << "Failed setting NN_RCVTIMEO socket option, reason: " << nn_strerror(errno);
     }
@@ -121,9 +118,20 @@ void FairMQSocketNN::Connect(const string& address)
     }
 }
 
-int FairMQSocketNN::Send(FairMQMessagePtr& msg, const int flags)
+int FairMQSocketNN::Send(FairMQMessagePtr& msg, const int timeout) { return SendImpl(msg, 0, timeout); }
+int FairMQSocketNN::Receive(FairMQMessagePtr& msg, const int timeout) { return ReceiveImpl(msg, 0, timeout); }
+int64_t FairMQSocketNN::Send(vector<unique_ptr<FairMQMessage>>& msgVec, const int timeout) { return SendImpl(msgVec, 0, timeout); }
+int64_t FairMQSocketNN::Receive(vector<unique_ptr<FairMQMessage>>& msgVec, const int timeout) { return ReceiveImpl(msgVec, 0, timeout); }
+
+int FairMQSocketNN::TrySend(FairMQMessagePtr& msg) { return SendImpl(msg, NN_DONTWAIT, 0); }
+int FairMQSocketNN::TryReceive(FairMQMessagePtr& msg) { return ReceiveImpl(msg, NN_DONTWAIT, 0); }
+int64_t FairMQSocketNN::TrySend(vector<unique_ptr<FairMQMessage>>& msgVec) { return SendImpl(msgVec, NN_DONTWAIT, 0); }
+int64_t FairMQSocketNN::TryReceive(vector<unique_ptr<FairMQMessage>>& msgVec) { return ReceiveImpl(msgVec, NN_DONTWAIT, 0); }
+
+int FairMQSocketNN::SendImpl(FairMQMessagePtr& msg, const int flags, const int timeout)
 {
     int nbytes = -1;
+    int elapsed = 0;
 
     FairMQMessageNN* msgPtr = static_cast<FairMQMessageNN*>(msg.get());
     void* bufPtr = msgPtr->GetMessage();
@@ -157,6 +165,14 @@ int FairMQSocketNN::Send(FairMQMessagePtr& msg, const int flags)
         {
             if (!fInterrupted && ((flags & NN_DONTWAIT) == 0))
             {
+                if (timeout)
+                {
+                    elapsed += fSndTimeout;
+                    if (elapsed >= timeout)
+                    {
+                        return -2;
+                    }
+                }
                 continue;
             }
             else
@@ -181,9 +197,10 @@ int FairMQSocketNN::Send(FairMQMessagePtr& msg, const int flags)
     }
 }
 
-int FairMQSocketNN::Receive(FairMQMessagePtr& msg, const int flags)
+int FairMQSocketNN::ReceiveImpl(FairMQMessagePtr& msg, const int flags, const int timeout)
 {
     int nbytes = -1;
+    int elapsed = 0;
 
     FairMQMessageNN* msgPtr = static_cast<FairMQMessageNN*>(msg.get());
 
@@ -207,6 +224,14 @@ int FairMQSocketNN::Receive(FairMQMessagePtr& msg, const int flags)
         {
             if (!fInterrupted && ((flags & NN_DONTWAIT) == 0))
             {
+                if (timeout)
+                {
+                    elapsed += fRcvTimeout;
+                    if (elapsed >= timeout)
+                    {
+                        return -2;
+                    }
+                }
                 continue;
             }
             else
@@ -231,10 +256,11 @@ int FairMQSocketNN::Receive(FairMQMessagePtr& msg, const int flags)
     }
 }
 
-int64_t FairMQSocketNN::Send(vector<FairMQMessagePtr>& msgVec, const int flags)
+int64_t FairMQSocketNN::SendImpl(vector<FairMQMessagePtr>& msgVec, const int flags, const int timeout)
 {
     const unsigned int vecSize = msgVec.size();
 #ifdef MSGPACK_FOUND
+    int elapsed = 0;
 
     // create msgpack simple buffer
     msgpack::sbuffer sbuf;
@@ -275,6 +301,14 @@ int64_t FairMQSocketNN::Send(vector<FairMQMessagePtr>& msgVec, const int flags)
         {
             if (!fInterrupted && ((flags & NN_DONTWAIT) == 0))
             {
+                if (timeout)
+                {
+                    elapsed += fSndTimeout;
+                    if (elapsed >= timeout)
+                    {
+                        return -2;
+                    }
+                }
                 continue;
             }
             else
@@ -303,7 +337,7 @@ int64_t FairMQSocketNN::Send(vector<FairMQMessagePtr>& msgVec, const int flags)
 #endif /*MSGPACK_FOUND*/
 }
 
-int64_t FairMQSocketNN::Receive(vector<FairMQMessagePtr>& msgVec, const int flags)
+int64_t FairMQSocketNN::ReceiveImpl(vector<FairMQMessagePtr>& msgVec, const int flags, const int timeout)
 {
 #ifdef MSGPACK_FOUND
     // Warn if the vector is filled before Receive() and empty it.
@@ -312,6 +346,8 @@ int64_t FairMQSocketNN::Receive(vector<FairMQMessagePtr>& msgVec, const int flag
     //     LOG(warn) << "Message vector contains elements before Receive(), they will be deleted!";
     //     msgVec.clear();
     // }
+
+    int elapsed = 0;
 
     while (true)
     {
@@ -331,7 +367,7 @@ int64_t FairMQSocketNN::Receive(vector<FairMQMessagePtr>& msgVec, const int flag
             while (offset != static_cast<size_t>(nbytes)) // continue until all parts have been read
             {
                 // vector of chars to hold blob (unlike char*/void* this type can be converted to by msgpack)
-                std::vector<char> buf;
+                vector<char> buf;
 
                 // unpack and convert chunk
                 msgpack::unpacked result;
@@ -357,6 +393,14 @@ int64_t FairMQSocketNN::Receive(vector<FairMQMessagePtr>& msgVec, const int flag
         {
             if (!fInterrupted && ((flags & NN_DONTWAIT) == 0))
             {
+                if (timeout)
+                {
+                    elapsed += fRcvTimeout;
+                    if (elapsed >= timeout)
+                    {
+                        return -2;
+                    }
+                }
                 continue;
             }
             else
@@ -465,7 +509,8 @@ unsigned long FairMQSocketNN::GetMessagesRx() const
 
 bool FairMQSocketNN::SetSendTimeout(const int timeout, const string& /*address*/, const string& /*method*/)
 {
-    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_SNDTIMEO, &timeout, sizeof(int)) != 0)
+    fSndTimeout = timeout;
+    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_SNDTIMEO, &fSndTimeout, sizeof(fSndTimeout)) != 0)
     {
         LOG(error) << "Failed setting option 'send timeout' on socket " << fId << ", reason: " << nn_strerror(errno);
         return false;
@@ -476,20 +521,13 @@ bool FairMQSocketNN::SetSendTimeout(const int timeout, const string& /*address*/
 
 int FairMQSocketNN::GetSendTimeout() const
 {
-    int timeout = -1;
-    size_t size = sizeof(timeout);
-
-    if (nn_getsockopt(fSocket, NN_SOL_SOCKET, NN_SNDTIMEO, &timeout, &size) != 0)
-    {
-        LOG(error) << "Failed getting option 'send timeout' on socket " << fId << ", reason: " << nn_strerror(errno);
-    }
-
-    return timeout;
+    return fSndTimeout;
 }
 
 bool FairMQSocketNN::SetReceiveTimeout(const int timeout, const string& /*address*/, const string& /*method*/)
 {
-    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(int)) != 0)
+    fRcvTimeout = timeout;
+    if (nn_setsockopt(fSocket, NN_SOL_SOCKET, NN_RCVTIMEO, &fRcvTimeout, sizeof(fRcvTimeout)) != 0)
     {
         LOG(error) << "Failed setting option 'receive timeout' on socket " << fId << ", reason: " << nn_strerror(errno);
         return false;
@@ -500,15 +538,7 @@ bool FairMQSocketNN::SetReceiveTimeout(const int timeout, const string& /*addres
 
 int FairMQSocketNN::GetReceiveTimeout() const
 {
-    int timeout = -1;
-    size_t size = sizeof(timeout);
-
-    if (nn_getsockopt(fSocket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, &size) != 0)
-    {
-        LOG(error) << "Failed getting option 'receive timeout' on socket " << fId << ", reason: " << nn_strerror(errno);
-    }
-
-    return timeout;
+    return fRcvTimeout;
 }
 
 int FairMQSocketNN::GetConstant(const string& constant)
