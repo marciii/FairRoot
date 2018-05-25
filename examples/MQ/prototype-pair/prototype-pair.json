@@ -5,7 +5,7 @@
                 "id": "flpprocessorpair1",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -23,7 +23,7 @@
                 "id": "flpprocessorpair2",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -41,7 +41,7 @@
                 "id": "flpprocessorpair3",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -59,7 +59,7 @@
                 "id": "flpprocessorpair4",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -77,7 +77,7 @@
                 "id": "flpprocessorpair5",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -95,7 +95,7 @@
                 "id": "flpprocessorpair6",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -113,7 +113,7 @@
                 "id": "flpprocessorpair7",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -131,7 +131,7 @@
                 "id": "flpprocessorpair8",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -149,7 +149,7 @@
                 "id": "flpprocessorpair9",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -167,7 +167,7 @@
                 "id": "flpprocessorpair10",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -185,7 +185,7 @@
                 "id": "flpprocessorpair11",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -203,7 +203,7 @@
                 "id": "flpprocessorpair12",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -221,7 +221,7 @@
                 "id": "flpprocessorpair13",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -239,7 +239,7 @@
                 "id": "flpprocessorpair14",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -257,7 +257,7 @@
                 "id": "flpprocessorpair15",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -275,7 +275,7 @@
                 "id": "flpprocessorpair16",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -293,7 +293,7 @@
                 "id": "flpprocessorpair17",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -311,7 +311,7 @@
                 "id": "flpprocessorpair18",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -329,7 +329,7 @@
                 "id": "flpprocessorpair19",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -347,7 +347,7 @@
                 "id": "flpprocessorpair20",
                 "channels": [
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",
@@ -395,7 +395,7 @@
                     },
     
                     {
-                        "name": "scheduledatatoflp",
+                        "name": "sched-flp-chan",
                         "sockets": [
                             {
                                 "type": "pair",

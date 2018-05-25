@@ -30,6 +30,8 @@ void write(int amountFlp, duration<double>dur);
 virtual void InitTask();
 virtual bool ConditionalRun();
 
+uint64_t getRandomAnswerId(bool randomAnswer);
+int calculateMessageSize(int counter);
 
 std::string logDir;
 uint64_t messageSize;

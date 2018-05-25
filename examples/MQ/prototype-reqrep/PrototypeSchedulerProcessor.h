@@ -34,7 +34,8 @@ class PrototypeSchedulerProcessor : public FairMQDevice
 bool HandleData2(FairMQMessagePtr&, int);
 void write(int amountFlp, duration<double>dur);
 void write(std::string msgSize, duration<double>dur);
-
+int calculateMessageSize(int counter);
+uint64_t getRandomAnswerId(bool randomAnswer);
 
 
   private:

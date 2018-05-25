@@ -36,6 +36,8 @@ bool randomReply;
 uint64_t msgFreq;
 uint64_t amountFlp;
 bool msgAutoscale;
+int calculateMessageSize(int counter);
+uint64_t getRandomAnswerId(bool randomAnswer);
 
 };
 

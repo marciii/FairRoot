@@ -77,41 +77,14 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
 	//teil fuer message scaling
 	if (msgAutoscale == true) {
-		if (sendCounter <= 100) len = 4096; //4kb
-		else if (sendCounter <= 200) len = 8192; //8kb
-		else if (sendCounter <= 300) len = 16384; //16kb
-		else if (sendCounter <= 400) len = 32768; //32kb
-		else if (sendCounter <= 500) len = 65536; //64kb
-		else if (sendCounter <= 600) len = 131072; //128kb
-		else if (sendCounter <= 700) len = 262144; //256kb
-		else if (sendCounter <= 800) len = 524288; //512kb
-		else if (sendCounter <= 900) len = 1048576; //1024kb, 1mb
-		else if (sendCounter <= 1000) len = 2097152; //2048kb, 2mb
-		else if (sendCounter <= 1100) len = 4194304; //4096kb, 4mb
-		else if (sendCounter <= 1200) len = 8388608; //8192kb, 8mb
-		else if (sendCounter <= 1300) len = 16777216; //16384kb, 16mb
+    len = calculateMessageSize(sendCounter);
 	}
 
 
   MyMessage msgToFlp;
   msgToFlp.sendCounter = sendCounter;
-
-
-    //teil für random id -> statistik
-  if (randomReply == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
-    std::random_device rd;
-    std::mt19937 eng(rd());
-    std::uniform_int_distribution<> distribution(0, amountFlp-1);
-    flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
-
-    LOG(info) << "FLP " << flpAnswerId << " soll antworten";
-    msgToFlp.replyId = flpAnswerId;
-
-  } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
-    //wenn alle antworten sollen -> -1
-    msgToFlp.replyId = 99999;
-  }
-
+  //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+  msgToFlp.replyId = getRandomAnswerId(randomReply);
 
   FairMQMessagePtr msg2 = NewMessage(len);
 
@@ -219,12 +192,6 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& msg, int index)
   counter++;
     LOG(info) << "Empfange Daten von EPN";
 
-    // Modify the received string
-    //string* text = new std::string(static_cast<char*>(msg->GetData()), msg->GetSize());
-    //*text += " (modified by " + fId + ")";
-
-
-
 
 if (counter > 50) {
 LOG(info) << "am ende angelangt";
@@ -242,10 +209,6 @@ return false;
    LOG(info) <<"hier2";
 
 
-    // create message object with a pointer to the data buffer,
-    // its size,
-    // custom deletion function (called when transfer is done),
-    // and pointer to the object managing the data buffer
 
 
     // Send out the output message
@@ -279,6 +242,41 @@ void PrototypeSchedulerProcessor::write(std::string s1, duration<double> dur)
   std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
   gnudatafile << s1 << "\t" << dur.count() << std::endl;
   return;
+}
+
+int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
+  int len;
+  if (counter <= 100) len = 4096; //4kb
+  else if (counter <= 200) len = 8192; //8kb
+  else if (counter <= 300) len = 16384; //16kb
+  else if (counter <= 400) len = 32768; //32kb
+  else if (counter <= 500) len = 65536; //64kb
+  else if (counter <= 600) len = 131072; //128kb
+  else if (counter <= 700) len = 262144; //256kb
+  else if (counter <= 800) len = 524288; //512kb
+  else if (counter <= 900) len = 1048576; //1024kb, 1mb
+  else if (counter <= 1000) len = 2097152; //2048kb, 2mb
+  else if (counter <= 1100) len = 4194304; //4096kb, 4mb
+  else if (counter <= 1200) len = 8388608; //8192kb, 8mb
+  else if (counter <= 1300) len = 16777216; //16384kb, 16mb
+  return len;
+}
+
+uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
+  if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
+    //teil für random id -> statistik
+    std::random_device rd;
+    std::mt19937 eng(rd());
+    std::uniform_int_distribution<> distribution(0, amountFlp-1);
+    flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
+
+    LOG(info) << "FLP " << flpAnswerId << " soll antworten";
+    return flpAnswerId;
+
+  } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
+    //wenn alle antworten sollen -> -1
+    return 99999;
+  }
 }
 
 PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()

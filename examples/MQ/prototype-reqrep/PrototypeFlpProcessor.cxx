@@ -73,6 +73,7 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
   MyMessage conf;
   conf.confirmation = true;
+  conf.sendCounter = messageCounter;
 
   FairMQMessagePtr confirmation = NewMessage(100);
   memcpy(confirmation->GetData(), &conf, sizeof(MyMessage));
