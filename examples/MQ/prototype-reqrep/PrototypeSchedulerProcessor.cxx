@@ -92,6 +92,12 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
 {
 
   sendCounter++;
+
+  if (sendCounter ==  1300) { //
+    LOG(info) << "am ende angelangt";
+    return false;
+  }
+
   int len = messageSize;
 
 

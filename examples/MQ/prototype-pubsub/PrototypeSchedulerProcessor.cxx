@@ -62,7 +62,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   sendCounter++;
 
-  if (sendCounter ==  1400) { //
+  if (sendCounter ==  1300) { //
     LOG(info) << "am ende angelangt";
     return false;
   }
