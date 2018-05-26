@@ -1,10 +1,10 @@
 /********************************************************************************
- *    Copyright (C) 2014 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH    *
- *                                                                              *
- *              This software is distributed under the terms of the             *
- *              GNU Lesser General Public Licence (LGPL) version 3,             *
- *                  copied verbatim in the file "LICENSE"                       *
- ********************************************************************************/
+*    Copyright (C) 2014 GSI Helmholtzzentrum fuer Schwerionenforschung GmbH    *
+*                                                                              *
+*              This software is distributed under the terms of the             *
+*              GNU Lesser General Public Licence (LGPL) version 3,             *
+*                  copied verbatim in the file "LICENSE"                       *
+********************************************************************************/
 
 #include "PrototypeSchedulerProcessor.h"
 #include "FairMQLogger.h"
@@ -34,7 +34,6 @@ int flpAnswerId;
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
-  // std::string content;
 };
 
 PrototypeSchedulerProcessor::PrototypeSchedulerProcessor()
@@ -51,6 +50,7 @@ void PrototypeSchedulerProcessor::InitTask()
   msgFreq = fConfig->GetValue<uint64_t>("msgFreq");
   amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
   msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
+  scalingFlp = fConfig->GetValue<bool>("scalingFlp");
 
   this_thread::sleep_for(chrono::seconds(10));
 }
@@ -68,17 +68,17 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
   }
 
 
-	//kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
+  //kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
   FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
   Send(testMsg, "scheduledatafromepn");
 
 
   int len = messageSize;
 
-	//teil fuer message scaling
-	if (msgAutoscale == true) {
+  //teil fuer message scaling
+  if (msgAutoscale == true) {
     len = calculateMessageSize(sendCounter);
-	}
+  }
 
 
   MyMessage msgToFlp;
@@ -88,10 +88,8 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   FairMQMessagePtr msg2 = NewMessage(len);
 
-  //LOG(info) << "hier1";
- // memset(msg2->GetData(), 'a', msg2->GetSize());
+  // memset(msg2->GetData(), 'a', msg2->GetSize());
   memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
-  //LOG(info) << "hier2";
 
 
   msgSize = std::to_string(msg2->GetSize());
@@ -106,49 +104,54 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
 
 
-if (randomReply == false) {
-  int test = Send(msg2, "scheduledatatoflp");
-  if (test < 0 ) {
-    LOG(error) << "fail";
-    return false;
+  if (randomReply == false) {
+    int test = Send(msg2, "scheduledatatoflp");
+    if (test < 0 ) {
+      LOG(error) << "fail";
+      return false;
+    }
+
+
+    for (int i = 0; i < amountFlp; i++) {
+
+      if (Receive(reply, "answerfromflp", i) >= 0) {
+
+        LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
+
+
+        if (i == amountFlp-1) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+          after = high_resolution_clock::now();
+          duration<double> dur = duration_cast<duration<double>>(after - before);
+          LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, schreibe";
+          if (scalingFlp) { //für skalierende #flps
+            write(amountFlp, dur);
+          }
+          else { //für skalierende msg size
+            write(msgSize, dur);
+          }
+
+        }
+        //return true;
+      } else LOG(info) << "hier2";
+    }
   }
 
+  else { //randomReply = true
+    int test = Send(msg2, "scheduledatatoflp");
+    if (test < 0 ) {
+      LOG(error) << "fail";
+      return false;
+    }
 
-  for (int i = 0; i < amountFlp; i++) {
+    if (Receive(reply, "answerfromflp", flpAnswerId) > 0) {
+      LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten, schreibe";
+      after = high_resolution_clock::now();
+      duration<double> dur = duration_cast<duration<double>>(after - before);
+      //write(amountFlp, dur); //für skalierende #flps
+      write(msgSize, dur);
+    }
 
-    if (Receive(reply, "answerfromflp", i) >= 0) {
-
-      LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
-
-
-      if (i == amountFlp-1) { //alle haben geantwortet, timer stoppen -> gilt für RTT
-        after = high_resolution_clock::now();
-        duration<double> dur = duration_cast<duration<double>>(after - before);
-        LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, schreibe";
-        //write(amountFlp, dur); //für skalierende #flps
-        write(msgSize, dur);
-      }
-      //return true;
-    } else LOG(info) << "hier2";
   }
-}
-
-else { //randomReply = true
- int test = Send(msg2, "scheduledatatoflp");
-  if (test < 0 ) {
-    LOG(error) << "fail";
-    return false;
-  }
-
-	if (Receive(reply, "answerfromflp", flpAnswerId) > 0) {
-		LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten, schreibe";
-		after = high_resolution_clock::now();
-		duration<double> dur = duration_cast<duration<double>>(after - before);
-		//write(amountFlp, dur); //für skalierende #flps
-		write(msgSize, dur);
-	}
-
-}
 
 
 
@@ -171,17 +174,17 @@ else { //randomReply = true
 /*
 bool PrototypeSchedulerProcessor::HandleFlpData(FairMQMessagePtr& msg, int index) //bestätigung von FLP (für RTT)
 {
-  //string* text = new std::string(static_cast<char*>(msg->GetData()));
-    LOG(info) << "Empfange Antwort von FLP: " << msg->GetData();
-  answerCounter++;
-  if (answerCounter == amountFlp) {//Bestätigung von allen erreicht
-  LOG(info) << "alle " << amountFlp << " antworten erhalten, schreibe";
-    high_resolution_clock::time_point after = high_resolution_clock::now();
-    duration<double> dur = duration_cast<duration<double>>(after - before);
-  answerCounter=0;
-  write(msgSize, dur);
-  }
-  return true;
+//string* text = new std::string(static_cast<char*>(msg->GetData()));
+LOG(info) << "Empfange Antwort von FLP: " << msg->GetData();
+answerCounter++;
+if (answerCounter == amountFlp) {//Bestätigung von allen erreicht
+LOG(info) << "alle " << amountFlp << " antworten erhalten, schreibe";
+high_resolution_clock::time_point after = high_resolution_clock::now();
+duration<double> dur = duration_cast<duration<double>>(after - before);
+answerCounter=0;
+write(msgSize, dur);
+}
+return true;
 }
 */
 
@@ -189,8 +192,8 @@ bool PrototypeSchedulerProcessor::HandleFlpData(FairMQMessagePtr& msg, int index
 /*
 bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& msg, int index)
 {
-  counter++;
-    LOG(info) << "Empfange Daten von EPN";
+counter++;
+LOG(info) << "Empfange Daten von EPN";
 
 
 if (counter > 50) {
@@ -198,35 +201,35 @@ LOG(info) << "am ende angelangt";
 return false;
 }
 
-        //hier liegt das Problem bei hohen werten
+//hier liegt das Problem bei hohen werten
 
-  FairMQMessagePtr msg2(NewMessage(len));
+FairMQMessagePtr msg2(NewMessage(len));
 
-   LOG(info) <<"hier1";
-  LOG(info) << msg2->GetSize() ;
-  memset(msg2->GetData(), 'a', msg2->GetSize()) ;
-  //memcpy(msg2->GetData(), const_cast<char*>(text->c_str()), msg2->GetSize());
-   LOG(info) <<"hier2";
-
-
+LOG(info) <<"hier1";
+LOG(info) << msg2->GetSize() ;
+memset(msg2->GetData(), 'a', msg2->GetSize()) ;
+//memcpy(msg2->GetData(), const_cast<char*>(text->c_str()), msg2->GetSize());
+LOG(info) <<"hier2";
 
 
-    // Send out the output message
-    LOG(info) <<"Leite weiter an FLP";
 
-  msgSize = std::to_string(msg2->GetSize());
-  before = high_resolution_clock::now();
-    if (Send(msg2, "scheduledatatoflp") < 0)
-    {
-        return false;
-    }
-  //high_resolution_clock::time_point after = high_resolution_clock::now();
-  //duration<double> dur = duration_cast<duration<double>>(after - before);
-  //(write(amountFlp, dur);
-  //write(msgSize, dur);
-  //counter++;
-  //delete text;
-    return true;
+
+// Send out the output message
+LOG(info) <<"Leite weiter an FLP";
+
+msgSize = std::to_string(msg2->GetSize());
+before = high_resolution_clock::now();
+if (Send(msg2, "scheduledatatoflp") < 0)
+{
+return false;
+}
+//high_resolution_clock::time_point after = high_resolution_clock::now();
+//duration<double> dur = duration_cast<duration<double>>(after - before);
+//(write(amountFlp, dur);
+//write(msgSize, dur);
+//counter++;
+//delete text;
+return true;
 }
 */
 

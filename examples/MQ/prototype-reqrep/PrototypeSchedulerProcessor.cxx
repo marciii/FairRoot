@@ -33,6 +33,7 @@ int flpReceived = 0;
 int bestaetigungReceived = 0;
 
 high_resolution_clock::time_point before;
+high_resolution_clock::time_point after;
 
 std::string msgSize;
 int flpAnswerId;
@@ -59,6 +60,7 @@ void PrototypeSchedulerProcessor::InitTask()
   msgFreq = fConfig->GetValue<uint64_t>("msgFreq");
   amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
   msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
+  scalingFlp = fConfig->GetValue<bool>("scalingFlp");
 
 
   this_thread::sleep_for(chrono::seconds(3));
@@ -140,6 +142,16 @@ if (Send(reply, "scheduledata") > 0) //3)
       //dh falls eine antwort nicht empfangen wurde, wird nicht geschrieben
       if (bestaetigungReceived == amountFlp && currentMessage == conf.sendCounter) {
         LOG(info) << "alle bestätigungen erhalten, schreibe";
+        after = high_resolution_clock::now();
+        duration<double> dur = duration_cast<duration<double>>(after - before);
+        if (scalingFlp) {
+          write(amountFlp, dur); //für skalierende #flps
+        }
+        else {
+          write(msgSize, dur); //teil für skalierende msg size
+        }
+
+
         bestaetigungReceived = 0;
         currentMessage++; //wenn alle Bestätigungen erhalten wurde, Nahchrichtenzähler erhöhen
       }

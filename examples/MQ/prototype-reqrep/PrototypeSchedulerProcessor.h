@@ -45,6 +45,7 @@ bool randomReply;
 uint64_t msgFreq;
 uint64_t amountFlp;
 bool msgAutoscale;
+bool scalingFlp;
 
 int bestaetigungReceived = 0;
 };

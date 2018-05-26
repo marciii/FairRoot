@@ -1,3 +1,0 @@
-Request / Reply pattern
-===============
-
