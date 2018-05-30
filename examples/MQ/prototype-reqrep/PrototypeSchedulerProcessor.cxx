@@ -41,6 +41,8 @@ int flpAnswerId;
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
+  uint64_t flpId;
+  uint64_t frequency;
   bool confirmation;
 };
 
@@ -123,7 +125,7 @@ MyMessage msgToFlp;
 msgToFlp.sendCounter = sendCounter;
 //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
 msgToFlp.replyId = getRandomAnswerId(randomReply);
-
+msgToFlp.frequency = msgFreq;
 
 FairMQMessagePtr reply = NewMessage(len);
 FairMQMessagePtr reply2 = NewMessage(1);
@@ -142,8 +144,9 @@ if (Send(reply, "scheduledata") > 0) //3)
   if (Receive(reply2, "scheduledata") >=0) {//6
     memcpy(&conf, reply2->GetData(), sizeof(MyMessage));
     if (conf.confirmation == true) {
-      LOG(info) << "empfange bestätigung: " << bestaetigungReceived;
       bestaetigungReceived++;
+      LOG(info) << "empfange bestätigung von flp " << conf.flpId;
+
       //hier aufpassen, dass alle bestätitungen zur selben nachrichtenwellge gehören
       //dh falls eine antwort nicht empfangen wurde, wird nicht geschrieben
       if (bestaetigungReceived == amountFlp && currentMessage == conf.sendCounter) {

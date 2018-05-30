@@ -31,10 +31,13 @@ using namespace std;
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
+  uint64_t flpId;
+  uint64_t frequency;
   bool confirmation;
 };
 
 int messageCounter = 0;
+uint64_t msgFreq;
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
 {
@@ -74,6 +77,7 @@ bool PrototypeFlpProcessor::ConditionalRun()
   MyMessage conf;
   conf.confirmation = true;
   conf.sendCounter = messageCounter;
+  conf.flpId = myId;
 
   FairMQMessagePtr confirmation = NewMessage(100);
   memcpy(confirmation->GetData(), &conf, sizeof(MyMessage));
@@ -87,13 +91,18 @@ bool PrototypeFlpProcessor::ConditionalRun()
   if (Send(request, "scheduledata") > 0) //1)
   {
     if (Receive(reply, "scheduledata") >= 0) {//4)
+      MyMessage replyMsg;
+      memcpy(&replyMsg, reply->GetData(), sizeof(MyMessage));
+      msgFreq = replyMsg.frequency;
+
 
       LOG(info) << "sende bestätigung";
       Send(confirmation, "scheduledata");//5)
 
       if (Receive(reply2, "scheduledata") > 0 ) {//8)
 
-        this_thread::sleep_for(chrono::seconds(10));
+
+        this_thread::sleep_for(chrono::milliseconds(msgFreq));
 
         return true; }
         else
@@ -101,7 +110,7 @@ bool PrototypeFlpProcessor::ConditionalRun()
       }
     }
 
-    this_thread::sleep_for(chrono::seconds(10));
+    this_thread::sleep_for(chrono::milliseconds(msgFreq));
     return false;
   }
 
