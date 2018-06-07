@@ -372,8 +372,8 @@ endif(BUILD_DOXYGEN)
 
 Option(BUILD_EXAMPLES "Build Examples" ON)
 if(BUILD_EXAMPLES)
-  add_subdirectory (examples)
 endif(BUILD_EXAMPLES)
+add_subdirectory (examples)
 
 if(IWYU_FOUND)
 
