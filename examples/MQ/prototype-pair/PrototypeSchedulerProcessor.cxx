@@ -40,7 +40,6 @@ struct MyMessage {
 PrototypeSchedulerProcessor::PrototypeSchedulerProcessor()
 {
 
-
 	//OnData("scheduledatafromepn", &PrototypeSchedulerProcessor::HandleData);
 	//OnData("scheduledatatoflp", &PrototypeSchedulerProcessor::HandleFlpData);
 }

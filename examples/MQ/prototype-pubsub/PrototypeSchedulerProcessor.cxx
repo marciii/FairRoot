@@ -56,7 +56,6 @@ void PrototypeSchedulerProcessor::InitTask()
 }
 
 
-
 bool PrototypeSchedulerProcessor::ConditionalRun()
 {
 

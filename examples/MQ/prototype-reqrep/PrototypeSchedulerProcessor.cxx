@@ -65,7 +65,6 @@ void PrototypeSchedulerProcessor::InitTask()
   msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
   scalingFlp = fConfig->GetValue<bool>("scalingFlp");
 
-
   this_thread::sleep_for(chrono::seconds(3));
 }
 
