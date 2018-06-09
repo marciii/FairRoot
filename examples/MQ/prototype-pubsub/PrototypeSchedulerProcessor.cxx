@@ -67,6 +67,10 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
     return false;
   }
 
+  if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+		LOG(info) << "am ende angelangt";
+		return false;
+	}
 
   //kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
   FairMQMessagePtr testMsg(NewSimpleMessage("OK"));

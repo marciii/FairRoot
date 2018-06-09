@@ -1,6 +1,24 @@
 {
     "fairMQOptions": {
         "devices": [
+           {
+                "id": "flpprocessorpair0",
+                "channels": [
+                    {
+                        "name": "sched-flp-chan",
+                        "sockets": [
+                            {
+                                "type": "pair",
+                                "method": "bind",
+                                "address": "tcp://*:25000",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            }
+                        ]
+                    }
+                ]
+            },
             {
                 "id": "flpprocessorpair1",
                 "channels": [
@@ -397,6 +415,14 @@
                     {
                         "name": "sched-flp-chan",
                         "sockets": [
+                            {
+                                "type": "pair",
+                                "method": "connect",
+                                "address": "tcp://localhost:25000",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
                             {
                                 "type": "pair",
                                 "method": "connect",

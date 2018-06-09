@@ -54,6 +54,7 @@ void PrototypeSchedulerProcessor::InitTask()
 	msgFreq = fConfig->GetValue<uint64_t>("msgFreq");
 	amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
 	msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
+	rtt = fConfig->GetValue<bool>("rtt");
 	scalingFlp = fConfig->GetValue<bool>("scalingFlp");
 }
 
@@ -68,6 +69,10 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 		return false;
 	}
 
+	if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+		LOG(info) << "am ende angelangt";
+		return false;
+	}
 
 	int len = messageSize;
 
@@ -102,7 +107,29 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
 	answerCounter	= 0;
 
-	if (randomReply == false) { //Antwort von allen FLPs sammeln
+	if (randomReply == false && rtt == false) { //keine round-trip time, nur das Senden messen
+
+		for (int i = 0; i < amountFlp; i++) {
+
+			int test = Send(msg2[i], "sched-flp-chan", i);
+			if (test < 0 ) {
+				LOG(error) << "fail index " << i;
+				return false;
+			}
+		}
+		after = high_resolution_clock::now();
+		duration<double> dur = duration_cast<duration<double>>(after - before);
+		LOG(info) << "an alle geschickt, schreibe";
+		if (scalingFlp) {
+			write(amountFlp, dur); //für skalierende #flps
+		}
+		else {
+			write(msgSize, dur);	//für skalierende msg size
+		}
+	}
+
+		else if (randomReply == false && rtt == true) {//Antwort von allen FLPs sammeln
+
 		for (int i = 0; i < amountFlp; i++) {
 
 			int test = Send(msg2[i], "sched-flp-chan", i);
@@ -132,6 +159,9 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 			} else LOG(error) << "fail";
 
 		}
+
+
+
 	}
 	else { //randomReply = true
 

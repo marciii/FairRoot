@@ -19,6 +19,7 @@ void addCustomOptions(bpo::options_description& options)
 	("randomReply", bpo::value<bool>()->default_value(false), "wether a random FLP answers to get a statistics or not")
 	("msgFreq", bpo::value<uint64_t>()->default_value(1000), "frequency of the messages in ms")
 	("msgAutoscale", bpo::value<bool>()->default_value(false), "wether the message sizes shall increase automatically")
+	("rtt", bpo::value<bool>()->default_value(false), "round-trip time: wether the flp are supposed to answer or not")
 	("scalingFlp", bpo::value<bool>()->default_value(false), "wether we are testing on diffent #FLPs")
 	("amountFlp", bpo::value<uint64_t>()->default_value(1), "amount of FLPs");
 }

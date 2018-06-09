@@ -30,6 +30,7 @@ int sendCounter = 1; //0
 int currentMessage = 1;
 int flpReceived = 0;
 
+int requestReceived = 0;
 int bestaetigungReceived = 0;
 
 high_resolution_clock::time_point before;
@@ -93,20 +94,21 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int /*in
 bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*index*/) //FLP data, alias Schrit 2)
 {
 
-  sendCounter++;
+
 
   if (sendCounter ==  1300) { //
     LOG(info) << "am ende angelangt";
     return false;
   }
 
+  if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+		LOG(info) << "am ende angelangt";
+		return false;
+	}
   int len = messageSize;
 
 
   //teil fuer message scaling
-  if (msgAutoscale == true) {
-    len = calculateMessageSize(sendCounter);
-  }
 
 
 
@@ -116,41 +118,46 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
   memcpy(&receivedMsg, request->GetData(), sizeof(MyMessage));
 
 
-  /*
-  if (counter > 20) { //50 für plot: mit size und realtime dauer
-  LOG(info) << "am ende angelangt";
-  return false;
-}*/
-MyMessage msgToFlp;
-msgToFlp.sendCounter = sendCounter;
-//generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-msgToFlp.replyId = getRandomAnswerId(randomReply);
-msgToFlp.frequency = msgFreq;
+  if (receivedMsg.confirmation == false) { // 2) erster request also
+    requestReceived++;
+    if (requestReceived == 1) {
+      before = high_resolution_clock::now(); //timer NUR beim ersten request starten
+      //damit er nicht bei jedem request neu startet
+      sendCounter++;//hier die versendeten nachrichten zählen
+    }
+    if (requestReceived == amountFlp) {
+      requestReceived = 0; //zaehler zurücksetzen
+    }
 
-FairMQMessagePtr reply = NewMessage(len);
-FairMQMessagePtr reply2 = NewMessage(1);
-memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
+    //hier die eigentliche (große) Nachricht
+    if (msgAutoscale == true) {
+      len = calculateMessageSize(sendCounter);
+    }
 
+    MyMessage msgToFlp;
+    msgToFlp.sendCounter = sendCounter;
+    //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+    msgToFlp.replyId = getRandomAnswerId(randomReply);
+    msgToFlp.frequency = msgFreq;
 
-std::string msgSize = std::to_string(reply->GetSize());
+    FairMQMessagePtr reply = NewMessage(len);
+    memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
+    msgSize = std::to_string(reply->GetSize());
+    if (Send(reply, "scheduledata") > 0) // 3)
+      return true;
+    else
+      return false;
+  }
+  else if (receivedMsg.confirmation == true) { // 6)
+    bestaetigungReceived++;
+    LOG(info) << "empfange bestätigung von flp " << receivedMsg.flpId;
 
-MyMessage conf;
+    //if (receivedMsg.flpId == flpAnswerId && randomReply == true) {
+    //}
 
-//high_resolution_clock::time_point before = high_resolution_clock::now(); //timer starten
-before = high_resolution_clock::now();
-
-if (Send(reply, "scheduledata") > 0) //3)
-{
-  if (Receive(reply2, "scheduledata") >=0) {//6
-    memcpy(&conf, reply2->GetData(), sizeof(MyMessage));
-    if (conf.confirmation == true) {
-      bestaetigungReceived++;
-      LOG(info) << "empfange bestätigung von flp " << conf.flpId;
-
-      //hier aufpassen, dass alle bestätitungen zur selben nachrichtenwellge gehören
-      //dh falls eine antwort nicht empfangen wurde, wird nicht geschrieben
-      if (bestaetigungReceived == amountFlp && currentMessage == conf.sendCounter) {
+      if (bestaetigungReceived == amountFlp) {
         LOG(info) << "alle bestätigungen erhalten, schreibe";
+        bestaetigungReceived = 0;
         after = high_resolution_clock::now();
         duration<double> dur = duration_cast<duration<double>>(after - before);
         if (scalingFlp) {
@@ -159,27 +166,15 @@ if (Send(reply, "scheduledata") > 0) //3)
         else {
           write(msgSize, dur); //teil für skalierende msg size
         }
-
-
-        bestaetigungReceived = 0;
-        currentMessage++; //wenn alle Bestätigungen erhalten wurde, Nahchrichtenzähler erhöhen
       }
-      //hier beginnt dann nächste nachricht, ohne dass alle bestätigungen von der vorherigen gesammelt wurden
-      //dh es wird nichts geschrieben
-      else if (currentMessage != conf.sendCounter) {
-        LOG(info) << "currentMessage " << currentMessage << "     conf.sendcounter " << conf.sendCounter;
-        currentMessage = conf.sendCounter; //der aktuelle nachrichtenzähler wird auf diesen hier gesetzt
-        bestaetigungReceived = 1;
-        LOG(info) << "eine oder mehrere Bestätigungen nicht erhalten, schreibe die letzte Runde nicht mit";
-      }
-    }
-    Send(reply2, "scheduledata"); //7
-    return true;
+      FairMQMessagePtr step7 = NewMessage(1);
+      if (Send(step7, "scheduledata") > 0 ) // 7)
+        return true;
+      else
+        return false;
   }
 
 
-}
-return false;
 }
 
 void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur) {

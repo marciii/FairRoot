@@ -37,6 +37,7 @@ uint64_t msgFreq;
 uint64_t amountFlp;
 bool msgAutoscale;
 bool scalingFlp;
+bool rtt;
 int calculateMessageSize(int counter);
 uint64_t getRandomAnswerId(bool randomAnswer);
 
