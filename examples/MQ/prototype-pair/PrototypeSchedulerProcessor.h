@@ -24,8 +24,9 @@ class PrototypeSchedulerProcessor : public FairMQDevice
   protected:
     bool HandleData(FairMQMessagePtr&, int);
 	bool HandleFlpData(FairMQMessagePtr&, int);
-void write(int amountFlp, duration<double>dur);
-void write(std::string msgSize, duration<double>dur);
+void writeToFile(std::string result);
+//void write(int amountFlp, duration<double>dur);
+//void write(std::string msgSize, duration<double>dur);
 
 virtual void InitTask();
 virtual bool ConditionalRun();
@@ -37,7 +38,6 @@ uint64_t msgFreq;
 uint64_t amountFlp;
 bool msgAutoscale;
 bool scalingFlp;
-bool rtt;
 int calculateMessageSize(int counter);
 uint64_t getRandomAnswerId(bool randomAnswer);
 

@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <random>
 
+#include <string>
+#include <sstream>
 //times
 #include <ctime>
 
@@ -38,6 +40,8 @@ high_resolution_clock::time_point after;
 
 std::string msgSize;
 int flpAnswerId;
+
+std::stringstream result;
 
 struct MyMessage {
   uint64_t sendCounter;
@@ -73,7 +77,7 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int /*in
 
   //LOG(info) << "Received request from client: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
 
-  string* text = new string("bestaetigung, dass nachricht ankam");
+  string* text = new string("bestaetigung");
 
   //LOG(info) << "Sende EPN Bestaetigung";
 
@@ -96,12 +100,14 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
 
 
   if (sendCounter ==  1300) { //
-    LOG(info) << "am ende angelangt";
+    LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
     return false;
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-		LOG(info) << "am ende angelangt";
+		LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
 		return false;
 	}
   int len = messageSize;
@@ -155,15 +161,17 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
     //}
 
       if (bestaetigungReceived == amountFlp) {
-        LOG(info) << "alle bestätigungen erhalten, schreibe";
+        LOG(info) << "alle bestätigungen erhalten";
         bestaetigungReceived = 0;
         after = high_resolution_clock::now();
         duration<double> dur = duration_cast<duration<double>>(after - before);
         if (scalingFlp) {
-          write(amountFlp, dur); //für skalierende #flps
+          //write(amountFlp, dur); //für skalierende #flps
+          result << amountFlp << "\t" << dur.count() << std::endl;
         }
         else {
-          write(msgSize, dur); //teil für skalierende msg size
+          //write(msgSize, dur); //teil für skalierende msg size
+          result << msgSize << "\t" << dur.count() << std::endl;
         }
       }
       FairMQMessagePtr step7 = NewMessage(1);
@@ -176,16 +184,27 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
 
 }
 
-void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur) {
+void PrototypeSchedulerProcessor::writeToFile(std::string text)
+{
+	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+	gnudatafile << text;
+	return;
+}
+/*
+void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur)
+{
   std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
   gnudatafile << amountFlp << "\t" << dur.count() << std::endl;
   return;
 }
-void PrototypeSchedulerProcessor::write(std::string msgSize, duration<double>dur) {
+
+void PrototypeSchedulerProcessor::write(std::string s1, duration<double> dur)
+{
   std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-  gnudatafile << msgSize << "\t" << dur.count() << std::endl;
+  gnudatafile << s1 << "\t" << dur.count() << std::endl;
   return;
 }
+*/
 
 int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
   int len;

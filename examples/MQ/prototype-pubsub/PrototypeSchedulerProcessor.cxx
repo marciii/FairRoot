@@ -13,6 +13,7 @@
 #include <random>
 
 #include <string>
+#include <sstream>
 
 //times
 #include <ctime>
@@ -30,6 +31,8 @@ int answerCounter = 0;
 
 std::string msgSize;
 int flpAnswerId;
+
+std::stringstream result;
 
 struct MyMessage {
   uint64_t sendCounter;
@@ -62,12 +65,14 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
   sendCounter++;
 
   if (sendCounter ==  1300) { //
-    LOG(info) << "am ende angelangt";
+    LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
     return false;
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-		LOG(info) << "am ende angelangt";
+		LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
 		return false;
 	}
 
@@ -125,12 +130,14 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
         if (i == amountFlp-1) { //alle haben geantwortet, timer stoppen -> gilt für RTT
           after = high_resolution_clock::now();
           duration<double> dur = duration_cast<duration<double>>(after - before);
-          LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, schreibe";
+          LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
           if (scalingFlp) { //für skalierende #flps
-            write(amountFlp, dur);
+            result << amountFlp << "\t" << dur.count() << std::endl;
+            //write(amountFlp, dur);
           }
           else { //für skalierende msg size
-            write(msgSize, dur);
+            result << msgSize << "\t" << dur.count() << std::endl;
+            //write(msgSize, dur);
           }
 
         }
@@ -147,11 +154,11 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
     }
 
     if (Receive(reply, "answerfromflp", flpAnswerId) > 0) {
-      LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten, schreibe";
+      LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
       after = high_resolution_clock::now();
       duration<double> dur = duration_cast<duration<double>>(after - before);
-      //write(amountFlp, dur); //für skalierende #flps
-      write(msgSize, dur);
+
+      result << flpAnswerId << "\t" << dur.count() << std::endl;
     }
 
   }
@@ -235,7 +242,13 @@ return false;
 return true;
 }
 */
-
+void PrototypeSchedulerProcessor::writeToFile(std::string text)
+{
+	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+	gnudatafile << text;
+	return;
+}
+/*
 void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur)
 {
   std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
@@ -249,6 +262,7 @@ void PrototypeSchedulerProcessor::write(std::string s1, duration<double> dur)
   gnudatafile << s1 << "\t" << dur.count() << std::endl;
   return;
 }
+*/
 
 int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
   int len;

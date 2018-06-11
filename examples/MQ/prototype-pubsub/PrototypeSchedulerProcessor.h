@@ -24,8 +24,9 @@ public:
 protected:
   bool HandleData(FairMQMessagePtr&, int);
   bool HandleFlpData(FairMQMessagePtr&, int);
-  void write(std::string s1, duration<double> dur);
-  void write(int amountFlp, duration<double>dur);
+  //void write(std::string s1, duration<double> dur);
+  //void write(int amountFlp, duration<double>dur);
+  void writeToFile(std::string text);
 
   virtual void InitTask();
   virtual bool ConditionalRun();
