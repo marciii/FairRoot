@@ -106,10 +106,10 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-		LOG(info) << "am ende angelangt, schreibe";
+    LOG(info) << "am ende angelangt, schreibe";
     writeToFile(result.str());
-		return false;
-	}
+    return false;
+  }
   int len = messageSize;
 
 
@@ -129,6 +129,7 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
       before = high_resolution_clock::now(); //timer NUR beim ersten request starten
       //damit er nicht bei jedem request neu startet
       sendCounter++;//hier die versendeten nachrichten zählen
+      getRandomAnswerId(randomReply); //auch hier nur einmal die Funktion, damit diese nicht x mal aufgerufen wird
     }
     if (requestReceived == amountFlp) {
       requestReceived = 0; //zaehler zurücksetzen
@@ -142,24 +143,36 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
     MyMessage msgToFlp;
     msgToFlp.sendCounter = sendCounter;
     //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-    msgToFlp.replyId = getRandomAnswerId(randomReply);
+    msgToFlp.replyId = flpAnswerId;
     msgToFlp.frequency = msgFreq;
 
     FairMQMessagePtr reply = NewMessage(len);
     memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
     msgSize = std::to_string(reply->GetSize());
     if (Send(reply, "scheduledata") > 0) // 3)
-      return true;
+    return true;
     else
-      return false;
+    return false;
   }
   else if (receivedMsg.confirmation == true) { // 6)
     bestaetigungReceived++;
     LOG(info) << "empfange bestätigung von flp " << receivedMsg.flpId;
 
-    //if (receivedMsg.flpId == flpAnswerId && randomReply == true) {
-    //}
-
+    if (randomReply == true) {
+      if (receivedMsg.flpId == flpAnswerId) {
+        //für randomReply - wenn bestätigung ankam
+        LOG(info) << "bestätigung von " << flpAnswerId << " erhalten";
+        after = high_resolution_clock::now();
+        duration<double> dur = duration_cast<duration<double>>(after - before);
+        result << flpAnswerId << "\t" << dur.count() << std::endl;
+      }
+      FairMQMessagePtr step7 = NewMessage(1);
+      if (Send(step7, "scheduledata") > 0 ) // 7)
+        return true;
+      else
+        return false;
+    }
+    else if (randomReply == false) {
       if (bestaetigungReceived == amountFlp) {
         LOG(info) << "alle bestätigungen erhalten";
         bestaetigungReceived = 0;
@@ -176,9 +189,10 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
       }
       FairMQMessagePtr step7 = NewMessage(1);
       if (Send(step7, "scheduledata") > 0 ) // 7)
-        return true;
+      return true;
       else
-        return false;
+      return false;
+    }
   }
 
 
@@ -186,23 +200,23 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
 
 void PrototypeSchedulerProcessor::writeToFile(std::string text)
 {
-	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-	gnudatafile << text;
-	return;
+  std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+  gnudatafile << text;
+  return;
 }
 /*
 void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur)
 {
-  std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-  gnudatafile << amountFlp << "\t" << dur.count() << std::endl;
-  return;
+std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+gnudatafile << amountFlp << "\t" << dur.count() << std::endl;
+return;
 }
 
 void PrototypeSchedulerProcessor::write(std::string s1, duration<double> dur)
 {
-  std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-  gnudatafile << s1 << "\t" << dur.count() << std::endl;
-  return;
+std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+gnudatafile << s1 << "\t" << dur.count() << std::endl;
+return;
 }
 */
 

@@ -161,7 +161,7 @@ if (randomReply == false) {//Antwort von allen FLPs sammeln
 		FairMQMessagePtr reply(NewMessage());
 
 		if (Receive(reply, "sched-flp-chan", flpAnswerId) > 0) {
-			LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten, schreibe";
+			LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
 			after = high_resolution_clock::now();
 			duration<double> dur = duration_cast<duration<double>>(after - before);
 			result << flpAnswerId << "\t" << dur.count() << std::endl;

@@ -96,18 +96,19 @@ bool PrototypeFlpProcessor::ConditionalRun()
       msgFreq = replyMsg.frequency;
 
 
-      LOG(info) << "sende bestätigung";
-      Send(confirmation, "scheduledata");//5)
+        LOG(info) << "sende bestätigung";
+        Send(confirmation, "scheduledata");//5)
 
-      if (Receive(reply2, "scheduledata") > 0 ) {//8)
+        if (Receive(reply2, "scheduledata") > 0 ) {//8)
 
 
-        this_thread::sleep_for(chrono::milliseconds(msgFreq));
+          this_thread::sleep_for(chrono::milliseconds(msgFreq));
 
-        return true; }
-        else
-        return false;
-      }
+          return true; }
+          else
+          return false;
+        }
+
     }
 
     this_thread::sleep_for(chrono::milliseconds(msgFreq));
