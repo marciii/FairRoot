@@ -21,6 +21,8 @@
 #include "FairMQProgOptions.h"
 #include "HardwareInformation.h"
 
+#include <string>
+#include <sstream>
 //times
 #include <ctime>
 
@@ -28,16 +30,22 @@
 using namespace std::chrono;
 using namespace std;
 
+
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
   uint64_t flpId;
   uint64_t frequency;
+  uint64_t numberFlp;
+  uint64_t numberMessages;
   bool confirmation;
 };
 
 int messageCounter = 0;
 uint64_t msgFreq;
+uint64_t amountFlp;
+uint64_t amountMessages;
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
 {
@@ -54,6 +62,11 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
 
   messageCounter++;
+  if (messageCounter == amountMessages) {
+    LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
+    return false;
+  }
 
 
   string* text = new string(std::to_string(messageCounter) + ". Nachricht");
@@ -85,16 +98,26 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
   LOG(info) << "Sende an Scheduler:  \"" << *text << "\"";
 
-  high_resolution_clock::time_point rttBefore = high_resolution_clock::now();
+  before = high_resolution_clock::now();
 
 
   if (Send(request, "scheduledata") > 0) //1)
   {
     if (Receive(reply, "scheduledata") >= 0) {//4)
+
       MyMessage replyMsg;
       memcpy(&replyMsg, reply->GetData(), sizeof(MyMessage));
+      //msgSize = string(static_cast<char*>(reply->GetSize()));
+      msgSize = std::to_string(reply->GetSize());
+    //  msgSize = string(static_cast<char*>(reply->GetSize()));
       msgFreq = replyMsg.frequency;
+      amountFlp = replyMsg.numberFlp;
+      amountMessages = replyMsg.numberMessages;
 
+      after = high_resolution_clock::now();
+      duration<double> dur = duration_cast<duration<double>>(after - before);
+    
+      result << myId << "\t" << msgSize << "\t" << amountFlp << "\t" << dur.count() << std::endl;
 
         LOG(info) << "sende bestätigung";
         Send(confirmation, "scheduledata");//5)
@@ -113,6 +136,15 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
     this_thread::sleep_for(chrono::milliseconds(msgFreq));
     return false;
+  }
+
+  void PrototypeFlpProcessor::writeToFile(std::string text)
+  {
+    std::stringstream filename;
+    filename << "gnudatafile" << myId << ".txt";
+    std::ofstream gnudatafile(filename.str(), std::ios_base::out | std::ios_base::app );
+    gnudatafile << text;
+    return;
   }
 
 

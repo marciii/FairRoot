@@ -30,11 +30,17 @@ class PrototypeFlpProcessor : public FairMQDevice
 
   protected:
 
+high_resolution_clock::time_point before;
+high_resolution_clock::time_point after;
 
+std::string msgSize;
+
+std::stringstream result;
 
     virtual bool ConditionalRun();
     virtual void InitTask();
 
+    void writeToFile(std::string text);
 private:
     uint64_t myId;
 };

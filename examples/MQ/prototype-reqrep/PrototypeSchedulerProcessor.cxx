@@ -48,6 +48,8 @@ struct MyMessage {
   uint64_t replyId;
   uint64_t flpId;
   uint64_t frequency;
+  uint64_t numberFlp;
+  uint64_t numberMessages;
   bool confirmation;
 };
 
@@ -99,13 +101,13 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
 
 
 
-  if (sendCounter ==  1300) { //
+  if (sendCounter ==  1500) { //
     LOG(info) << "am ende angelangt, schreibe";
     writeToFile(result.str());
     return false;
   }
 
-  if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+  if (sendCounter == 150 && scalingFlp == true) { //nur 100 messages pro Versuch
     LOG(info) << "am ende angelangt, schreibe";
     writeToFile(result.str());
     return false;
@@ -145,6 +147,11 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
     //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
     msgToFlp.replyId = flpAnswerId;
     msgToFlp.frequency = msgFreq;
+    msgToFlp.numberFlp = amountFlp;
+    if (scalingFlp)
+      msgToFlp.numberMessages = 100;
+    else
+      msgToFlp.numberMessages = 1299;
 
     FairMQMessagePtr reply = NewMessage(len);
     memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
