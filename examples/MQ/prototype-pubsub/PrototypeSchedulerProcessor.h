@@ -44,7 +44,7 @@ protected:
 
 double min;
 double max;
-double median;
+double average;
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */

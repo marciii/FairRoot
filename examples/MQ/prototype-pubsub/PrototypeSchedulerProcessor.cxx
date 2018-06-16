@@ -73,8 +73,11 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-    median = median / 99;
-		result << amountFlp << "\t" << min << "\t" << median << "\t" << max << std::endl;
+    average = average / 99;
+		double min_abweichung = average - min;
+		double max_abweichung = max - average;
+
+		result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
 		LOG(info) << "am ende angelangt, schreibe";
 		writeToFile(result.str());
 		return false;
@@ -92,8 +95,10 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
     if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
       sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
       sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
-        median = median / 100;
-        result << msgSize << "\t" << min << "\t" << median << "\t" << max << std::endl;
+        double min_abweichung = average - min;
+				double max_abweichung = max - average;
+
+				result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
         minMaxReset = true;
       }
     len = calculateMessageSize(sendCounter);
@@ -150,7 +155,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
           }
 
 
-            median += dur.count();
+            average += dur.count();
             if (dur.count() < min) min = dur.count();
             if (dur.count() > max) max = dur.count();
 
