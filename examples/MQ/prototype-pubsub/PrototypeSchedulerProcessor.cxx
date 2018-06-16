@@ -74,10 +74,11 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
     average = average / 99;
-		double min_abweichung = average - min;
-		double max_abweichung = max - average;
+		//double min_abweichung = average - min;
+		//double max_abweichung = max - average;
 
-		result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+		//result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+    result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
 		LOG(info) << "am ende angelangt, schreibe";
 		writeToFile(result.str());
 		return false;
