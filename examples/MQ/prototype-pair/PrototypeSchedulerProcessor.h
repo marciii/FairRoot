@@ -41,6 +41,10 @@ bool scalingFlp;
 int calculateMessageSize(int counter);
 uint64_t getRandomAnswerId(bool randomAnswer);
 
+double min;
+double max;
+double median;
+
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */

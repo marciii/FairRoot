@@ -55,7 +55,7 @@ PrototypeFlpProcessor::PrototypeFlpProcessor()
 void PrototypeFlpProcessor::InitTask()
 {
   myId = fConfig->GetValue<uint64_t>("myId");
-  this_thread::sleep_for(chrono::seconds(10));
+  this_thread::sleep_for(chrono::seconds(5));
 }
 
 

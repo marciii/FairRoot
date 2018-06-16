@@ -34,6 +34,8 @@ int flpAnswerId;
 
 std::stringstream result;
 
+bool minMaxReset = false;
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
@@ -64,15 +66,17 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   sendCounter++;
 
-  if (sendCounter ==  1300) { //
+  if (sendCounter ==  1302) { //
     LOG(info) << "am ende angelangt, schreibe";
     writeToFile(result.str());
     return false;
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+    median = median / 99;
+		result << amountFlp << "\t" << min << "\t" << median << "\t" << max << std::endl;
 		LOG(info) << "am ende angelangt, schreibe";
-    writeToFile(result.str());
+		writeToFile(result.str());
 		return false;
 	}
 
@@ -85,6 +89,13 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   //teil fuer message scaling
   if (msgAutoscale == true) {
+    if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
+      sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
+      sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
+        median = median / 100;
+        result << msgSize << "\t" << min << "\t" << median << "\t" << max << std::endl;
+        minMaxReset = true;
+      }
     len = calculateMessageSize(sendCounter);
   }
 
@@ -131,14 +142,17 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
           after = high_resolution_clock::now();
           duration<double> dur = duration_cast<duration<double>>(after - before);
           LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
-          if (scalingFlp) { //für skalierende #flps
-            result << amountFlp << "\t" << dur.count() << std::endl;
-            //write(amountFlp, dur);
+
+          if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+            min = dur.count();
+            max = dur.count();
+            minMaxReset = false;
           }
-          else { //für skalierende msg size
-            result << msgSize << "\t" << dur.count() << std::endl;
-            //write(msgSize, dur);
-          }
+
+
+            median += dur.count();
+            if (dur.count() < min) min = dur.count();
+            if (dur.count() > max) max = dur.count();
 
         }
         //return true;

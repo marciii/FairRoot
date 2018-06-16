@@ -49,7 +49,9 @@ uint64_t amountFlp;
 bool msgAutoscale;
 bool scalingFlp;
 
-int bestaetigungReceived = 0;
+double min;
+double max;
+double median;
 };
 
 #endif /* PROTOTYPESCHEDULERPROCESSOR_H_ */

@@ -43,6 +43,8 @@ int flpAnswerId;
 
 std::stringstream result;
 
+bool minMaxReset = false;
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
@@ -82,20 +84,22 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   sendCounter++;
 
-  if (sendCounter ==  1300) { //
+  if (sendCounter ==  1302) { //
     LOG(info) << "am ende angelangt, schreibe";
     writeToFile(result.str());
     return false;
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-		LOG(info) << "am ende angelangt, schreibe";
+    median = median / 99;
+    result << amountFlp << "\t" << min << "\t" << median << "\t" << max << std::endl;
+    LOG(info) << "am ende angelangt, schreibe";
     writeToFile(result.str());
-		return false;
-	}
+    return false;
+  }
 
   //kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
-//  FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
+  //  FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
   //Send(testMsg, "scheduledatafromepn");
 
 
@@ -103,96 +107,109 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   //teil fuer message scaling
   if (msgAutoscale == true) {
-    len = calculateMessageSize(sendCounter);
-  }
 
-
-  MyMessage msgToFlp;
-  msgToFlp.sendCounter = sendCounter;
-  //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-  msgToFlp.replyId = getRandomAnswerId(randomReply);
-
-  FairMQMessagePtr msg2 = NewMessage(len);
-
-  // memset(msg2->GetData(), 'a', msg2->GetSize());
-  memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
-
-
-  msgSize = std::to_string(msg2->GetSize());
-
-
-  //Zeit starten
-  //high_resolution_clock::time_point before = high_resolution_clock::now();
-  FairMQMessagePtr reply(NewMessage());
-
-  before = high_resolution_clock::now();
-
-
-
-
-  if (randomReply == false) {
-    for (int i=0;i<amountFlp;i++) {
-    int test = Send(msg2, "scheduledata", i);
-    if (test < 0 ) {
-      LOG(error) << "fail";
-      return false;
+    if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
+      sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
+      sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
+        median = median / 100;
+        result << msgSize << "\t" << min << "\t" << median << "\t" << max << std::endl;
+        minMaxReset = true;
+      }
+      len = calculateMessageSize(sendCounter);
     }
 
-      if (Receive(reply, "scheduledata", i) >= 0) {
 
-        LOG(info) << "Empfange von FLP: " << i;
-        bestaetigungReceived++;
+    MyMessage msgToFlp;
+    msgToFlp.sendCounter = sendCounter;
+    //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+    msgToFlp.replyId = getRandomAnswerId(randomReply);
 
-        if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+    FairMQMessagePtr msg2 = NewMessage(len);
+
+    // memset(msg2->GetData(), 'a', msg2->GetSize());
+    memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
+
+
+    msgSize = std::to_string(msg2->GetSize());
+
+
+    //Zeit starten
+    //high_resolution_clock::time_point before = high_resolution_clock::now();
+    FairMQMessagePtr reply(NewMessage());
+
+    before = high_resolution_clock::now();
+
+
+
+
+    if (randomReply == false) {
+      for (int i=0;i<amountFlp;i++) {
+        int test = Send(msg2, "scheduledata", i);
+        if (test < 0 ) {
+          LOG(error) << "fail";
+          return false;
+        }
+
+        if (Receive(reply, "scheduledata", i) >= 0) {
+
+          LOG(info) << "Empfange von FLP: " << i;
+          bestaetigungReceived++;
+
+          if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+            after = high_resolution_clock::now();
+            duration<double> dur = duration_cast<duration<double>>(after - before);
+            LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+
+            if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+              min = dur.count();
+              max = dur.count();
+              minMaxReset = false;
+            }
+
+
+            median += dur.count();
+            if (dur.count() < min) min = dur.count();
+            if (dur.count() > max) max = dur.count();
+
+
+            bestaetigungReceived=0;
+            //return true;
+          }
+        }
+      }
+
+    }
+
+    else { //randomReply = true
+      for (int i=0;i<amountFlp;i++) {
+        int test = Send(msg2, "scheduledatatoflp", i);
+        if (test < 0 ) {
+          LOG(error) << "fail";
+          return false;
+        }
+
+        if (Receive(reply, "answerfromflp", i) > 0) {
+          LOG(info) << "bestätigung von flp erhalten";
           after = high_resolution_clock::now();
           duration<double> dur = duration_cast<duration<double>>(after - before);
-          LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
-          if (scalingFlp) { //für skalierende #flps
-            result << amountFlp << "\t" << dur.count() << std::endl;
-            //write(amountFlp, dur);
-          }
-          else { //für skalierende msg size
-            result << msgSize << "\t" << dur.count() << std::endl;
-            //write(msgSize, dur);
-          }
 
-          bestaetigungReceived=0;
-        //return true;
+          result << flpAnswerId << "\t" << dur.count() << std::endl;
+        }
       }
     }
-  }
 
-  }
 
-  else { //randomReply = true
-    int test = Send(msg2, "scheduledatatoflp");
-    if (test < 0 ) {
-      LOG(error) << "fail";
-      return false;
-    }
 
-    if (Receive(reply, "answerfromflp") > 0) {
-      LOG(info) << "bestätigung von flp erhalten";
-      after = high_resolution_clock::now();
-      duration<double> dur = duration_cast<duration<double>>(after - before);
+    this_thread::sleep_for(chrono::milliseconds(msgFreq));
 
-      result << flpAnswerId << "\t" << dur.count() << std::endl;
-    }
-
+    return true;
   }
 
 
 
-  this_thread::sleep_for(chrono::milliseconds(msgFreq));
-
-  return true;
-}
-
-
-
-/*
-bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int index) //EPN data
-{
+  /*
+  bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int index) //EPN data
+  {
 
   //LOG(info) << "Received request from client: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
 
@@ -208,10 +225,10 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int inde
   if (Send(reply, "epndata") > 0)
   {
 
-    return true;
-  }
+  return true;
+}
 
-  return false;
+return false;
 }
 */
 
@@ -221,106 +238,106 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int ind
 
 
 
-  if (sendCounter ==  1500) { //
-    LOG(info) << "am ende angelangt, schreibe";
-    writeToFile(result.str());
-    return false;
-  }
+if (sendCounter ==  1500) { //
+LOG(info) << "am ende angelangt, schreibe";
+writeToFile(result.str());
+return false;
+}
 
-  if (sendCounter == 150 && scalingFlp == true) { //nur 100 messages pro Versuch
-    LOG(info) << "am ende angelangt, schreibe";
-    writeToFile(result.str());
-    return false;
-  }
-  int len = messageSize;
-
-
-  //teil fuer message scaling
+if (sendCounter == 150 && scalingFlp == true) { //nur 100 messages pro Versuch
+LOG(info) << "am ende angelangt, schreibe";
+writeToFile(result.str());
+return false;
+}
+int len = messageSize;
 
 
-
-  MyMessage receivedMsg;
-  // make sure the msg is large enough to hold the data
-  assert(request->GetSize() >= sizeof(MyMessage));
-  memcpy(&receivedMsg, request->GetData(), sizeof(MyMessage));
+//teil fuer message scaling
 
 
-  if (receivedMsg.confirmation == false) { // 2) erster request also
-    requestReceived++;
-    if (requestReceived == 1) {
-      before = high_resolution_clock::now(); //timer NUR beim ersten request starten
-      //damit er nicht bei jedem request neu startet
-      sendCounter++;//hier die versendeten nachrichten zählen
-      getRandomAnswerId(randomReply); //auch hier nur einmal die Funktion, damit diese nicht x mal aufgerufen wird
-    }
-    if (requestReceived == amountFlp) {
-      requestReceived = 0; //zaehler zurücksetzen
-    }
 
-    //hier die eigentliche (große) Nachricht
-    if (msgAutoscale == true) {
-      len = calculateMessageSize(sendCounter);
-    }
+MyMessage receivedMsg;
+// make sure the msg is large enough to hold the data
+assert(request->GetSize() >= sizeof(MyMessage));
+memcpy(&receivedMsg, request->GetData(), sizeof(MyMessage));
 
-    MyMessage msgToFlp;
-    msgToFlp.sendCounter = sendCounter;
-    //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-    msgToFlp.replyId = flpAnswerId;
-    msgToFlp.frequency = msgFreq;
-    msgToFlp.numberFlp = amountFlp;
-    if (scalingFlp)
-      msgToFlp.numberMessages = 100;
-    else
-      msgToFlp.numberMessages = 1299;
 
-    FairMQMessagePtr reply = NewMessage(len);
-    memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
-    msgSize = std::to_string(reply->GetSize());
-    if (Send(reply, "scheduledata") > 0) // 3)
-    return true;
-    else
-    return false;
-  }
-  else if (receivedMsg.confirmation == true) { // 6)
-    bestaetigungReceived++;
-    LOG(info) << "empfange bestätigung von flp " << receivedMsg.flpId;
+if (receivedMsg.confirmation == false) { // 2) erster request also
+requestReceived++;
+if (requestReceived == 1) {
+before = high_resolution_clock::now(); //timer NUR beim ersten request starten
+//damit er nicht bei jedem request neu startet
+sendCounter++;//hier die versendeten nachrichten zählen
+getRandomAnswerId(randomReply); //auch hier nur einmal die Funktion, damit diese nicht x mal aufgerufen wird
+}
+if (requestReceived == amountFlp) {
+requestReceived = 0; //zaehler zurücksetzen
+}
 
-    if (randomReply == true) {
-      if (receivedMsg.flpId == flpAnswerId) {
-        //für randomReply - wenn bestätigung ankam
-        LOG(info) << "bestätigung von " << flpAnswerId << " erhalten";
-        after = high_resolution_clock::now();
-        duration<double> dur = duration_cast<duration<double>>(after - before);
-        result << flpAnswerId << "\t" << dur.count() << std::endl;
-      }
-      FairMQMessagePtr step7 = NewMessage(1);
-      if (Send(step7, "scheduledata") > 0 ) // 7)
-        return true;
-      else
-        return false;
-    }
-    else if (randomReply == false) {
-      if (bestaetigungReceived == amountFlp) {
-        LOG(info) << "alle bestätigungen erhalten";
-        bestaetigungReceived = 0;
-        after = high_resolution_clock::now();
-        duration<double> dur = duration_cast<duration<double>>(after - before);
-        if (scalingFlp) {
-          //write(amountFlp, dur); //für skalierende #flps
-          result << amountFlp << "\t" << dur.count() << std::endl;
-        }
-        else {
-          //write(msgSize, dur); //teil für skalierende msg size
-          result << msgSize << "\t" << dur.count() << std::endl;
-        }
-      }
-      FairMQMessagePtr step7 = NewMessage(1);
-      if (Send(step7, "scheduledata") > 0 ) // 7)
-      return true;
-      else
-      return false;
-    }
-  }
+//hier die eigentliche (große) Nachricht
+if (msgAutoscale == true) {
+len = calculateMessageSize(sendCounter);
+}
+
+MyMessage msgToFlp;
+msgToFlp.sendCounter = sendCounter;
+//generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+msgToFlp.replyId = flpAnswerId;
+msgToFlp.frequency = msgFreq;
+msgToFlp.numberFlp = amountFlp;
+if (scalingFlp)
+msgToFlp.numberMessages = 100;
+else
+msgToFlp.numberMessages = 1299;
+
+FairMQMessagePtr reply = NewMessage(len);
+memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
+msgSize = std::to_string(reply->GetSize());
+if (Send(reply, "scheduledata") > 0) // 3)
+return true;
+else
+return false;
+}
+else if (receivedMsg.confirmation == true) { // 6)
+bestaetigungReceived++;
+LOG(info) << "empfange bestätigung von flp " << receivedMsg.flpId;
+
+if (randomReply == true) {
+if (receivedMsg.flpId == flpAnswerId) {
+//für randomReply - wenn bestätigung ankam
+LOG(info) << "bestätigung von " << flpAnswerId << " erhalten";
+after = high_resolution_clock::now();
+duration<double> dur = duration_cast<duration<double>>(after - before);
+result << flpAnswerId << "\t" << dur.count() << std::endl;
+}
+FairMQMessagePtr step7 = NewMessage(1);
+if (Send(step7, "scheduledata") > 0 ) // 7)
+return true;
+else
+return false;
+}
+else if (randomReply == false) {
+if (bestaetigungReceived == amountFlp) {
+LOG(info) << "alle bestätigungen erhalten";
+bestaetigungReceived = 0;
+after = high_resolution_clock::now();
+duration<double> dur = duration_cast<duration<double>>(after - before);
+if (scalingFlp) {
+//write(amountFlp, dur); //für skalierende #flps
+result << amountFlp << "\t" << dur.count() << std::endl;
+}
+else {
+//write(msgSize, dur); //teil für skalierende msg size
+result << msgSize << "\t" << dur.count() << std::endl;
+}
+}
+FairMQMessagePtr step7 = NewMessage(1);
+if (Send(step7, "scheduledata") > 0 ) // 7)
+return true;
+else
+return false;
+}
+}
 }
 */
 
