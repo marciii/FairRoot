@@ -43,7 +43,7 @@ uint64_t getRandomAnswerId(bool randomAnswer);
 
 double min;
 double max;
-double median;
+double average;
 
 };
 
