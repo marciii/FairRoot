@@ -8,9 +8,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                                "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25553",
+                                "type": "rep",
+                                "method": "bind",
+                                "address": "tcp://*:25553",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -26,9 +26,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                             "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25553",
+                             "type": "rep",
+                                "method": "bind",
+                                "address": "tcp://*:25552",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -44,9 +44,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                            "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25553",
+                            "type": "rep",
+                                "method": "bind",
+                                "address": "tcp://*:25551",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -62,9 +62,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                            "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25553",
+                            "type": "rep",
+                                "method": "bind",
+                                "address": "tcp://*:25550",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -80,9 +80,9 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                            "type": "req",
-                                "method": "connect",
-                                "address": "tcp://localhost:25553",
+                            "type": "rep",
+                                "method": "bind",
+                                "address": "tcp://*:25549",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0
@@ -370,9 +370,41 @@
                         "name": "scheduledata",
                         "sockets": [
                             {
-                                "type": "rep",
-                                "method": "bind",
-                                "address": "tcp://*:25553",
+                                "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25553",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
+                            {
+                                "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25552",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
+                            {
+                                "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25551",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
+                            {
+                                "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25550",
+                                "sndBufSize": 1000,
+                                "rcvBufSize": 1000,
+                                "rateLogging": 0
+                            },
+                            {
+                                "type": "req",
+                                "method": "connect",
+                                "address": "tcp://localhost:25549",
                                 "sndBufSize": 1000,
                                 "rcvBufSize": 1000,
                                 "rateLogging": 0

@@ -37,7 +37,8 @@ std::string msgSize;
 
 std::stringstream result;
 
-    virtual bool ConditionalRun();
+    //virtual bool ConditionalRun();
+bool HandleData(FairMQMessagePtr&, int);
     virtual void InitTask();
 
     void writeToFile(std::string text);

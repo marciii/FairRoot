@@ -28,11 +28,11 @@ using namespace std::chrono;
 using namespace std;
 
 int size = 1;
-int sendCounter = 1; //0
+int sendCounter = 0; //0
 int currentMessage = 1;
 int flpReceived = 0;
 
-int requestReceived = 0;
+
 int bestaetigungReceived = 0;
 
 high_resolution_clock::time_point before;
@@ -56,8 +56,8 @@ struct MyMessage {
 
 PrototypeSchedulerProcessor::PrototypeSchedulerProcessor()
 {
-  OnData("epndata", &PrototypeSchedulerProcessor::HandleData);
-  OnData("scheduledata", &PrototypeSchedulerProcessor::HandleData2);
+  //OnData("epndata", &PrototypeSchedulerProcessor::HandleData);
+  //OnData("scheduledata", &PrototypeSchedulerProcessor::HandleData2);
 }
 
 
@@ -74,7 +74,124 @@ void PrototypeSchedulerProcessor::InitTask()
   this_thread::sleep_for(chrono::seconds(3));
 }
 
-bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int /*index*/) //EPN data
+
+
+
+bool PrototypeSchedulerProcessor::ConditionalRun()
+{
+
+  sendCounter++;
+
+  if (sendCounter ==  1300) { //
+    LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
+    return false;
+  }
+
+  if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+		LOG(info) << "am ende angelangt, schreibe";
+    writeToFile(result.str());
+		return false;
+	}
+
+  //kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
+//  FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
+  //Send(testMsg, "scheduledatafromepn");
+
+
+  int len = messageSize;
+
+  //teil fuer message scaling
+  if (msgAutoscale == true) {
+    len = calculateMessageSize(sendCounter);
+  }
+
+
+  MyMessage msgToFlp;
+  msgToFlp.sendCounter = sendCounter;
+  //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+  msgToFlp.replyId = getRandomAnswerId(randomReply);
+
+  FairMQMessagePtr msg2 = NewMessage(len);
+
+  // memset(msg2->GetData(), 'a', msg2->GetSize());
+  memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
+
+
+  msgSize = std::to_string(msg2->GetSize());
+
+
+  //Zeit starten
+  //high_resolution_clock::time_point before = high_resolution_clock::now();
+  FairMQMessagePtr reply(NewMessage());
+
+  before = high_resolution_clock::now();
+
+
+
+
+  if (randomReply == false) {
+    for (int i=0;i<amountFlp;i++) {
+    int test = Send(msg2, "scheduledata", i);
+    if (test < 0 ) {
+      LOG(error) << "fail";
+      return false;
+    }
+
+      if (Receive(reply, "scheduledata", i) >= 0) {
+
+        LOG(info) << "Empfange von FLP: " << i;
+        bestaetigungReceived++;
+
+        if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+          after = high_resolution_clock::now();
+          duration<double> dur = duration_cast<duration<double>>(after - before);
+          LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+          if (scalingFlp) { //für skalierende #flps
+            result << amountFlp << "\t" << dur.count() << std::endl;
+            //write(amountFlp, dur);
+          }
+          else { //für skalierende msg size
+            result << msgSize << "\t" << dur.count() << std::endl;
+            //write(msgSize, dur);
+          }
+
+          bestaetigungReceived=0;
+        //return true;
+      }
+    }
+  }
+
+  }
+
+  else { //randomReply = true
+    int test = Send(msg2, "scheduledatatoflp");
+    if (test < 0 ) {
+      LOG(error) << "fail";
+      return false;
+    }
+
+    if (Receive(reply, "answerfromflp") > 0) {
+      LOG(info) << "bestätigung von flp erhalten";
+      after = high_resolution_clock::now();
+      duration<double> dur = duration_cast<duration<double>>(after - before);
+
+      result << flpAnswerId << "\t" << dur.count() << std::endl;
+    }
+
+  }
+
+
+
+  this_thread::sleep_for(chrono::milliseconds(msgFreq));
+
+  return true;
+}
+
+
+
+/*
+bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int index) //EPN data
 {
 
   //LOG(info) << "Received request from client: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
@@ -85,7 +202,7 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int /*in
 
   FairMQMessagePtr reply(NewMessage(const_cast<char*>(text->c_str()), // data
   text->length(), // size
-  [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
+  [](void* data, void* object) { delete static_cast<string*>(object); }, // deletion callback
   text)); // object that manages the data
 
   if (Send(reply, "epndata") > 0)
@@ -96,7 +213,10 @@ bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int /*in
 
   return false;
 }
-bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*index*/) //FLP data, alias Schrit 2)
+*/
+
+/*
+bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int index) //FLP data, alias Schrit 2)
 {
 
 
@@ -201,9 +321,8 @@ bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int /*i
       return false;
     }
   }
-
-
 }
+*/
 
 void PrototypeSchedulerProcessor::writeToFile(std::string text)
 {

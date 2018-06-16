@@ -49,6 +49,7 @@ uint64_t amountMessages;
 
 PrototypeFlpProcessor::PrototypeFlpProcessor()
 {
+  OnData("scheduledata", &PrototypeFlpProcessor::HandleData);
 }
 
 void PrototypeFlpProcessor::InitTask()
@@ -57,6 +58,21 @@ void PrototypeFlpProcessor::InitTask()
   this_thread::sleep_for(chrono::seconds(10));
 }
 
+
+bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& request, int /*index*/)
+{
+  LOG(info) << "nachricht empfangen, antworte";
+  FairMQMessagePtr reply = NewMessage(100);
+  if (Send(reply, "scheduledata") > 0)
+  {
+
+      return true;
+  }
+
+  return false;
+}
+
+/*
 bool PrototypeFlpProcessor::ConditionalRun()
 {
 
@@ -68,14 +84,6 @@ bool PrototypeFlpProcessor::ConditionalRun()
     return false;
   }
 
-
-  string* text = new string(std::to_string(messageCounter) + ". Nachricht");
-  string* bestaetigungtext = new string("bestätigung von flp");
-
-  //FairMQMessagePtr request(NewMessage(const_cast<char*>(text->c_str()), // data
-  //                                                    text->length(), // size
-  //                                                  [](void* /*data*/, void* object) { delete static_cast<string*>(object); }, // deletion callback
-  //                                                text)); // object that manages the data
 
   MyMessage requ;
   requ.confirmation = false;
@@ -116,7 +124,7 @@ bool PrototypeFlpProcessor::ConditionalRun()
 
       after = high_resolution_clock::now();
       duration<double> dur = duration_cast<duration<double>>(after - before);
-    
+
       result << myId << "\t" << msgSize << "\t" << amountFlp << "\t" << dur.count() << std::endl;
 
         LOG(info) << "sende bestätigung";
@@ -137,7 +145,7 @@ bool PrototypeFlpProcessor::ConditionalRun()
     this_thread::sleep_for(chrono::milliseconds(msgFreq));
     return false;
   }
-
+*/
   void PrototypeFlpProcessor::writeToFile(std::string text)
   {
     std::stringstream filename;
