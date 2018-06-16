@@ -98,7 +98,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
         double min_abweichung = average - min;
 				double max_abweichung = max - average;
 
-				result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+				result << msgSize << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
         minMaxReset = true;
       }
     len = calculateMessageSize(sendCounter);
