@@ -95,10 +95,12 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
     if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
       sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
       sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
-        double min_abweichung = average - min;
-				double max_abweichung = max - average;
+        average = average / 100;
+        //double min_abweichung = average - min;
+				//double max_abweichung = max - average;
 
-				result << msgSize << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+				//result << msgSize << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+        result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
         minMaxReset = true;
       }
     len = calculateMessageSize(sendCounter);
