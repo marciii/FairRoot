@@ -75,7 +75,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 	sendCounter++;
 
 
-	if (sendCounter == 20) { //
+	if (sendCounter == 1302) { //
 
 		if (randomReply == false) {
 
