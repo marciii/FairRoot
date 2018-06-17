@@ -34,8 +34,11 @@ int flpAnswerId;
 
 std::stringstream result;
 
-
 bool minMaxReset = false;
+
+double* flpTimes;
+double* flpRandomCounter;
+
 
 struct MyMessage {
 	uint64_t sendCounter;
@@ -60,6 +63,10 @@ void PrototypeSchedulerProcessor::InitTask()
 	amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
 	msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
 	scalingFlp = fConfig->GetValue<bool>("scalingFlp");
+
+	flpTimes = new double[amountFlp];
+	flpRandomCounter = new double[amountFlp];
+
 }
 
 bool PrototypeSchedulerProcessor::ConditionalRun()
@@ -68,21 +75,35 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 	sendCounter++;
 
 
-	if (sendCounter == 1302) { //
-		LOG(info) << "am ende angelangt, schreibe";
-		writeToFile(result.str());
+	if (sendCounter == 20) { //
+
+		if (randomReply == false) {
+
+			LOG(info) << "am ende angelangt, schreibe";
+			writeToFile(result.str());
+		}
+		else { //random reply = true
+			LOG(info) << "amount flp " <<amountFlp;
+			for (int i=0; i<amountFlp; i++) {
+				flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
+				result << i << "\t" << flpTimes[i] << std::endl;
+			}
+			LOG(info) << "am ende angelangt, schreibe";
+			writeToFile(result.str());
+		}
+		delete [] flpTimes;
+		delete [] flpRandomCounter;
 		return false;
 	}
 
 	if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
 		average = average / 99;
-	//	double min_abweichung = average - min;
-	//	double max_abweichung = max - average;
-
-		//result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
 		result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
 		LOG(info) << "am ende angelangt, schreibe";
 		writeToFile(result.str());
+
+		delete [] flpTimes;
+		delete [] flpRandomCounter;
 		return false;
 	}
 
@@ -95,10 +116,6 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 			sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
 			sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
 				average = average / 100;
-				//double min_abweichung = average - min;
-				//double max_abweichung = max - average;
-
-				//result << msgSize << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
 				result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
 				minMaxReset = true;
 			}
@@ -161,17 +178,14 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 						}
 
 
-							average += dur.count();
-							if (dur.count() < min) min = dur.count();
-	            if (dur.count() > max) max = dur.count();
+						average += dur.count();
+						if (dur.count() < min) min = dur.count();
+						if (dur.count() > max) max = dur.count();
 
 					}
 				} else LOG(error) << "fail";
 
 			}
-
-
-
 		}
 		else { //randomReply = true
 
@@ -182,6 +196,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 					LOG(error) << "fail index " << i;
 					return false;
 				}
+
 			}
 
 			FairMQMessagePtr reply(NewMessage());
@@ -190,8 +205,9 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 				LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
 				after = high_resolution_clock::now();
 				duration<double> dur = duration_cast<duration<double>>(after - before);
-				average+= dur.count();
-				result << flpAnswerId << "\t" << dur.count() << std::endl;
+				//average+= dur.count();
+				flpTimes[flpAnswerId] += dur.count();
+				flpRandomCounter[flpAnswerId]++;
 
 			}
 		}

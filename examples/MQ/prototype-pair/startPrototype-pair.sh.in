@@ -135,10 +135,10 @@ PROCESSOR2+=" --id schedulerprocessorpair"
 PROCESSOR2+=" --mq-config $prototypeconfig"
 PROCESSOR2+=" --amountFlp 5"
 PROCESSOR2+=" --msgFreq 5000"
-PROCESSOR2+=" --messageSize 100"
-PROCESSOR2+=" --msgAutoscale true"
+PROCESSOR2+=" --messageSize 100000000"
+PROCESSOR2+=" --msgAutoscale false"
 PROCESSOR2+=" --scalingFlp false"
-PROCESSOR2+=" --randomReply false"
+PROCESSOR2+=" --randomReply true"
 #PROCESSOR2+=" --config-key processor"
 xterm -geometry 80x23+500+330 -hold -e @CMAKE_BINARY_DIR@/bin/examples/MQ/prototype-pair/$PROCESSOR2 &
 
