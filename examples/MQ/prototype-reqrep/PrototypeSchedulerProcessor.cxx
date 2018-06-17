@@ -90,7 +90,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   sendCounter++;
 
-  if (sendCounter ==  1302) { //
+  if (sendCounter ==  1002) { //
 
     if (randomReply == false) {
 			LOG(info) << "am ende angelangt, schreibe";
