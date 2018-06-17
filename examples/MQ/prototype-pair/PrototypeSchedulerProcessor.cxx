@@ -83,7 +83,6 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 			writeToFile(result.str());
 		}
 		else { //random reply = true
-			LOG(info) << "amount flp " <<amountFlp;
 			for (int i=0; i<amountFlp; i++) {
 				flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
 				result << i << "\t" << flpTimes[i] << std::endl;

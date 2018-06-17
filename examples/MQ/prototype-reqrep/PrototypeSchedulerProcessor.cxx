@@ -45,6 +45,9 @@ std::stringstream result;
 
 bool minMaxReset = false;
 
+double* flpTimes;
+double* flpRandomCounter;
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
@@ -68,9 +71,13 @@ void PrototypeSchedulerProcessor::InitTask()
   logDir = fConfig->GetValue<std::string>("logDir");
   messageSize = fConfig->GetValue<uint64_t>("messageSize");
   randomReply = fConfig->GetValue<bool>("randomReply");
-  msgFreq = fConfig->GetValue<uint64_t>("msgFreq");  amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
+  msgFreq = fConfig->GetValue<uint64_t>("msgFreq");
+  amountFlp = fConfig->GetValue<uint64_t>("amountFlp");
   msgAutoscale = fConfig->GetValue<bool>("msgAutoscale");
   scalingFlp = fConfig->GetValue<bool>("scalingFlp");
+
+  flpTimes = new double[amountFlp];
+	flpRandomCounter = new double[amountFlp];
 
   this_thread::sleep_for(chrono::seconds(3));
 }
@@ -84,9 +91,22 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
   sendCounter++;
 
   if (sendCounter ==  1302) { //
-    LOG(info) << "am ende angelangt, schreibe";
-    writeToFile(result.str());
-    return false;
+
+    if (randomReply == false) {
+			LOG(info) << "am ende angelangt, schreibe";
+			writeToFile(result.str());
+		}
+		else { //random reply = true
+			for (int i=0; i<amountFlp; i++) {
+				flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
+				result << i << "\t" << flpTimes[i] << std::endl;
+			}
+			LOG(info) << "am ende angelangt, schreibe";
+			writeToFile(result.str());
+		}
+		delete [] flpTimes;
+		delete [] flpRandomCounter;
+		return false;
   }
 
   if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
@@ -197,11 +217,11 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
         }
 
         if (Receive(reply, "answerfromflp", i) > 0) {
-          LOG(info) << "bestätigung von flp erhalten";
           after = high_resolution_clock::now();
           duration<double> dur = duration_cast<duration<double>>(after - before);
-
-          result << flpAnswerId << "\t" << dur.count() << std::endl;
+          //result << flpAnswerId << "\t" << dur.count() << std::endl;
+          flpTimes[flpAnswerId] += dur.count();
+          flpRandomCounter[flpAnswerId]++;
         }
       }
     }
