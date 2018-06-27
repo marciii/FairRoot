@@ -69,162 +69,173 @@ void PrototypeSchedulerProcessor::InitTask()
 
 }
 
-bool PrototypeSchedulerProcessor::ConditionalRun()
+void PrototypeSchedulerProcessor::Run()
 {
+	FairMQPollerPtr poller(NewPoller("sched-flp-chan"));
 
-	sendCounter++;
+	while (CheckCurrentState(RUNNING))
+	{
+		poller->Poll(1000);
+		sendCounter++;
 
 
-	if (sendCounter == 1302) { //
+		if (sendCounter == 1302) { //
 
-		if (randomReply == false) {
+			if (randomReply == false) {
 
+				LOG(info) << "am ende angelangt, schreibe";
+				writeToFile(result.str());
+			}
+			else { //random reply = true
+				for (int i=0; i<amountFlp; i++) {
+					flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
+					result << i << "\t" << flpTimes[i] << std::endl;
+				}
+				LOG(info) << "am ende angelangt, schreibe";
+				writeToFile(result.str());
+			}
+			delete [] flpTimes;
+			delete [] flpRandomCounter;
+			break;
+		}
+
+		if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+			average = average / 99;
+			result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
 			LOG(info) << "am ende angelangt, schreibe";
 			writeToFile(result.str());
+
+			delete [] flpTimes;
+			delete [] flpRandomCounter;
+			break;
 		}
-		else { //random reply = true
-			for (int i=0; i<amountFlp; i++) {
-				flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
-				result << i << "\t" << flpTimes[i] << std::endl;
+
+		int len = messageSize;
+
+		//teil fuer message scaling
+		if (msgAutoscale == true) {
+
+			if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
+				sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
+				sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
+					average = average / 100;
+					result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
+					minMaxReset = true;
+				}
+				len = calculateMessageSize(sendCounter);
 			}
-			LOG(info) << "am ende angelangt, schreibe";
-			writeToFile(result.str());
-		}
-		delete [] flpTimes;
-		delete [] flpRandomCounter;
-		return false;
-	}
-
-	if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-		average = average / 99;
-		result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
-		LOG(info) << "am ende angelangt, schreibe";
-		writeToFile(result.str());
-
-		delete [] flpTimes;
-		delete [] flpRandomCounter;
-		return false;
-	}
-
-	int len = messageSize;
-
-	//teil fuer message scaling
-	if (msgAutoscale == true) {
-
-		if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
-			sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
-			sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
-				average = average / 100;
-				result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
-				minMaxReset = true;
-			}
-			len = calculateMessageSize(sendCounter);
-		}
 
 
 
-		MyMessage msgToFlp;
-		msgToFlp.sendCounter = sendCounter;
-		//generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-		msgToFlp.replyId = getRandomAnswerId(randomReply);
+			MyMessage msgToFlp;
+			msgToFlp.sendCounter = sendCounter;
+			//generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+			msgToFlp.replyId = getRandomAnswerId(randomReply);
 
 
-		FairMQMessagePtr msg2[amountFlp];
-		for (int i = 0; i < amountFlp; i++) {
-			msg2[i] = NewMessage(len);
-
-			//memcpy(msg2[i]->GetData(), const_cast<char*>(text->c_str()), msg2[i]->GetSize()); //bugged bei grosser message
-			//memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
-
-			memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
-		}
-
-		msgSize = std::to_string(msg2[0]->GetSize());
-
-
-		//Zeit starten
-		before = high_resolution_clock::now();
-
-		answerCounter	= 0;
-
-		if (randomReply == false) {//Antwort von allen FLPs sammeln
-
+			FairMQMessagePtr msg2[amountFlp];
 			for (int i = 0; i < amountFlp; i++) {
+				msg2[i] = NewMessage(len);
 
-				int test = Send(msg2[i], "sched-flp-chan", i);
-				if (test < 0 ) {
-					LOG(error) << "fail index " << i;
-					return false;
+				//memcpy(msg2[i]->GetData(), const_cast<char*>(text->c_str()), msg2[i]->GetSize()); //bugged bei grosser message
+				//memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
+
+				memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
+			}
+
+			msgSize = std::to_string(msg2[0]->GetSize());
+
+
+			//Zeit starten
+			before = high_resolution_clock::now();
+
+			answerCounter	= 0;
+
+
+
+			if (randomReply == false) {//Antwort von allen FLPs sammeln
+
+				for (int i = 0; i < amountFlp; i++) {
+					int test = Send(msg2[i], "sched-flp-chan", i);
+					if (test < 0 ) {
+						LOG(error) << "fail index " << i;
+						//return false;
+						break;
+					}
+				}
+
+				for (int i = 0; i < amountFlp; i++) {
+					if (poller->CheckInput("sched-flp-chan", i)) {
+						FairMQMessagePtr reply(NewMessage());
+
+						if (Receive(reply, "sched-flp-chan", i) > 0) {
+
+							LOG(info) << "Empfange von FLP: \"";
+							answerCounter++;
+
+							if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+								after = high_resolution_clock::now();
+								duration<double> dur = duration_cast<duration<double>>(after - before);
+								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+
+
+								if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+									min = dur.count();
+									max = dur.count();
+									minMaxReset = false;
+								}
+
+
+								average += dur.count();
+								if (dur.count() < min) min = dur.count();
+								if (dur.count() > max) max = dur.count();
+
+							}
+						} else LOG(error) << "fail";
+					}
+				}
+
+			}
+			else { //randomReply = true
+
+				for (int i = 0; i < amountFlp; i++) {
+
+					int test = Send(msg2[i], "sched-flp-chan", i);
+					if (test < 0 ) {
+						LOG(error) << "fail index " << i;
+						//return false;
+						break;
+					}
+
 				}
 
 				FairMQMessagePtr reply(NewMessage());
 
-				if (Receive(reply, "sched-flp-chan", i) > 0) {
+				if (Receive(reply, "sched-flp-chan", flpAnswerId) > 0) {
+					LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
+					after = high_resolution_clock::now();
+					duration<double> dur = duration_cast<duration<double>>(after - before);
+					//average+= dur.count();
+					flpTimes[flpAnswerId] += dur.count();
+					flpRandomCounter[flpAnswerId]++;
 
-					LOG(info) << "Empfange von FLP: \"";
-					answerCounter++;
-
-					if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
-						after = high_resolution_clock::now();
-						duration<double> dur = duration_cast<duration<double>>(after - before);
-						LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
-
-
-						if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
-							min = dur.count();
-							max = dur.count();
-							minMaxReset = false;
-						}
-
-
-						average += dur.count();
-						if (dur.count() < min) min = dur.count();
-						if (dur.count() > max) max = dur.count();
-
-					}
-				} else LOG(error) << "fail";
-
-			}
-		}
-		else { //randomReply = true
-
-			for (int i = 0; i < amountFlp; i++) {
-
-				int test = Send(msg2[i], "sched-flp-chan", i);
-				if (test < 0 ) {
-					LOG(error) << "fail index " << i;
-					return false;
 				}
-
 			}
 
-			FairMQMessagePtr reply(NewMessage());
 
-			if (Receive(reply, "sched-flp-chan", flpAnswerId) > 0) {
-				LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
-				after = high_resolution_clock::now();
-				duration<double> dur = duration_cast<duration<double>>(after - before);
-				//average+= dur.count();
-				flpTimes[flpAnswerId] += dur.count();
-				flpRandomCounter[flpAnswerId]++;
 
-			}
+
+			//hier an alle weitergeleitet -> Zeit stoppen
+			//high_resolution_clock::time_point after = high_resolution_clock::now();
+
+			//duration<double> dur = duration_cast<duration<double>>(after - before);
+			//LOG(info) << "an alle 5 gesendet, schreibe";
+			//write(5, dur); //für skalierende #flps
+			//write(msgSize, dur);
+
+			this_thread::sleep_for(chrono::milliseconds(msgFreq));
 		}
-
-
-
-
-		//hier an alle weitergeleitet -> Zeit stoppen
-		//high_resolution_clock::time_point after = high_resolution_clock::now();
-
-		//duration<double> dur = duration_cast<duration<double>>(after - before);
-		//LOG(info) << "an alle 5 gesendet, schreibe";
-		//write(5, dur); //für skalierende #flps
-		//write(msgSize, dur);
-
-		this_thread::sleep_for(chrono::milliseconds(msgFreq));
-
-		return true;
+		//return true;
 	}
 
 
