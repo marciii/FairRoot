@@ -226,89 +226,13 @@ void PrototypeSchedulerProcessor::Run()
     }
   }
 
-
-  /*
-  bool PrototypeSchedulerProcessor::HandleFlpData(FairMQMessagePtr& msg, int index) //bestätigung von FLP (für RTT)
-  {
-  //string* text = new std::string(static_cast<char*>(msg->GetData()));
-  LOG(info) << "Empfange Antwort von FLP: " << msg->GetData();
-  answerCounter++;
-  if (answerCounter == amountFlp) {//Bestätigung von allen erreicht
-  LOG(info) << "alle " << amountFlp << " antworten erhalten, schreibe";
-  high_resolution_clock::time_point after = high_resolution_clock::now();
-  duration<double> dur = duration_cast<duration<double>>(after - before);
-  answerCounter=0;
-  write(msgSize, dur);
-}
-return true;
-}
-*/
-
-
-/*
-bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& msg, int index)
-{
-counter++;
-LOG(info) << "Empfange Daten von EPN";
-
-
-if (counter > 50) {
-LOG(info) << "am ende angelangt";
-return false;
-}
-
-//hier liegt das Problem bei hohen werten
-
-FairMQMessagePtr msg2(NewMessage(len));
-
-LOG(info) <<"hier1";
-LOG(info) << msg2->GetSize() ;
-memset(msg2->GetData(), 'a', msg2->GetSize()) ;
-//memcpy(msg2->GetData(), const_cast<char*>(text->c_str()), msg2->GetSize());
-LOG(info) <<"hier2";
-
-
-
-
-// Send out the output message
-LOG(info) <<"Leite weiter an FLP";
-
-msgSize = std::to_string(msg2->GetSize());
-before = high_resolution_clock::now();
-if (Send(msg2, "scheduledatatoflp") < 0)
-{
-return false;
-}
-//high_resolution_clock::time_point after = high_resolution_clock::now();
-//duration<double> dur = duration_cast<duration<double>>(after - before);
-//(write(amountFlp, dur);
-//write(msgSize, dur);
-//counter++;
-//delete text;
-return true;
-}
-*/
 void PrototypeSchedulerProcessor::writeToFile(std::string text)
 {
   std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
   gnudatafile << text;
   return;
 }
-/*
-void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur)
-{
-std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-gnudatafile << amountFlp << "\t" << dur.count() << std::endl;
-return;
-}
 
-void PrototypeSchedulerProcessor::write(std::string s1, duration<double> dur)
-{
-std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-gnudatafile << s1 << "\t" << dur.count() << std::endl;
-return;
-}
-*/
 
 int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
   int len;
