@@ -75,7 +75,7 @@ void PrototypeSchedulerProcessor::Run()
 
 	while (CheckCurrentState(RUNNING))
 	{
-		poller->Poll(1000);
+
 		sendCounter++;
 
 
@@ -165,6 +165,7 @@ void PrototypeSchedulerProcessor::Run()
 				}
 
 				for (int i = 0; i < amountFlp; i++) {
+					poller->Poll(1000);
 					if (poller->CheckInput("sched-flp-chan", i)) {
 						FairMQMessagePtr reply(NewMessage());
 
