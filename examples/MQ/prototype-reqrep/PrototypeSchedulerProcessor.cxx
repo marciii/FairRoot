@@ -77,7 +77,7 @@ void PrototypeSchedulerProcessor::InitTask()
   scalingFlp = fConfig->GetValue<bool>("scalingFlp");
 
   flpTimes = new double[amountFlp];
-	flpRandomCounter = new double[amountFlp];
+  flpRandomCounter = new double[amountFlp];
 
   this_thread::sleep_for(chrono::seconds(3));
 }
@@ -85,154 +85,161 @@ void PrototypeSchedulerProcessor::InitTask()
 
 
 
-bool PrototypeSchedulerProcessor::ConditionalRun()
+void PrototypeSchedulerProcessor::Run()
 {
 
-  sendCounter++;
 
-  if (sendCounter ==  1002) { //
+  while (CheckCurrentState(RUNNING))
+  {
+    sendCounter++;
 
-    if (randomReply == false) {
-			LOG(info) << "am ende angelangt, schreibe";
-			writeToFile(result.str());
-		}
-		else { //random reply = true
-			for (int i=0; i<amountFlp; i++) {
-				flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
-				result << i << "\t" << flpTimes[i] << std::endl;
-			}
-			LOG(info) << "am ende angelangt, schreibe";
-			writeToFile(result.str());
-		}
-		delete [] flpTimes;
-		delete [] flpRandomCounter;
-		return false;
-  }
+    if (sendCounter ==  1002) { //
 
-  if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
-    average = average / 99;
-		//double min_abweichung = average - min;
-		//double max_abweichung = max - average;
-
-	//	result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
-  result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
-    LOG(info) << "am ende angelangt, schreibe";
-    writeToFile(result.str());
-    return false;
-  }
-
-  //kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
-  //  FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
-  //Send(testMsg, "scheduledatafromepn");
-
-
-  int len = messageSize;
-
-  //teil fuer message scaling
-  if (msgAutoscale == true) {
-
-    if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
-      sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
-      sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
-        average = average / 100;
-        //double min_abweichung = average - min;
-				//double max_abweichung = max - average;
-
-				//result << msgSize << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
-        result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
-
-        minMaxReset = true;
+      if (randomReply == false) {
+        LOG(info) << "am ende angelangt, schreibe";
+        writeToFile(result.str());
       }
-      len = calculateMessageSize(sendCounter);
+      else { //random reply = true
+        for (int i=0; i<amountFlp; i++) {
+          flpTimes[i] = flpTimes[i] / flpRandomCounter[i]; //durchschnitt berechnen
+          result << i << "\t" << flpTimes[i] << std::endl;
+        }
+        LOG(info) << "am ende angelangt, schreibe";
+        writeToFile(result.str());
+      }
+      delete [] flpTimes;
+      delete [] flpRandomCounter;
+      //return false;
+      break;
     }
 
+    if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+      average = average / 99;
+      //double min_abweichung = average - min;
+      //double max_abweichung = max - average;
 
-    MyMessage msgToFlp;
-    msgToFlp.sendCounter = sendCounter;
-    //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-    msgToFlp.replyId = getRandomAnswerId(randomReply);
+      //	result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+      result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
+      LOG(info) << "am ende angelangt, schreibe";
+      writeToFile(result.str());
+      //return false;
+      break;
+    }
 
-    FairMQMessagePtr msg2 = NewMessage(len);
-
-    // memset(msg2->GetData(), 'a', msg2->GetSize());
-    memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
-
-
-    msgSize = std::to_string(msg2->GetSize());
-
-
-    //Zeit starten
-    //high_resolution_clock::time_point before = high_resolution_clock::now();
-    FairMQMessagePtr reply(NewMessage());
-
-    before = high_resolution_clock::now();
+    //kurze Nachricht an EPN, nur um Kommunikation zu überprüfen
+    //  FairMQMessagePtr testMsg(NewSimpleMessage("OK"));
+    //Send(testMsg, "scheduledatafromepn");
 
 
+    int len = messageSize;
 
+    //teil fuer message scaling
+    if (msgAutoscale == true) {
 
-    if (randomReply == false) {
-      for (int i=0;i<amountFlp;i++) {
-        int test = Send(msg2, "scheduledata", i);
-        if (test < 0 ) {
-          LOG(error) << "fail";
-          return false;
+      if (sendCounter == 101 || sendCounter == 201 || sendCounter == 301 || sendCounter == 401 || sendCounter == 501 ||
+        sendCounter == 601 || sendCounter == 701 || sendCounter == 801 || sendCounter == 901 || sendCounter == 1001 ||
+        sendCounter == 1101 || sendCounter == 1201 || sendCounter == 1301) {
+          average = average / 100;
+          //double min_abweichung = average - min;
+          //double max_abweichung = max - average;
+
+          //result << msgSize << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
+          result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
+
+          minMaxReset = true;
         }
+        len = calculateMessageSize(sendCounter);
+      }
 
-        if (Receive(reply, "scheduledata", i) >= 0) {
 
-          LOG(info) << "Empfange von FLP: " << i;
-          bestaetigungReceived++;
+      MyMessage msgToFlp;
+      msgToFlp.sendCounter = sendCounter;
+      //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
+      msgToFlp.replyId = getRandomAnswerId(randomReply);
 
-          if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+      FairMQMessagePtr msg2 = NewMessage(len);
+
+      // memset(msg2->GetData(), 'a', msg2->GetSize());
+      memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
+
+
+      msgSize = std::to_string(msg2->GetSize());
+
+
+      //Zeit starten
+      //high_resolution_clock::time_point before = high_resolution_clock::now();
+
+      FairMQMessagePtr reply(NewMessage());
+      before = high_resolution_clock::now();
+
+
+
+
+      if (randomReply == false) {
+        for (int i=0;i<amountFlp;i++) {
+          int test = Send(msg2, "scheduledata", i);
+          if (test < 0 ) {
+            LOG(error) << "fail bei index " << i;
+            //return false;
+            //break;
+          }
+
+
+          if (Receive(reply, "scheduledata", i) >= 0) {
+
+            LOG(info) << "Empfange von FLP: " << i;
+            bestaetigungReceived++;
+
+            if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+              after = high_resolution_clock::now();
+              duration<double> dur = duration_cast<duration<double>>(after - before);
+              LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+
+              if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+                min = dur.count();
+                max = dur.count();
+                minMaxReset = false;
+              }
+
+
+              average += dur.count();
+              if (dur.count() < min) min = dur.count();
+              if (dur.count() > max) max = dur.count();
+
+
+              bestaetigungReceived=0;
+            }
+          }
+
+        }
+      }
+
+      else { //randomReply = true
+        for (int i=0;i<amountFlp;i++) {
+          int test = Send(msg2, "scheduledatatoflp", i);
+          if (test < 0 ) {
+            LOG(error) << "fail";
+            //return false;
+            break;
+          }
+
+          if (Receive(reply, "answerfromflp", i) > 0) {
             after = high_resolution_clock::now();
             duration<double> dur = duration_cast<duration<double>>(after - before);
-            LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
-
-            if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
-              min = dur.count();
-              max = dur.count();
-              minMaxReset = false;
-            }
-
-
-            average += dur.count();
-            if (dur.count() < min) min = dur.count();
-            if (dur.count() > max) max = dur.count();
-
-
-            bestaetigungReceived=0;
-            //return true;
+            //result << flpAnswerId << "\t" << dur.count() << std::endl;
+            flpTimes[flpAnswerId] += dur.count();
+            flpRandomCounter[flpAnswerId]++;
           }
         }
       }
 
+
+
+      this_thread::sleep_for(chrono::milliseconds(msgFreq));
+
+      //return true;
     }
-
-    else { //randomReply = true
-      for (int i=0;i<amountFlp;i++) {
-        int test = Send(msg2, "scheduledatatoflp", i);
-        if (test < 0 ) {
-          LOG(error) << "fail";
-          return false;
-        }
-
-        if (Receive(reply, "answerfromflp", i) > 0) {
-          after = high_resolution_clock::now();
-          duration<double> dur = duration_cast<duration<double>>(after - before);
-          //result << flpAnswerId << "\t" << dur.count() << std::endl;
-          flpTimes[flpAnswerId] += dur.count();
-          flpRandomCounter[flpAnswerId]++;
-        }
-      }
-    }
-
-
-
-    this_thread::sleep_for(chrono::milliseconds(msgFreq));
-
-    return true;
   }
-
 
 
   /*

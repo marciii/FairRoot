@@ -145,7 +145,7 @@ void PrototypeSchedulerProcessor::Run()
 
 			msgSize = std::to_string(msg2[0]->GetSize());
 
-
+			FairMQMessagePtr reply(NewMessage());
 			//Zeit starten
 			before = high_resolution_clock::now();
 
@@ -167,7 +167,7 @@ void PrototypeSchedulerProcessor::Run()
 				for (int i = 0; i < amountFlp; i++) {
 					poller->Poll(1000);
 					if (poller->CheckInput("sched-flp-chan", i)) {
-						FairMQMessagePtr reply(NewMessage());
+
 
 						if (Receive(reply, "sched-flp-chan", i) > 0) {
 
@@ -210,7 +210,6 @@ void PrototypeSchedulerProcessor::Run()
 
 				}
 
-				FairMQMessagePtr reply(NewMessage());
 
 				if (Receive(reply, "sched-flp-chan", flpAnswerId) > 0) {
 					LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
