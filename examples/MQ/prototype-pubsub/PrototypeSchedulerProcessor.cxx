@@ -166,11 +166,13 @@ void PrototypeSchedulerProcessor::Run()
             if (Receive(reply, "answerfromflp", i) >= 0) {
 
               LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
+              answerCounter++;
 
-              if (i == amountFlp-1) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+              if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
                 after = high_resolution_clock::now();
                 duration<double> dur = duration_cast<duration<double>>(after - before);
                 LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+                answerCounter=0;
 
                 if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
                   min = dur.count();
