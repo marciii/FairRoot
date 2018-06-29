@@ -34,7 +34,7 @@ int flpAnswerId;
 
 std::stringstream result;
 
-bool minMaxReset = false;
+bool minMaxReset = true;
 
 double* flpTimes;
 double* flpRandomCounter;
@@ -178,7 +178,6 @@ void PrototypeSchedulerProcessor::Run()
 								after = high_resolution_clock::now();
 								duration<double> dur = duration_cast<duration<double>>(after - before);
 								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
-
 
 								if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
 									min = dur.count();

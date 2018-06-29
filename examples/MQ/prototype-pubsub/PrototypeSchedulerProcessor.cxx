@@ -34,7 +34,7 @@ int flpAnswerId;
 
 std::stringstream result;
 
-bool minMaxReset = false;
+bool minMaxReset = true;
 
 double* flpTimes;
 double* flpRandomCounter;
