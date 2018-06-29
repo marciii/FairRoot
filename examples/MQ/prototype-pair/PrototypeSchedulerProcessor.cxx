@@ -149,7 +149,7 @@ void PrototypeSchedulerProcessor::Run()
 			//Zeit starten
 			before = high_resolution_clock::now();
 
-			answerCounter	= 0;
+
 
 
 
@@ -178,6 +178,7 @@ void PrototypeSchedulerProcessor::Run()
 								after = high_resolution_clock::now();
 								duration<double> dur = duration_cast<duration<double>>(after - before);
 								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+								answerCounter	= 0;
 
 								if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
 									min = dur.count();
