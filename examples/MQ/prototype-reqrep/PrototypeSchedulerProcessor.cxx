@@ -185,31 +185,31 @@ void PrototypeSchedulerProcessor::Run()
           }
 
 
-          if (Receive(reply, "scheduledata", i) >= 0) {
+            if (Receive(reply, "scheduledata", i) >= 0) {
 
-            LOG(info) << "Empfange von FLP: " << i;
-            bestaetigungReceived++;
+              LOG(info) << "Empfange von FLP: " << i;
+              bestaetigungReceived++;
 
-            if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
-              after = high_resolution_clock::now();
-              duration<double> dur = duration_cast<duration<double>>(after - before);
-              LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+              if (bestaetigungReceived == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+                after = high_resolution_clock::now();
+                duration<double> dur = duration_cast<duration<double>>(after - before);
+                LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
 
-              if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
-                min = dur.count();
-                max = dur.count();
-                minMaxReset = false;
+                if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+                  min = dur.count();
+                  max = dur.count();
+                  minMaxReset = false;
+                }
+
+
+                average += dur.count();
+                if (dur.count() < min) min = dur.count();
+                if (dur.count() > max) max = dur.count();
+
+
+                bestaetigungReceived=0;
               }
-
-
-              average += dur.count();
-              if (dur.count() < min) min = dur.count();
-              if (dur.count() > max) max = dur.count();
-
-
-              bestaetigungReceived=0;
             }
-          }
 
         }
       }
