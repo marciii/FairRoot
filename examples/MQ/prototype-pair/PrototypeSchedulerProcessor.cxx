@@ -139,7 +139,7 @@ void PrototypeSchedulerProcessor::Run()
 				msg2[i] = NewMessage(len);
 
 				//memcpy(msg2[i]->GetData(), const_cast<char*>(text->c_str()), msg2[i]->GetSize()); //bugged bei grosser message
-				//memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
+				memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
 
 				memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
 			}
