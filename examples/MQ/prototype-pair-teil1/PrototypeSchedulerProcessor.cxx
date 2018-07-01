@@ -141,7 +141,6 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
 		msgSize = std::to_string(msg2[0]->GetSize());
 
-
 		//Zeit starten
 		before = high_resolution_clock::now();
 

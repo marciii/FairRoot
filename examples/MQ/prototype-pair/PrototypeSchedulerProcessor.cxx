@@ -25,12 +25,13 @@ using namespace std;
 
 int sendCounter = 0;
 int answerCounter = 0;
+int flpAnswerId;
+
 
 high_resolution_clock::time_point before;
 high_resolution_clock::time_point after;
 
 std::string msgSize;
-int flpAnswerId;
 
 std::stringstream result;
 
@@ -38,6 +39,10 @@ bool minMaxReset = true;
 
 double* flpTimes;
 double* flpRandomCounter;
+
+// map <bin, count>
+std::map<std::uint64_t, std::uint64_t> hist;
+const std::uint64_t binSize = 1000; // 100 micro secconds bin size; you can tune this
 
 
 struct MyMessage {
@@ -69,12 +74,12 @@ void PrototypeSchedulerProcessor::InitTask()
 
 }
 
-void PrototypeSchedulerProcessor::Run()
+bool PrototypeSchedulerProcessor::ConditionalRun()
 {
+	LOG(info) << "conditional run";
 	FairMQPollerPtr poller(NewPoller("sched-flp-chan"));
 
-	while (CheckCurrentState(RUNNING))
-	{
+
 
 		sendCounter++;
 
@@ -82,6 +87,12 @@ void PrototypeSchedulerProcessor::Run()
 		if (sendCounter == 1302) { //
 
 			if (randomReply == false) {
+
+				for (auto &h : hist) {
+					if (h.second/1000 > 0) {
+							result << (h.first)*binSize + binSize/2 << "\t" << h.second/1000;
+					}
+				}
 
 				LOG(info) << "am ende angelangt, schreibe";
 				writeToFile(result.str());
@@ -96,18 +107,26 @@ void PrototypeSchedulerProcessor::Run()
 			}
 			delete [] flpTimes;
 			delete [] flpRandomCounter;
-			break;
+			//break;
+			return false;
 		}
 
 		if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
 			average = average / 99;
 			result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
+
+			for (auto &h : hist) {
+				if (h.second/1000 > 0) {
+						result << (h.first)*binSize + binSize/2 << "\t" << h.second/1000;
+				}
+			}
 			LOG(info) << "am ende angelangt, schreibe";
 			writeToFile(result.str());
 
 			delete [] flpTimes;
 			delete [] flpRandomCounter;
-			break;
+			//break;
+			return false;
 		}
 
 		int len = messageSize;
@@ -139,7 +158,7 @@ void PrototypeSchedulerProcessor::Run()
 				msg2[i] = NewMessage(len);
 
 				//memcpy(msg2[i]->GetData(), const_cast<char*>(text->c_str()), msg2[i]->GetSize()); //bugged bei grosser message
-				memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
+				//memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
 
 				memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
 			}
@@ -147,6 +166,10 @@ void PrototypeSchedulerProcessor::Run()
 			msgSize = std::to_string(msg2[0]->GetSize());
 
 			FairMQMessagePtr reply(NewMessage());
+
+
+
+			LOG(info) << "starte zeitmessung";
 			//Zeit starten
 			before = high_resolution_clock::now();
 
@@ -160,14 +183,14 @@ void PrototypeSchedulerProcessor::Run()
 					int test = Send(msg2[i], "sched-flp-chan", i);
 					if (test < 0 ) {
 						LOG(error) << "fail index " << i;
-						//return false;
-						break;
+						return false;
+						//break;
 					}
 				}
 
 				for (int i = 0; i < amountFlp; i++) {
 					poller->Poll(1000);
-					if (poller->CheckInput("sched-flp-chan", i)) {
+				//	if (poller->CheckInput("sched-flp-chan", i)) {
 
 
 						if (Receive(reply, "sched-flp-chan", i) > 0) {
@@ -178,7 +201,10 @@ void PrototypeSchedulerProcessor::Run()
 							if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
 								after = high_resolution_clock::now();
 								duration<double> dur = duration_cast<duration<double>>(after - before);
+
+
 								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
+								hist[dur.count() / binSize]++;
 								answerCounter	= 0;
 
 								if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
@@ -194,7 +220,7 @@ void PrototypeSchedulerProcessor::Run()
 
 							}
 						} else LOG(error) << "fail";
-					}
+					//}
 				}
 
 			}
@@ -205,8 +231,8 @@ void PrototypeSchedulerProcessor::Run()
 					int test = Send(msg2[i], "sched-flp-chan", i);
 					if (test < 0 ) {
 						LOG(error) << "fail index " << i;
-						//return false;
-						break;
+						return false;
+						//break;
 					}
 
 				}
@@ -223,39 +249,11 @@ void PrototypeSchedulerProcessor::Run()
 				}
 			}
 
-
-
-
-			//hier an alle weitergeleitet -> Zeit stoppen
-			//high_resolution_clock::time_point after = high_resolution_clock::now();
-
-			//duration<double> dur = duration_cast<duration<double>>(after - before);
-			//LOG(info) << "an alle 5 gesendet, schreibe";
-			//write(5, dur); //für skalierende #flps
-			//write(msgSize, dur);
-
 			this_thread::sleep_for(chrono::milliseconds(msgFreq));
-		}
-		//return true;
+
+		return true;
 	}
 
-
-	/*
-	bool PrototypeSchedulerProcessor::HandleFlpData(FairMQMessagePtr& msg, int index)
-	{
-	//index ist hier der index der EPN's
-	LOG(info) << "Empfange Daten von FLP " <<index << " nachricht: " << string(static_cast<char*>(msg->GetData()));
-	answerCounter++;
-	if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
-	after = high_resolution_clock::now();
-	duration<double> dur = duration_cast<duration<double>>(after - before);
-	LOG(info) << "bestätigung von allen " << amountFlp <<" bekommen, schreibe";
-	//write(amountFlp, dur); //für skalierende #flps
-	write(msgSize, dur);
-	answerCounter=0;
-}
-return true;
-} */
 
 bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& msg, int index)
 {
@@ -274,20 +272,7 @@ void PrototypeSchedulerProcessor::writeToFile(std::string text)
 	gnudatafile << text;
 	return;
 }
-/*
-void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur)
-{
-std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-gnudatafile << amountFlp << "\t" << dur.count() << std::endl;
-return;
-}
-void PrototypeSchedulerProcessor::write(std::string msgSize, duration<double>dur)
-{
-std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-gnudatafile << msgSize << "\t" << dur.count() << std::endl;
-return;
-}
-*/
+
 
 int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
 	int len;

@@ -29,7 +29,7 @@ void writeToFile(std::string result);
 //void write(std::string msgSize, duration<double>dur);
 
 virtual void InitTask();
-virtual void Run();
+virtual bool ConditionalRun();
 
 std::string logDir;
 uint64_t messageSize;
