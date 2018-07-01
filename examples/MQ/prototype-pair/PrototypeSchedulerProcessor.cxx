@@ -121,6 +121,7 @@ void PrototypeSchedulerProcessor::Run()
 					average = average / 100;
 					result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
 					minMaxReset = true;
+					average = 0;
 				}
 				len = calculateMessageSize(sendCounter);
 			}
@@ -177,7 +178,7 @@ void PrototypeSchedulerProcessor::Run()
 							if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
 								after = high_resolution_clock::now();
 								duration<double> dur = duration_cast<duration<double>>(after - before);
-								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
 								answerCounter	= 0;
 
 								if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
