@@ -175,9 +175,6 @@ void PrototypeSchedulerProcessor::Run()
 		before = high_resolution_clock::now();
 
 
-
-
-
 		if (randomReply == false) {//Antwort von allen FLPs sammeln
 
 			for (int i = 0; i < amountFlp; i++) {

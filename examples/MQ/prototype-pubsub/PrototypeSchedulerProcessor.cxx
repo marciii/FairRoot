@@ -162,33 +162,37 @@ void PrototypeSchedulerProcessor::Run()
         }
 
         for (int i = 0; i < amountFlp; i++) {
-          poller->Poll(1000);
-          if (poller->CheckInput("answerfromflp", i)) {
-            if (Receive(reply, "answerfromflp", i) >= 0) {
+          while (true) {
+            poller->Poll(1000);
+            if (poller->CheckInput("answerfromflp", i)) {
+              if (Receive(reply, "answerfromflp", i) >= 0) {
 
-              LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
-              answerCounter++;
+                LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
+                answerCounter++;
 
-              if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
-                after = high_resolution_clock::now();
-                duration<double> dur = duration_cast<duration<double>>(after - before);
-                LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
-                answerCounter=0;
+                if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+                  after = high_resolution_clock::now();
+                  duration<double> dur = duration_cast<duration<double>>(after - before);
+                  LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
+                  answerCounter=0;
 
-                if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
-                  min = dur.count();
-                  max = dur.count();
-                  minMaxReset = false;
+                  if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+                    min = dur.count();
+                    max = dur.count();
+                    minMaxReset = false;
+                  }
+
+
+                  average += dur.count();
+                  if (dur.count() < min) min = dur.count();
+                  if (dur.count() > max) max = dur.count();
+
                 }
-
-
-                average += dur.count();
-                if (dur.count() < min) min = dur.count();
-                if (dur.count() > max) max = dur.count();
-
+                //return true;
+                break;
               }
-              //return true;
-            } else LOG(info) << "hier2";
+              else LOG(info) << "fail";
+            }
           }
         }
       }
@@ -229,49 +233,49 @@ void PrototypeSchedulerProcessor::Run()
     }
   }
 
-void PrototypeSchedulerProcessor::writeToFile(std::string text)
-{
-  std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-  gnudatafile << text;
-  return;
-}
-
-
-int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
-  int len;
-  if (counter <= 100) len = 4096; //4kb
-  else if (counter <= 200) len = 8192; //8kb
-  else if (counter <= 300) len = 16384; //16kb
-  else if (counter <= 400) len = 32768; //32kb
-  else if (counter <= 500) len = 65536; //64kb
-  else if (counter <= 600) len = 131072; //128kb
-  else if (counter <= 700) len = 262144; //256kb
-  else if (counter <= 800) len = 524288; //512kb
-  else if (counter <= 900) len = 1048576; //1024kb, 1mb
-  else if (counter <= 1000) len = 2097152; //2048kb, 2mb
-  else if (counter <= 1100) len = 4194304; //4096kb, 4mb
-  else if (counter <= 1200) len = 8388608; //8192kb, 8mb
-  else if (counter <= 1300) len = 16777216; //16384kb, 16mb
-  return len;
-}
-
-uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
-  if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
-    //teil für random id -> statistik
-    std::random_device rd;
-    std::mt19937 eng(rd());
-    std::uniform_int_distribution<> distribution(0, amountFlp-1);
-    flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
-
-    LOG(info) << "FLP " << flpAnswerId << " soll antworten";
-    return flpAnswerId;
-
-  } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
-    //wenn alle antworten sollen -> -1
-    return 99999;
+  void PrototypeSchedulerProcessor::writeToFile(std::string text)
+  {
+    std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+    gnudatafile << text;
+    return;
   }
-}
 
-PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()
-{
-}
+
+  int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
+    int len;
+    if (counter <= 100) len = 4096; //4kb
+    else if (counter <= 200) len = 8192; //8kb
+    else if (counter <= 300) len = 16384; //16kb
+    else if (counter <= 400) len = 32768; //32kb
+    else if (counter <= 500) len = 65536; //64kb
+    else if (counter <= 600) len = 131072; //128kb
+    else if (counter <= 700) len = 262144; //256kb
+    else if (counter <= 800) len = 524288; //512kb
+    else if (counter <= 900) len = 1048576; //1024kb, 1mb
+    else if (counter <= 1000) len = 2097152; //2048kb, 2mb
+    else if (counter <= 1100) len = 4194304; //4096kb, 4mb
+    else if (counter <= 1200) len = 8388608; //8192kb, 8mb
+    else if (counter <= 1300) len = 16777216; //16384kb, 16mb
+    return len;
+  }
+
+  uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
+    if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
+      //teil für random id -> statistik
+      std::random_device rd;
+      std::mt19937 eng(rd());
+      std::uniform_int_distribution<> distribution(0, amountFlp-1);
+      flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
+
+      LOG(info) << "FLP " << flpAnswerId << " soll antworten";
+      return flpAnswerId;
+
+    } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
+      //wenn alle antworten sollen -> -1
+      return 99999;
+    }
+  }
+
+  PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()
+  {
+  }
