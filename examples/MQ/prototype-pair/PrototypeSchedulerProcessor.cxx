@@ -195,7 +195,7 @@ void PrototypeSchedulerProcessor::Run()
 
 						if (Receive(reply, "sched-flp-chan", i) > 0) {
 
-							LOG(info) << "Empfange von FLP: \"";
+							LOG(info) << "Empfange von FLP: " << i;
 							answerCounter++;
 
 							if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
@@ -205,7 +205,9 @@ void PrototypeSchedulerProcessor::Run()
 
 								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
 								LOG(info) << "value: " << (dur.count() * 1000);
-								hist[(dur.count() * 1000) / binSize]++;
+
+
+								hist[(dur.count() * 1000) / binSize]++; //0,5 -> 5000 -> 50
 
 								answerCounter	= 0;
 

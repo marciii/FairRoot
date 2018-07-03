@@ -153,6 +153,8 @@ void PrototypeSchedulerProcessor::Run()
       //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
       msgToFlp.replyId = getRandomAnswerId(randomReply);
 
+
+      /*
       FairMQMessagePtr msg2 = NewMessage(len);
 
       // memset(msg2->GetData(), 'a', msg2->GetSize());
@@ -160,6 +162,18 @@ void PrototypeSchedulerProcessor::Run()
 
 
       msgSize = std::to_string(msg2->GetSize());
+      */
+
+
+      FairMQMessagePtr msg2[amountFlp];
+      for (int i = 0; i < amountFlp; i++) {
+        msg2[i] = NewMessage(len);
+
+        //memcpy(msg2[i]->GetData(), const_cast<char*>(text->c_str()), msg2[i]->GetSize()); //bugged bei grosser message
+        //memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
+
+        memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
+      }
 
 
       //Zeit starten
@@ -167,13 +181,13 @@ void PrototypeSchedulerProcessor::Run()
 
       FairMQMessagePtr reply(NewMessage());
       before = high_resolution_clock::now();
-
+      LOG(info) << "starte zeitmessung";
 
 
 
       if (randomReply == false) {
         for (int i=0;i<amountFlp;i++) {
-          int test = Send(msg2, "scheduledata", i);
+          int test = Send(msg2[i], "scheduledata", i);
           if (test < 0 ) {
             LOG(error) << "fail bei index " << i;
             //return false;
@@ -215,78 +229,78 @@ void PrototypeSchedulerProcessor::Run()
           }
         }
       }
-        else { //randomReply = true
-          for (int i=0;i<amountFlp;i++) {
-            int test = Send(msg2, "scheduledatatoflp", i);
-            if (test < 0 ) {
-              LOG(error) << "fail";
-              //return false;
-              break;
-            }
+      else { //randomReply = true
+        for (int i=0;i<amountFlp;i++) {
+          int test = Send(msg2[i], "scheduledatatoflp", i);
+          if (test < 0 ) {
+            LOG(error) << "fail";
+            //return false;
+            break;
+          }
 
-            if (Receive(reply, "answerfromflp", i) > 0) {
-              after = high_resolution_clock::now();
-              duration<double> dur = duration_cast<duration<double>>(after - before);
-              //result << flpAnswerId << "\t" << dur.count() << std::endl;
-              flpTimes[flpAnswerId] += dur.count();
-              flpRandomCounter[flpAnswerId]++;
-            }
+          if (Receive(reply, "answerfromflp", i) > 0) {
+            after = high_resolution_clock::now();
+            duration<double> dur = duration_cast<duration<double>>(after - before);
+            //result << flpAnswerId << "\t" << dur.count() << std::endl;
+            flpTimes[flpAnswerId] += dur.count();
+            flpRandomCounter[flpAnswerId]++;
           }
         }
-
-
-
-        this_thread::sleep_for(chrono::milliseconds(msgFreq));
-
-        //return true;
       }
+
+
+
+      this_thread::sleep_for(chrono::milliseconds(msgFreq));
+
+      //return true;
     }
+  }
 
 
 
-    void PrototypeSchedulerProcessor::writeToFile(std::string text)
-    {
-      std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-      gnudatafile << text;
-      return;
+  void PrototypeSchedulerProcessor::writeToFile(std::string text)
+  {
+    std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+    gnudatafile << text;
+    return;
+  }
+
+
+  int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
+    int len;
+    if (counter <= 100) len = 4096; //4kb
+    else if (counter <= 200) len = 8192; //8kb
+    else if (counter <= 300) len = 16384; //16kb
+    else if (counter <= 400) len = 32768; //32kb
+    else if (counter <= 500) len = 65536; //64kb
+    else if (counter <= 600) len = 131072; //128kb
+    else if (counter <= 700) len = 262144; //256kb
+    else if (counter <= 800) len = 524288; //512kb
+    else if (counter <= 900) len = 1048576; //1024kb, 1mb
+    else if (counter <= 1000) len = 2097152; //2048kb, 2mb
+    else if (counter <= 1100) len = 4194304; //4096kb, 4mb
+    else if (counter <= 1200) len = 8388608; //8192kb, 8mb
+    else if (counter <= 1300) len = 16777216; //16384kb, 16mb
+    return len;
+  }
+
+  uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
+    if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
+      //teil für random id -> statistik
+      std::random_device rd;
+      std::mt19937 eng(rd());
+      std::uniform_int_distribution<> distribution(0, amountFlp-1);
+      flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
+
+      LOG(info) << "FLP " << flpAnswerId << " soll antworten";
+      return flpAnswerId;
+
+    } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
+      //wenn alle antworten sollen -> -1
+      return 99999;
     }
+  }
 
-
-    int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
-      int len;
-      if (counter <= 100) len = 4096; //4kb
-      else if (counter <= 200) len = 8192; //8kb
-      else if (counter <= 300) len = 16384; //16kb
-      else if (counter <= 400) len = 32768; //32kb
-      else if (counter <= 500) len = 65536; //64kb
-      else if (counter <= 600) len = 131072; //128kb
-      else if (counter <= 700) len = 262144; //256kb
-      else if (counter <= 800) len = 524288; //512kb
-      else if (counter <= 900) len = 1048576; //1024kb, 1mb
-      else if (counter <= 1000) len = 2097152; //2048kb, 2mb
-      else if (counter <= 1100) len = 4194304; //4096kb, 4mb
-      else if (counter <= 1200) len = 8388608; //8192kb, 8mb
-      else if (counter <= 1300) len = 16777216; //16384kb, 16mb
-      return len;
-    }
-
-    uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
-      if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
-        //teil für random id -> statistik
-        std::random_device rd;
-        std::mt19937 eng(rd());
-        std::uniform_int_distribution<> distribution(0, amountFlp-1);
-        flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
-
-        LOG(info) << "FLP " << flpAnswerId << " soll antworten";
-        return flpAnswerId;
-
-      } else { // keine random ID -> in MyMessage reply ID auf -1 setzen
-        //wenn alle antworten sollen -> -1
-        return 99999;
-      }
-    }
-
-    PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()
-    {
-    }
+  PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()
+  {
+  }
