@@ -181,7 +181,6 @@ void PrototypeSchedulerProcessor::Run()
 
       FairMQMessagePtr reply(NewMessage());
       before = high_resolution_clock::now();
-      LOG(info) << "starte zeitmessung";
 
 
 
