@@ -174,7 +174,7 @@ void PrototypeSchedulerProcessor::Run()
 
         memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
       }
-
+      msgSize = std::to_string(msg2[0]->GetSize());
 
       //Zeit starten
       //high_resolution_clock::time_point before = high_resolution_clock::now();
