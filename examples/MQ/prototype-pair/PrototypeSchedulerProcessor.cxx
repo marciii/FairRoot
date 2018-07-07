@@ -42,7 +42,7 @@ double* flpRandomCounter;
 
 // map <bin, count>
 std::map<std::uint64_t, std::uint64_t> hist;
-const std::uint64_t binSize = 50; // 100 micro secconds bin size; you can tune this
+const std::uint64_t binSize = 25; // 100 micro secconds bin size; you can tune this
 
 
 struct MyMessage {
