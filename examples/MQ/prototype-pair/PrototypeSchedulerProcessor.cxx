@@ -87,12 +87,13 @@ void PrototypeSchedulerProcessor::Run()
 	if (sendCounter == 1302) { //
 
 		if (randomReply == false) {
+			/*
 			result << std::endl;
 			for (auto &h : hist) {
 				//if (h.second/1000 > 0) {
 					result << (h.first)*binSize + binSize/2 << "\t" << h.second << std::endl;
 				//}
-			}
+			} */
 
 			LOG(info) << "am ende angelangt, schreibe";
 			writeToFile(result.str());
@@ -111,7 +112,7 @@ void PrototypeSchedulerProcessor::Run()
 		//return false;
 	}
 
-	if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+	if (sendCounter == 1000 && scalingFlp == true) { //nur 100 messages pro Versuch
 		average = average / 99;
 		result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
 		result << std::endl;
@@ -204,10 +205,10 @@ void PrototypeSchedulerProcessor::Run()
 
 
 								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
-								LOG(info) << "value: " << (dur.count() * 1000);
+								LOG(info) << "bin: " << (dur.count() * 1000) / binSize;
 
 
-								hist[(dur.count() * 1000) / binSize]++; //0,5 -> 5000 -> 50
+								hist[(dur.count() * 1000) / binSize]++; //10000 für localhost, 1000 für cluster
 
 								answerCounter	= 0;
 
