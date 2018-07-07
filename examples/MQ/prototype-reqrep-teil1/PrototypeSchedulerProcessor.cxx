@@ -152,13 +152,16 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
     //generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
     msgToFlp.replyId = getRandomAnswerId(randomReply);
 
-    FairMQMessagePtr msg2 = NewMessage(len);
 
-    // memset(msg2->GetData(), 'a', msg2->GetSize());
-    memcpy(msg2->GetData(), &msgToFlp, sizeof(MyMessage));
+    FairMQMessagePtr msg2[amountFlp];
+    for (int i = 0; i < amountFlp; i++) {
+      msg2[i] = NewMessage(len);
 
+      //memcpy(msg2[i]->GetData(), const_cast<char*>(text->c_str()), msg2[i]->GetSize()); //bugged bei grosser message
+      //memset(msg2[i]->GetData(), 'a', msg2[i]->GetSize()) ;
 
-    msgSize = std::to_string(msg2->GetSize());
+      memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
+    }
 
 
     //Zeit starten
@@ -172,7 +175,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
     if (randomReply == false) {
       for (int i=0;i<amountFlp;i++) {
-        int test = Send(msg2, "scheduledata", i);
+        int test = Send(msg2[i], "scheduledata", i);
         if (test < 0 ) {
           LOG(error) << "fail";
           return false;
@@ -210,7 +213,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
     else { //randomReply = true
       for (int i=0;i<amountFlp;i++) {
-        int test = Send(msg2, "scheduledatatoflp", i);
+        int test = Send(msg2[i], "scheduledatatoflp", i);
         if (test < 0 ) {
           LOG(error) << "fail";
           return false;

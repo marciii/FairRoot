@@ -39,6 +39,10 @@ bool minMaxReset = true;
 double* flpTimes;
 double* flpRandomCounter;
 
+// map <bin, count>
+std::map<std::uint64_t, std::uint64_t> hist;
+const std::uint64_t binSize = 25; // 100 micro secconds bin size; you can tune this
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
@@ -99,6 +103,14 @@ void PrototypeSchedulerProcessor::Run()
       average = average / 99;
 
       result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
+      result << std::endl;
+
+      for (auto &h : hist) {
+        //if (h.second/1000 > 0) {
+          result << (h.first)*binSize + binSize/2 << "\t" << h.second << std::endl;
+        //}
+      }
+
       LOG(info) << "am ende angelangt, schreibe";
       writeToFile(result.str());
 
@@ -174,6 +186,8 @@ void PrototypeSchedulerProcessor::Run()
                   after = high_resolution_clock::now();
                   duration<double> dur = duration_cast<duration<double>>(after - before);
                   LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
+
+                  hist[(dur.count() * 1000) / binSize]++; //10000 für localhost, 1000 für cluster
                   answerCounter=0;
 
                   if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
