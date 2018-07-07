@@ -42,7 +42,7 @@ double* flpRandomCounter;
 
 // map <bin, count>
 std::map<std::uint64_t, std::uint64_t> hist;
-const std::uint64_t binSize = 100; // 100 micro secconds bin size; you can tune this
+const std::uint64_t binSize = 50; // 100 micro secconds bin size; you can tune this
 
 
 struct MyMessage {
@@ -87,13 +87,6 @@ void PrototypeSchedulerProcessor::Run()
 	if (sendCounter == 1302) { //
 
 		if (randomReply == false) {
-			/*
-			result << std::endl;
-			for (auto &h : hist) {
-				//if (h.second/1000 > 0) {
-					result << (h.first)*binSize + binSize/2 << "\t" << h.second << std::endl;
-				//}
-			} */
 
 			LOG(info) << "am ende angelangt, schreibe";
 			writeToFile(result.str());
