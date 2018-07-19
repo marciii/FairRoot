@@ -99,7 +99,7 @@ void PrototypeSchedulerProcessor::Run()
       break;
     }
 
-    if (sendCounter == 1000 && scalingFlp == true) { //nur 100 messages pro Versuch
+    if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
       average = average / 99;
 
       result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
