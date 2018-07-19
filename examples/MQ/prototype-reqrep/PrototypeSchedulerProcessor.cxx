@@ -192,7 +192,9 @@ void PrototypeSchedulerProcessor::Run()
             //return false;
             //break;
           }
-
+        }
+        
+        for (int i=0;i<amountFlp;i++) {
           while (true) {
             poller->Poll(1000);
             if (poller->CheckInput("scheduledata", i)) {
