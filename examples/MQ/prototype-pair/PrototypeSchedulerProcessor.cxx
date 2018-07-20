@@ -43,7 +43,7 @@ double* flpRandomCounter;
 // map <bin, count>
 std::map<std::uint64_t, std::uint64_t> hist;
 const std::uint64_t binSize = 25; // 100 micro secconds bin size; you can tune this
-
+const double divSize = 1000; //1000 für cluster, 10000 für localhost
 
 struct MyMessage {
 	uint64_t sendCounter;
@@ -105,14 +105,15 @@ void PrototypeSchedulerProcessor::Run()
 		//return false;
 	}
 
-	if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+	if (sendCounter == 1000 && scalingFlp == true) { //nur 100 messages pro Versuch
 		average = average / 99;
 		result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
 		result << std::endl;
 
 		for (auto &h : hist) {
 			//if (h.second/1000 > 0) {
-				result << (h.first)*binSize + binSize/2 << "\t" << h.second << std::endl;
+			double tmp = ((h.first)*binSize + binSize/2.0)/divSize;
+				result << tmp << "\t" << h.second << std::endl;
 			//}
 		}
 		LOG(info) << "am ende angelangt, schreibe";
@@ -201,7 +202,7 @@ void PrototypeSchedulerProcessor::Run()
 								LOG(info) << "bin: " << (dur.count() * 1000) / binSize;
 
 
-								hist[(dur.count() * 1000) / binSize]++; //10000 für localhost, 1000 für cluster
+								hist[(dur.count() * divSize) / binSize]++; //10000 für localhost, 1000 für cluster
 
 								answerCounter	= 0;
 
