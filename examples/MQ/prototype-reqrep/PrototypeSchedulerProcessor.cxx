@@ -48,6 +48,11 @@ bool minMaxReset = true;
 double* flpTimes;
 double* flpRandomCounter;
 
+// map <bin, count>
+std::map<std::uint64_t, std::uint64_t> hist;
+const std::uint64_t binSize = 5;
+const double divSize = 1000; //1000 für cluster, 10000 für localhost
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
@@ -113,11 +118,20 @@ void PrototypeSchedulerProcessor::Run()
       break;
     }
 
-    if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+    if (sendCounter == 1000 && scalingFlp == true) { //nur 100 messages pro Versuch
       average = average / 99;
 
       //	result << amountFlp << "\t" << average << "\t" << min_abweichung << "\t" << max_abweichung << std::endl;
       result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
+      result << std::endl;
+
+      for (auto &h : hist) {
+        //if (h.second/1000 > 0) {
+        double tmp = ((h.first)*binSize + binSize/2.0)/divSize;
+        result << tmp << "\t" << h.second << std::endl;
+        //}
+      }
+
       LOG(info) << "am ende angelangt, schreibe";
       writeToFile(result.str());
       //return false;
@@ -193,7 +207,7 @@ void PrototypeSchedulerProcessor::Run()
             //break;
           }
         }
-        
+
         for (int i=0;i<amountFlp;i++) {
           while (true) {
             poller->Poll(1000);
@@ -208,6 +222,8 @@ void PrototypeSchedulerProcessor::Run()
                   after = high_resolution_clock::now();
                   duration<double> dur = duration_cast<duration<double>>(after - before);
                   LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
+
+                  hist[(dur.count() * divSize) / binSize]++;
 
                   if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
                     min = dur.count();

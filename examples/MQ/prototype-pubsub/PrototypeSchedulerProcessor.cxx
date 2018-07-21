@@ -79,7 +79,7 @@ void PrototypeSchedulerProcessor::Run()
   while (CheckCurrentState(RUNNING))
   {
     sendCounter++;
-
+    LOG(info) << "send counter " << sendCounter;
     if (sendCounter ==  1302) { //
 
       if (randomReply == false) {
@@ -100,12 +100,11 @@ void PrototypeSchedulerProcessor::Run()
       break;
     }
 
-    if (sendCounter == 10000 && scalingFlp == true) { //nur 100 messages pro Versuch
+    if (sendCounter == 1000 && scalingFlp == true) { //nur 100 messages pro Versuch
       average = average / 99;
 
       result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
       result << std::endl;
-
       for (auto &h : hist) {
   			//if (h.second/1000 > 0) {
   			double tmp = ((h.first)*binSize + binSize/2.0)/divSize;
