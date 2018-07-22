@@ -100,7 +100,7 @@ void PrototypeSchedulerProcessor::Run()
   {
     sendCounter++;
 
-    if (sendCounter ==  1302) { //
+    if (sendCounter == 1302 && msgAutoscale == true) { //msg autoscale
 
       if (randomReply == false) {
         LOG(info) << "am ende angelangt, schreibe";

@@ -86,7 +86,7 @@ void PrototypeSchedulerProcessor::Run()
 	sendCounter++;
 
 
-	if (sendCounter == 1302) { //
+	if (sendCounter == 1302 && msgAutoscale == true) { // msg msgAutoscale
 
 		if (randomReply == false) {
 
