@@ -44,6 +44,8 @@ std::map<std::uint64_t, std::uint64_t> hist;
 const std::uint64_t binSize = 5; // 100 micro secconds bin size; you can tune this
 const double divSize = 1000; //1000 für cluster, 10000 für localhost
 
+const int iterations = 100000;
+
 struct MyMessage {
   uint64_t sendCounter;
   uint64_t replyId;
@@ -100,8 +102,8 @@ void PrototypeSchedulerProcessor::Run()
       break;
     }
 
-    if (sendCounter == 1000 && scalingFlp == true) { //nur 100 messages pro Versuch
-      average = average / 99;
+    if (sendCounter == iterations && scalingFlp == true) { //nur 100 messages pro Versuch
+      average = average / (iterations - 1);
 
       result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
       result << std::endl;
