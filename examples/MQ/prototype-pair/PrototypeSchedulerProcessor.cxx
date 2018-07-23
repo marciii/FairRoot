@@ -84,7 +84,7 @@ void PrototypeSchedulerProcessor::Run()
 
 
 	sendCounter++;
-
+	LOG(info) << "send counter " << sendCounter;
 
 	if (sendCounter == 1302 && msgAutoscale == true) { // msg msgAutoscale
 

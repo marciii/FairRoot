@@ -99,7 +99,8 @@ void PrototypeSchedulerProcessor::Run()
   while (CheckCurrentState(RUNNING))
   {
     sendCounter++;
-
+    LOG(info) << "send counter " << sendCounter;
+    
     if (sendCounter == 1302 && msgAutoscale == true) { //msg autoscale
 
       if (randomReply == false) {
