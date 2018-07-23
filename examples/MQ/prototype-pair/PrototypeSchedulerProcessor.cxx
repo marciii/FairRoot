@@ -23,7 +23,7 @@
 using namespace std::chrono;
 using namespace std;
 
-int sendCounter = 0;
+long int sendCounter = 0;
 int answerCounter = 0;
 int flpAnswerId;
 

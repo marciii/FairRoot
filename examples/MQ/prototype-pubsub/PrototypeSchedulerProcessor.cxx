@@ -26,7 +26,7 @@ using namespace std;
 high_resolution_clock::time_point before;
 high_resolution_clock::time_point after;
 
-int sendCounter = 0;
+long int sendCounter = 0;
 int answerCounter = 0;
 
 std::string msgSize;

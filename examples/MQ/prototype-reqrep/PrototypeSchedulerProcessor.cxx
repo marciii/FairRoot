@@ -28,7 +28,7 @@ using namespace std::chrono;
 using namespace std;
 
 int size = 1;
-int sendCounter = 0; //0
+long int sendCounter = 0; //0
 int currentMessage = 1;
 int flpReceived = 0;
 
@@ -100,7 +100,7 @@ void PrototypeSchedulerProcessor::Run()
   {
     sendCounter++;
     LOG(info) << "send counter " << sendCounter;
-    
+
     if (sendCounter == 1302 && msgAutoscale == true) { //msg autoscale
 
       if (randomReply == false) {
