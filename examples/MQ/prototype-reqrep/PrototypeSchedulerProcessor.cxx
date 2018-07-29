@@ -212,9 +212,9 @@ void PrototypeSchedulerProcessor::Run()
         }
 
         for (int i=0;i<amountFlp;i++) {
-          while (true) {
-            poller->Poll(1000);
-            if (poller->CheckInput("scheduledata", i)) {
+          //while (true) {
+            //poller->Poll(1000);
+            //if (poller->CheckInput("scheduledata", i)) {
 
               if (Receive(reply, "scheduledata", i) >= 0) {
 
@@ -242,11 +242,11 @@ void PrototypeSchedulerProcessor::Run()
 
                   bestaetigungReceived=0;
                 }
-                break;
+                //break;
               }
               else LOG(error) << "failed to receive message";
-            }
-          }
+            //} //end if poller
+          //} //end while
         }
       }
       else { //randomReply = true
