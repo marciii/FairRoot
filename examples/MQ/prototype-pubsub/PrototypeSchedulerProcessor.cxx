@@ -177,9 +177,9 @@ void PrototypeSchedulerProcessor::Run()
         }
 
         for (int i = 0; i < amountFlp; i++) {
-        //  while (true) {
-          //  poller->Poll(1000);
-            //if (poller->CheckInput("answerfromflp", i)) {
+          while (true) {
+            poller->Poll(1000);
+            if (poller->CheckInput("answerfromflp", i)) {
               if (Receive(reply, "answerfromflp", i) >= 0) {
 
                 LOG(info) << "Empfange von FLP: \"";// << string(static_cast<char*>(reply->GetData()));
@@ -206,11 +206,11 @@ void PrototypeSchedulerProcessor::Run()
 
                 }
                 //return true;
-                //break;
+                break;
               }
               else LOG(info) << "fail";
-            //} //end if poller
-          //} //end while
+            } //end if poller
+          } //end while
         }
       }
 
