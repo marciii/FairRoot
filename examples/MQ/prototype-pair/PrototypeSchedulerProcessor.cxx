@@ -23,29 +23,22 @@
 using namespace std::chrono;
 using namespace std;
 
-long int sendCounter = 0;
+int sendCounter = 0;
 int answerCounter = 0;
-int flpAnswerId;
-
 
 high_resolution_clock::time_point before;
 high_resolution_clock::time_point after;
 
 std::string msgSize;
+int flpAnswerId;
 
 std::stringstream result;
 
-bool minMaxReset = true;
+bool minMaxReset = false;
 
 double* flpTimes;
 double* flpRandomCounter;
 
-// map <bin, count>
-std::map<std::uint64_t, std::uint64_t> hist;
-const std::uint64_t binSize = 5; // 100 micro secconds bin size; you can tune this
-const double divSize = 1000; //1000 für cluster, 10000 für localhost
-
-const int iterations = 100000;
 
 struct MyMessage {
 	uint64_t sendCounter;
@@ -76,17 +69,13 @@ void PrototypeSchedulerProcessor::InitTask()
 
 }
 
-void PrototypeSchedulerProcessor::Run()
+bool PrototypeSchedulerProcessor::ConditionalRun()
 {
-	FairMQPollerPtr poller(NewPoller("sched-flp-chan"));
-	while (CheckCurrentState(RUNNING))
-  {
-
 
 	sendCounter++;
-	LOG(info) << "send counter " << sendCounter;
 
-	if (sendCounter == 1302 && msgAutoscale == true) { // msg msgAutoscale
+
+	if (sendCounter == 1302) { //
 
 		if (randomReply == false) {
 
@@ -103,28 +92,18 @@ void PrototypeSchedulerProcessor::Run()
 		}
 		delete [] flpTimes;
 		delete [] flpRandomCounter;
-		break;
-		//return false;
+		return false;
 	}
 
-	if (sendCounter == iterations && scalingFlp == true) { //nur 100 messages pro Versuch
-		average = average / (iterations - 1);
+	if (sendCounter == 100 && scalingFlp == true) { //nur 100 messages pro Versuch
+		average = average / 99;
 		result << amountFlp << "\t" << average << "\t" << min << "\t" << max << std::endl;
-		result << std::endl;
-
-		for (auto &h : hist) {
-			//if (h.second/1000 > 0) {
-			double tmp = ((h.first)*binSize + binSize/2.0)/divSize;
-				result << tmp << "\t" << h.second << std::endl;
-			//}
-		}
 		LOG(info) << "am ende angelangt, schreibe";
 		writeToFile(result.str());
 
 		delete [] flpTimes;
 		delete [] flpRandomCounter;
-		break;
-		//return false;
+		return false;
 	}
 
 	int len = messageSize;
@@ -138,7 +117,6 @@ void PrototypeSchedulerProcessor::Run()
 				average = average / 100;
 				result << msgSize << "\t" << average << "\t" << min << "\t" << max << std::endl;
 				minMaxReset = true;
-				average = 0;
 			}
 			len = calculateMessageSize(sendCounter);
 		}
@@ -163,71 +141,49 @@ void PrototypeSchedulerProcessor::Run()
 
 		msgSize = std::to_string(msg2[0]->GetSize());
 
-		FairMQMessagePtr reply(NewMessage());
-
-
-
-		LOG(info) << "starte zeitmessung";
 		//Zeit starten
 		before = high_resolution_clock::now();
 
+		answerCounter	= 0;
 
 		if (randomReply == false) {//Antwort von allen FLPs sammeln
 
 			for (int i = 0; i < amountFlp; i++) {
+
 				int test = Send(msg2[i], "sched-flp-chan", i);
 				if (test < 0 ) {
 					LOG(error) << "fail index " << i;
-					//return false;
-					break;
+					return false;
 				}
-			}
 
-			for (int i = 0; i < amountFlp; i++) {
+				FairMQMessagePtr reply(NewMessage());
 
-				while (true) {
-					poller->Poll(1000);
-					if (poller->CheckInput("sched-flp-chan", i)) {
+				if (Receive(reply, "sched-flp-chan", i) > 0) {
 
+					LOG(info) << "Empfange von FLP: \"";
+					answerCounter++;
 
-						if (Receive(reply, "sched-flp-chan", i) > 0) {
-
-							LOG(info) << "Empfange von FLP: " << i;
-							answerCounter++;
-
-							if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
-								after = high_resolution_clock::now();
-								duration<double> dur = duration_cast<duration<double>>(after - before);
+					if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+						after = high_resolution_clock::now();
+						duration<double> dur = duration_cast<duration<double>>(after - before);
+						LOG(info) << "bestätigung von allen " << amountFlp << " bekommen";
 
 
-								LOG(info) << "bestätigung von allen " << amountFlp << " bekommen, dauer insgesamt: " << dur.count();
-								LOG(info) << "bin: " << (dur.count() * 1000) / binSize;
-
-
-								hist[(dur.count() * divSize) / binSize]++; //10000 für localhost, 1000 für cluster
-
-								answerCounter	= 0;
-
-								if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
-									min = dur.count();
-									max = dur.count();
-									minMaxReset = false;
-								}
-
-
-								average += dur.count();
-								if (dur.count() < min) min = dur.count();
-								if (dur.count() > max) max = dur.count();
-
-							}
-							break;
+						if (sendCounter==1 || minMaxReset==true) { //erste nachricht, min und max festlegen
+							min = dur.count();
+							max = dur.count();
+							minMaxReset = false;
 						}
-						else LOG(error) << "fail";
-					} //ende if poller
-				} //ende while
 
-			} //ende for
 
+						average += dur.count();
+						if (dur.count() < min) min = dur.count();
+						if (dur.count() > max) max = dur.count();
+
+					}
+				} else LOG(error) << "fail";
+
+			}
 		}
 		else { //randomReply = true
 
@@ -236,12 +192,12 @@ void PrototypeSchedulerProcessor::Run()
 				int test = Send(msg2[i], "sched-flp-chan", i);
 				if (test < 0 ) {
 					LOG(error) << "fail index " << i;
-					//return false;
-					break;
+					return false;
 				}
 
 			}
 
+			FairMQMessagePtr reply(NewMessage());
 
 			if (Receive(reply, "sched-flp-chan", flpAnswerId) > 0) {
 				LOG(info) << "bestätigung von flp " << flpAnswerId << " erhalten";
@@ -254,68 +210,108 @@ void PrototypeSchedulerProcessor::Run()
 			}
 		}
 
+
+
+
+		//hier an alle weitergeleitet -> Zeit stoppen
+		//high_resolution_clock::time_point after = high_resolution_clock::now();
+
+		//duration<double> dur = duration_cast<duration<double>>(after - before);
+		//LOG(info) << "an alle 5 gesendet, schreibe";
+		//write(5, dur); //für skalierende #flps
+		//write(msgSize, dur);
+
 		this_thread::sleep_for(chrono::milliseconds(msgFreq));
-
-		//return true;
-	}
-	}
-
-
-	bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& msg, int index)
-	{
-
-		//index ist hier der index der EPN's
-		LOG(info) << "Empfange Daten von EPN " << index;
-
-
 
 		return true;
 	}
 
-	void PrototypeSchedulerProcessor::writeToFile(std::string text)
+
+	/*
+	bool PrototypeSchedulerProcessor::HandleFlpData(FairMQMessagePtr& msg, int index)
 	{
-		std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
-		gnudatafile << text;
-		return;
+	//index ist hier der index der EPN's
+	LOG(info) << "Empfange Daten von FLP " <<index << " nachricht: " << string(static_cast<char*>(msg->GetData()));
+	answerCounter++;
+	if (answerCounter == amountFlp) { //alle haben geantwortet, timer stoppen -> gilt für RTT
+	after = high_resolution_clock::now();
+	duration<double> dur = duration_cast<duration<double>>(after - before);
+	LOG(info) << "bestätigung von allen " << amountFlp <<" bekommen, schreibe";
+	//write(amountFlp, dur); //für skalierende #flps
+	write(msgSize, dur);
+	answerCounter=0;
+}
+return true;
+} */
+
+bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& msg, int index)
+{
+
+	//index ist hier der index der EPN's
+	LOG(info) << "Empfange Daten von EPN " << index;
+
+
+
+	return true;
+}
+
+void PrototypeSchedulerProcessor::writeToFile(std::string text)
+{
+	std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+	gnudatafile << text;
+	return;
+}
+/*
+void PrototypeSchedulerProcessor::write(int amountFlp, duration<double>dur)
+{
+std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+gnudatafile << amountFlp << "\t" << dur.count() << std::endl;
+return;
+}
+void PrototypeSchedulerProcessor::write(std::string msgSize, duration<double>dur)
+{
+std::ofstream gnudatafile("gnudatafile.txt", std::ios_base::out | std::ios_base::app );
+gnudatafile << msgSize << "\t" << dur.count() << std::endl;
+return;
+}
+*/
+
+int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
+	int len;
+
+	if (counter <= 100) len = 4096; //4kb
+	else if (counter <= 200) len = 8192; //8kb
+	else if (counter <= 300) len = 16384; //16kb
+	else if (counter <= 400) len = 32768; //32kb
+	else if (counter <= 500) len = 65536; //64kb
+	else if (counter <= 600) len = 131072; //128kb
+	else if (counter <= 700) len = 262144; //256kb
+	else if (counter <= 800) len = 524288; //512kb
+	else if (counter <= 900) len = 1048576; //1024kb, 1mb
+	else if (counter <= 1000) len = 2097152; //2048kb, 2mb
+	else if (counter <= 1100) len = 4194304; //4096kb, 4mb
+	else if (counter <= 1200) len = 8388608; //8192kb, 8mb
+	else if (counter <= 1300) len = 16777216; //16384kb, 16mb
+	return len;
+}
+
+uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
+	if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
+		//teil für random id -> statistik
+		std::random_device rd;
+		std::mt19937 eng(rd());
+		std::uniform_int_distribution<> distribution(0, amountFlp-1);
+		flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
+
+		LOG(info) << "FLP " << flpAnswerId << " soll antworten";
+		return flpAnswerId;
+
+	} else { // keine random ID -> in MyMessage reply ID auf -1 setzen
+		//wenn alle antworten sollen -> -1
+		return 99999;
 	}
+}
 
-
-	int PrototypeSchedulerProcessor::calculateMessageSize(int counter) {
-		int len;
-
-		if (counter <= 100) len = 4096; //4kb
-		else if (counter <= 200) len = 8192; //8kb
-		else if (counter <= 300) len = 16384; //16kb
-		else if (counter <= 400) len = 32768; //32kb
-		else if (counter <= 500) len = 65536; //64kb
-		else if (counter <= 600) len = 131072; //128kb
-		else if (counter <= 700) len = 262144; //256kb
-		else if (counter <= 800) len = 524288; //512kb
-		else if (counter <= 900) len = 1048576; //1024kb, 1mb
-		else if (counter <= 1000) len = 2097152; //2048kb, 2mb
-		else if (counter <= 1100) len = 4194304; //4096kb, 4mb
-		else if (counter <= 1200) len = 8388608; //8192kb, 8mb
-		else if (counter <= 1300) len = 16777216; //16384kb, 16mb
-		return len;
-	}
-
-	uint64_t PrototypeSchedulerProcessor::getRandomAnswerId(bool randomAnswer) {
-		if (randomAnswer == true) { //eine reply in MyMessage ID zwischen 1.. #FLPs auswählen
-			//teil für random id -> statistik
-			std::random_device rd;
-			std::mt19937 eng(rd());
-			std::uniform_int_distribution<> distribution(0, amountFlp-1);
-			flpAnswerId = distribution(eng); //creates the random variable in the range of 1 and amountFlp
-
-			LOG(info) << "FLP " << flpAnswerId << " soll antworten";
-			return flpAnswerId;
-
-		} else { // keine random ID -> in MyMessage reply ID auf -1 setzen
-			//wenn alle antworten sollen -> -1
-			return 99999;
-		}
-	}
-
-	PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()
-	{
-	}
+PrototypeSchedulerProcessor::~PrototypeSchedulerProcessor()
+{
+}
