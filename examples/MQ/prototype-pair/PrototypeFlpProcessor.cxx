@@ -50,12 +50,10 @@ bool PrototypeFlpProcessor::HandleData(FairMQMessagePtr& msg, int index)
 
   if (receivedMsg.replyId == myId || receivedMsg.replyId == 99999) { //dieser FLP soll antworten oder jeder FLP soll antworten
 
-    //den teil dann in die obige if schleife
-    const string text = "bestätigung von FLP";
-    FairMQMessagePtr answer(NewMessage(text.length()));
-    memcpy(answer->GetData(), text.c_str(), text.length());
+    FairMQMessagePtr answer(NewMessage(100));
+  
 
-    LOG(info) << "Sende bestaetigung für RTT";
+
     if (Send(answer, "sched-flp-chan") < 0) {
       LOG(error) << "Bestaetigung konnte nicht gesendet werden";
       return false;
