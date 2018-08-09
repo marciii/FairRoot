@@ -90,7 +90,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
   sendCounter++;
 
-  if (sendCounter ==  1002) { //
+  if (sendCounter ==  1302) { //
 
     if (randomReply == false) {
 			LOG(info) << "am ende angelangt, schreibe";
@@ -162,7 +162,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
       memcpy(msg2[i]->GetData(), &msgToFlp, sizeof(MyMessage)) ;
     }
-
+    msgSize = std::to_string(msg2[0]->GetSize());
 
     //Zeit starten
     //high_resolution_clock::time_point before = high_resolution_clock::now();
@@ -238,139 +238,7 @@ bool PrototypeSchedulerProcessor::ConditionalRun()
 
 
 
-  /*
-  bool PrototypeSchedulerProcessor::HandleData(FairMQMessagePtr& request, int index) //EPN data
-  {
 
-  //LOG(info) << "Received request from client: \"" << string(static_cast<char*>(request->GetData()), request->GetSize()) << "\"";
-
-  string* text = new string("bestaetigung");
-
-  //LOG(info) << "Sende EPN Bestaetigung";
-
-  FairMQMessagePtr reply(NewMessage(const_cast<char*>(text->c_str()), // data
-  text->length(), // size
-  [](void* data, void* object) { delete static_cast<string*>(object); }, // deletion callback
-  text)); // object that manages the data
-
-  if (Send(reply, "epndata") > 0)
-  {
-
-  return true;
-}
-
-return false;
-}
-*/
-
-/*
-bool PrototypeSchedulerProcessor::HandleData2(FairMQMessagePtr& request, int index) //FLP data, alias Schrit 2)
-{
-
-
-
-if (sendCounter ==  1500) { //
-LOG(info) << "am ende angelangt, schreibe";
-writeToFile(result.str());
-return false;
-}
-
-if (sendCounter == 150 && scalingFlp == true) { //nur 100 messages pro Versuch
-LOG(info) << "am ende angelangt, schreibe";
-writeToFile(result.str());
-return false;
-}
-int len = messageSize;
-
-
-//teil fuer message scaling
-
-
-
-MyMessage receivedMsg;
-// make sure the msg is large enough to hold the data
-assert(request->GetSize() >= sizeof(MyMessage));
-memcpy(&receivedMsg, request->GetData(), sizeof(MyMessage));
-
-
-if (receivedMsg.confirmation == false) { // 2) erster request also
-requestReceived++;
-if (requestReceived == 1) {
-before = high_resolution_clock::now(); //timer NUR beim ersten request starten
-//damit er nicht bei jedem request neu startet
-sendCounter++;//hier die versendeten nachrichten zählen
-getRandomAnswerId(randomReply); //auch hier nur einmal die Funktion, damit diese nicht x mal aufgerufen wird
-}
-if (requestReceived == amountFlp) {
-requestReceived = 0; //zaehler zurücksetzen
-}
-
-//hier die eigentliche (große) Nachricht
-if (msgAutoscale == true) {
-len = calculateMessageSize(sendCounter);
-}
-
-MyMessage msgToFlp;
-msgToFlp.sendCounter = sendCounter;
-//generiert zufälligen wert wenn randomReply aktiviert ist, ansonsten 99999
-msgToFlp.replyId = flpAnswerId;
-msgToFlp.frequency = msgFreq;
-msgToFlp.numberFlp = amountFlp;
-if (scalingFlp)
-msgToFlp.numberMessages = 100;
-else
-msgToFlp.numberMessages = 1299;
-
-FairMQMessagePtr reply = NewMessage(len);
-memcpy(reply->GetData(), &msgToFlp, sizeof(MyMessage));
-msgSize = std::to_string(reply->GetSize());
-if (Send(reply, "scheduledata") > 0) // 3)
-return true;
-else
-return false;
-}
-else if (receivedMsg.confirmation == true) { // 6)
-bestaetigungReceived++;
-LOG(info) << "empfange bestätigung von flp " << receivedMsg.flpId;
-
-if (randomReply == true) {
-if (receivedMsg.flpId == flpAnswerId) {
-//für randomReply - wenn bestätigung ankam
-LOG(info) << "bestätigung von " << flpAnswerId << " erhalten";
-after = high_resolution_clock::now();
-duration<double> dur = duration_cast<duration<double>>(after - before);
-result << flpAnswerId << "\t" << dur.count() << std::endl;
-}
-FairMQMessagePtr step7 = NewMessage(1);
-if (Send(step7, "scheduledata") > 0 ) // 7)
-return true;
-else
-return false;
-}
-else if (randomReply == false) {
-if (bestaetigungReceived == amountFlp) {
-LOG(info) << "alle bestätigungen erhalten";
-bestaetigungReceived = 0;
-after = high_resolution_clock::now();
-duration<double> dur = duration_cast<duration<double>>(after - before);
-if (scalingFlp) {
-//write(amountFlp, dur); //für skalierende #flps
-result << amountFlp << "\t" << dur.count() << std::endl;
-}
-else {
-//write(msgSize, dur); //teil für skalierende msg size
-result << msgSize << "\t" << dur.count() << std::endl;
-}
-}
-FairMQMessagePtr step7 = NewMessage(1);
-if (Send(step7, "scheduledata") > 0 ) // 7)
-return true;
-else
-return false;
-}
-}
-}
-*/
 
 void PrototypeSchedulerProcessor::writeToFile(std::string text)
 {
