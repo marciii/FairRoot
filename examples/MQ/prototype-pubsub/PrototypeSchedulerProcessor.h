@@ -29,7 +29,7 @@ protected:
   void writeToFile(std::string text);
 
   virtual void InitTask();
-  virtual void Run();
+  virtual bool ConditionalRun();
 
   uint64_t getRandomAnswerId(bool randomAnswer);
   int calculateMessageSize(int counter);
