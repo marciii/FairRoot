@@ -186,7 +186,7 @@ void PrototypeSchedulerProcessor::Run()
 			for (int i = 0; i < amountFlp; i++) {
 
 				while (true) {
-					poller->Poll(1000);
+					poller->Poll(0);
 					if (poller->CheckInput("sched-flp-chan", i)) {
 
 
