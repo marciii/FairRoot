@@ -185,9 +185,9 @@ void PrototypeSchedulerProcessor::Run()
 
 			for (int i = 0; i < amountFlp; i++) {
 
-				//while (true) {
-				//	poller->Poll(0);
-				//	if (poller->CheckInput("sched-flp-chan", i)) {
+				while (true) {
+					poller->Poll(1000);
+					if (poller->CheckInput("sched-flp-chan", i)) {
 
 
 						if (Receive(reply, "sched-flp-chan", i) > 0) {
@@ -220,11 +220,11 @@ void PrototypeSchedulerProcessor::Run()
 								if (dur.count() > max) max = dur.count();
 
 							}
-						//	break;
+						break;
 						}
 						else LOG(error) << "fail";
-				//	} //ende if poller
-			//	} //ende while
+					} //ende if poller
+				} //ende while
 
 			} //ende for
 
